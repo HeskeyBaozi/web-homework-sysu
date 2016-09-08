@@ -39,10 +39,8 @@ body {
 
 #overview figure {
     width: min-content;
-    margin: 0 auto;
-    padding: 1em;
 
-    border: 1px solid #d9d9d9;
+    padding: 1em;
 }
 
 #overview ul {
