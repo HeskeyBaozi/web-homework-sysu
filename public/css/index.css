@@ -1,0 +1,114 @@
+body {
+    font-family: "MFMIAOMIAO_NONCOMMERCIAL-REGULAR", "Maiandra GD", "Microsoft YaHei UI", Consolas, sans-serif;
+
+    display: flex;
+    color: white;
+
+    box-sizing: border-box;
+    min-height: 100vh;
+
+    background: url('../img/12255820&id=29330.jpg') 0 / cover fixed;
+}
+
+a {
+    color: #eeeeee;
+}
+
+body main {
+    position: relative;
+
+    overflow: hidden;
+
+    width: 40em;
+    height: 20em;
+    margin: auto;
+
+    transition: all 600ms ease-in-out;
+
+    border-radius: 1.5em;
+    box-shadow: 0 0 2em black;
+}
+
+body main:hover {
+    width: 100%;
+
+    box-shadow: 0 0 5em black;
+    border-radius: 0;
+}
+
+body main:before {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    margin: -5em;
+
+    content: '';
+    -webkit-filter: blur(.5em);
+    -ms-filter: blur(.5em);
+    filter: blur(.5em);
+    background: url('../img/12255820&id=29330.jpg') 0 / cover fixed;
+
+}
+
+.nav .list {
+    display: flex;
+
+    list-style: none;
+    justify-content: flex-end;
+}
+
+.black-top {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    min-height: 5em;
+    background: linear-gradient(to bottom, black, rgba(255, 255, 255, 0));
+}
+
+.black-bottom {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    min-height: 5em;
+    background: linear-gradient(to top, black, rgba(255, 255, 255, 0));
+}
+
+.float-container {
+    display: flex;
+    flex-direction: column;
+
+    text-align: center;
+
+    justify-content: center;
+}
+
+.copy-right {
+    position: absolute;
+    bottom: .5em;
+
+    width: 100%;
+
+    text-align: center;
+}
+
+.btn {
+    display: inline-block;
+
+    margin: 1em;
+    padding: .5em 1em;
+
+    transition: color, background-color 200ms ease-in-out;
+    text-decoration: none;
+
+    border: 1px solid gray;
+    border-radius: 1em;
+}
+
+.btn:hover {
+    color: #212121;
+    background-color: #d9d9d9;
+}

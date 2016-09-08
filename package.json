@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/HeskeyBaozi/web-homework-sysu/issues"
   },
-  "homepage": "https://github.com/HeskeyBaozi/web-homework-sysu#readme"
+  "homepage": "https://github.com/HeskeyBaozi/web-homework-sysu#readme",
+  "dependencies": {
+    "normalize.css": "^4.2.0"
+  }
 }
