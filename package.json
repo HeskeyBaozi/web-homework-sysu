@@ -4,7 +4,7 @@
   "description": "Modern Web Programming HomeWork - SYSU",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "echo \"__dir: ./public/index.html\" && exit 1"
   },
   "repository": {
     "type": "git",
