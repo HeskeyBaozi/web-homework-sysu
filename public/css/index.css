@@ -48,8 +48,8 @@ body main:before {
     background: url('../img/12255820&id=29330.jpg') 0 / cover fixed;
 
     -webkit-filter: blur(.5em);
-    -ms-filter: blur(.5em);
-    filter: blur(.5em);
+        -ms-filter: blur(.5em);
+            filter: blur(.5em);
 }
 
 a {
