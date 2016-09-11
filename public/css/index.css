@@ -53,7 +53,7 @@ body main:before {
 }
 
 a {
-    color: #eee;
+    color: #f3f3f3;
 }
 
 .nav .list {
@@ -116,6 +116,6 @@ a {
 }
 
 .btn:hover {
-    color: #212121;
-    background-color: #ebebeb;
+    color: #000;
+    background-color: #f8f8f8;
 }
