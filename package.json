@@ -19,5 +19,14 @@
   "bugs": {
     "url": "https://github.com/HeskeyBaozi/web-homework-sysu/issues"
   },
-  "homepage": "https://github.com/HeskeyBaozi/web-homework-sysu#readme"
+  "homepage": "https://github.com/HeskeyBaozi/web-homework-sysu#readme",
+  "dependencies": {
+    "react": "^15.3.1",
+    "react-dom": "^15.3.1"
+  },
+  "devDependencies": {
+    "source-map-loader": "^0.1.5",
+    "ts-loader": "^0.8.2",
+    "webpack": "^1.13.2"
+  }
 }
