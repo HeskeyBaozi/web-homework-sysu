@@ -1,0 +1,175 @@
+/* global config */
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-family: Verdana, Tahoma, sans-serif;
+    font-size: 1.5em;
+
+    text-align: left;
+
+    background: url('../images/background.png') repeat;
+}
+
+div {
+    box-sizing: border-box;
+}
+
+/* typical style */
+.text-center {
+    text-align: center;
+}
+
+.highlight-background {
+    background-color: #a2b964;
+}
+
+.top-banner {
+    background: url('../images/bannerbackground.png') repeat-x;
+}
+
+.top-banner > img {
+    display: block;
+
+    margin: 0 auto;
+}
+
+/* main body */
+.wrapper {
+    padding: 0 calc(50% - 400px);
+}
+
+.container {
+    border: .4em solid gray;
+}
+
+.flex-container {
+    display: flex;
+}
+
+.flex-container > #main-content {
+    flex-basis: 550px;
+    flex-grow: 2;
+}
+
+.flex-container > #slide-bar {
+    flex-basis: 250px;
+    flex-grow: 1;
+}
+
+.container > footer {
+    font-size: 80%;
+
+    padding: .4em 0;
+}
+
+/* main-content */
+#top-rotten {
+    display: flex;
+
+    height: 83px;
+
+    background: url('../images/rottenbackground.png') repeat-x;
+
+    align-items: flex-end;
+}
+
+#top-rotten em {
+    font-size: 48pt;
+    font-weight: bold;
+    font-style: normal;
+
+    padding: 0 0 1px 5px;
+
+    color: red;
+}
+
+#top-rotten small {
+    font-size: 8pt;
+    font-weight: lighter;
+
+    padding: 0 0 10px 5px;
+
+    color: white;
+}
+
+#main-content > main {
+    display: flex;
+
+    padding-right: 2%;
+
+    flex-wrap: wrap;
+}
+
+/* comment */
+.comment {
+    width: 40%;
+    margin: 2% 0 .5em 2%;
+    margin-bottom: 5px;
+
+    flex-grow: 1;
+}
+
+.comment p {
+    line-height: 13px;
+}
+
+.comment img {
+    float: left;
+
+    margin-right: 5px;
+}
+
+.comment-body {
+    font-size: 8pt;
+    font-weight: bold;
+
+    overflow: hidden;
+
+    width: 100%;
+    padding: 8px;
+
+    border: .2em solid gray;
+    background-color: #e1d697;
+}
+
+.comment-body p {
+    margin: 0;
+}
+
+.from {
+    font-size: 90%;
+}
+
+.from .additional {
+    font-style: italic;
+}
+
+/* side-bar */
+#detail {
+    font-family: Arial, sans-serif;
+    font-size: 8pt;
+
+    margin: 0 1em;
+}
+
+#detail dt {
+    font-weight: bold;
+
+    margin-top: 1em;
+}
+
+/* validator */
+#test {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+}
+
+.fixed-col {
+    margin-top: -1.8em;
+}
+
+
+
