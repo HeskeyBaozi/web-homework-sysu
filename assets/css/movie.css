@@ -42,6 +42,7 @@ div {
 
 .container {
     border: .4em solid gray;
+    min-width: min-content;
 }
 
 .flex-container {
@@ -54,6 +55,8 @@ div {
 }
 
 .flex-container > #slide-bar {
+    min-width: min-content;
+
     flex-basis: 250px;
     flex-grow: 1;
 }
