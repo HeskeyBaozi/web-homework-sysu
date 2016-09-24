@@ -24,6 +24,10 @@ li {
     display: inline-block;
 }
 
+#button div {
+    border-radius: 50%;
+}
+
 /*******************************
             locator
  *******************************/
@@ -33,10 +37,6 @@ li {
     left: calc(50% - 65px);
 
     width: 130px;
-}
-
-#button div {
-    border-radius: 50%;
 }
 
 /*******************************
@@ -56,6 +56,25 @@ li {
     bottom: calc(120px - 13px);
 }
 
+/************************************************************
+   promise that only min-content to trigger the hover class
+ ************************************************************/
+#button #info-bar,
+#button .button {
+    visibility: hidden;
+    opacity: 0;
+}
+
+#button:hover #info-bar,
+#button:hover .button {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+/*******************************
+              icon
+ *******************************/
 #button .icon {
     transition: all 200ms ease-in 50ms;
 
@@ -87,18 +106,13 @@ li {
     width: 32px;
     height: 32px;
 
-    transition: opacity 300ms ease-in-out 100ms, transform 300ms ease-in-out 100ms;
+    transition: all 300ms ease-in-out 100ms;
 
-    opacity: 0;
     border-radius: 50%;
     background-color: #686669;
     background-repeat: no-repeat;
     background-position: center;
     background-size: 18px 18px;
-}
-
-#button:hover .button {
-    opacity: 1;
 }
 
 #button:hover .button:nth-child(1) {
@@ -178,18 +192,16 @@ li {
 
     transition: all 300ms ease-in-out 100ms;
 
-    opacity: 0;
     background-color: #7e7c7f;
 }
 
 #button:hover #info-bar {
-    bottom: 57px;
     left: calc(50% - 65px);
 
     width: 130px;
     height: 130px;
 
-    opacity: 1;
+    transform: translateY(-57px);
 }
 
 /*******************************
