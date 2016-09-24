@@ -1,0 +1,247 @@
+/*******************************
+           normalize
+ *******************************/
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.15;
+}
+
+div {
+    box-sizing: border-box;
+}
+
+ul {
+    list-style: none;
+}
+
+li {
+    display: inline-block;
+}
+
+/*******************************
+            locator
+ *******************************/
+#bottom-positioner {
+    position: fixed;
+    bottom: 0;
+    left: calc(50% - 65px);
+
+    width: 130px;
+}
+
+#button div {
+    border-radius: 50%;
+}
+
+/*******************************
+         hover target
+ *******************************/
+#button,
+#button div {
+    position: absolute;
+    bottom: calc(50% - 13px);
+    left: calc(50% - 13px);
+
+    width: 26px;
+    height: 26px;
+}
+
+#button {
+    bottom: calc(120px - 13px);
+}
+
+#button .icon {
+    transition: all 200ms ease-in 50ms;
+
+    background: url('../images/atplus_white.png') center no-repeat;
+    background-color: #9ea1ce;
+    background-size: 20px 15px;
+}
+
+#button:hover .icon {
+    bottom: calc(50% - 25px);
+    left: calc(50% - 25px);
+
+    width: 50px;
+    height: 50px;
+
+    background: url('../images/atplus_green.png') center no-repeat;
+    background-color: #303f9f;
+    background-size: 40px 30px;
+}
+
+/*******************************
+          list items
+ *******************************/
+.button {
+    position: absolute;
+    bottom: calc(50% - 16px);
+    left: calc(50% - 16px);
+
+    width: 32px;
+    height: 32px;
+
+    transition: opacity 300ms ease-in-out 100ms, transform 300ms ease-in-out 100ms;
+
+    opacity: 0;
+    border-radius: 50%;
+    background-color: #686669;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 18px 18px;
+}
+
+#button:hover .button {
+    opacity: 1;
+}
+
+#button:hover .button:nth-child(1) {
+    transform: translate(-65px, -34px);
+}
+
+#button:hover .button:nth-child(2) {
+    transform: translate(-73px, 8px);
+}
+
+#button:hover .button:nth-child(3) {
+    transform: translate(-58px, 46px);
+}
+
+#button:hover .button:nth-child(4) {
+    transform: translate(-22px, 70px);
+}
+
+#button:hover .button:nth-child(5) {
+    transform: translate(20px, 70px);
+}
+
+/*******************************
+   list items syntax analyse
+ *******************************/
+.mask {
+    background-image: url('../images/nomask.png');
+}
+
+.history {
+    background-image: url('../images/history.png');
+}
+
+.message {
+    background-image: url('../images/message.png');
+}
+
+.setting {
+    background-image: url('../images/setting.png');
+}
+
+.sign {
+    background-image: url('../images/signin.png');
+}
+
+/*******************************
+           unread tag
+ *******************************/
+.button span {
+    font-size: 15px;
+
+    position: absolute;
+    top: -7px;
+    right: -7px;
+
+    width: 20px;
+    height: 20px;
+
+    text-align: center;
+    vertical-align: middle;
+
+    color: #e0d6dc;
+    border-radius: 50%;
+    background-color: red;
+}
+
+/*******************************
+        information bar
+ *******************************/
+#info-bar {
+    position: absolute;
+    bottom: calc(50% - 13px);
+    left: calc(50% - 13px);
+
+    width: 26px;
+    height: 26px;
+
+    transition: all 300ms ease-in-out 100ms;
+
+    opacity: 0;
+    background-color: #7e7c7f;
+}
+
+#button:hover #info-bar {
+    bottom: 57px;
+    left: calc(50% - 65px);
+
+    width: 130px;
+    height: 130px;
+
+    opacity: 1;
+}
+
+/*******************************
+       information content
+ *******************************/
+#button .info {
+    position: static;
+
+    width: 100%;
+    margin-top: 12px;
+}
+
+.info li {
+    font-size: 1rem;
+    line-height: 1.5;
+
+    box-sizing: border-box;
+    width: 100%;
+
+    text-align: center;
+    vertical-align: top;
+
+    color: white;
+}
+
+.info span {
+    margin-left: 5px;
+
+    vertical-align: top;
+}
+
+.info .mine {
+    font-weight: bold;
+
+    width: 50%;
+
+    color: #4fc99e;
+}
+
+.info .posted {
+    padding-right: 5px;
+
+    text-align: right;
+}
+
+.info .like {
+    padding-left: 5px;
+
+    text-align: left;
+}
+
+.info .comment {
+    font-size: 30px;
+    font-weight: bold;
+}
