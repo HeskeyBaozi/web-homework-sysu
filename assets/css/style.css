@@ -162,7 +162,7 @@ li {
            unread tag
  *******************************/
 .button span {
-    font-size: 15px;
+    font-size: 14px;
 
     position: absolute;
     top: -7px;
@@ -172,7 +172,7 @@ li {
     height: 20px;
 
     text-align: center;
-    vertical-align: middle;
+    line-height: 20px;
 
     color: #e0d6dc;
     border-radius: 50%;
