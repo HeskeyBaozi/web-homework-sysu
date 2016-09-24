@@ -62,23 +62,24 @@ li {
 #button #info-bar,
 #button .button {
     visibility: hidden;
-    opacity: 0;
 
-    transition: all 300ms ease-in-out 100ms;
+    transition: all 300ms ease-out;
+
+    opacity: 0;
 }
 
 #button:hover #info-bar,
 #button:hover .button {
     visibility: visible;
+
     opacity: 1;
 }
-
 
 /*******************************
               icon
  *******************************/
 #button .icon {
-    transition: all 200ms ease-in 50ms;
+    transition: all 600ms ease-in 100ms;
 
     background: url('../images/atplus_white.png') center no-repeat;
     background-color: #9ea1ce;
@@ -91,6 +92,8 @@ li {
 
     width: 50px;
     height: 50px;
+
+    transition: all 300ms ease-in;
 
     background: url('../images/atplus_green.png') center no-repeat;
     background-color: #303f9f;
@@ -163,6 +166,7 @@ li {
  *******************************/
 .button span {
     font-size: 14px;
+    line-height: 20px;
 
     position: absolute;
     top: -7px;
@@ -172,7 +176,6 @@ li {
     height: 20px;
 
     text-align: center;
-    line-height: 20px;
 
     color: #e0d6dc;
     border-radius: 50%;
