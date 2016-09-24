@@ -1,0 +1,62 @@
+#f {
+    position: fixed;
+    width: 300px;
+    left: 0;
+    bottom: 0;
+}
+
+#f img {
+    width: 300px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Consolas, sans-serif;
+}
+
+html {
+    font-size: 10px;
+}
+
+body {
+    font-size: 1.5em;
+    text-align: center;
+}
+
+div {
+    box-sizing: border-box;
+    border: 1px solid lightcoral;
+}
+
+#app {
+    background-color: #f1f1f1;
+}
+
+#container {
+    width: 100%;
+    max-width: calc(9rem * 5);
+    height: calc(9rem * 8);
+    margin: 0 auto;
+}
+
+#screen {
+    height: 33%;
+}
+
+#panel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    height: 67%;
+}
+
+.flex-block {
+    width: 20%;
+    height: calc(100% / 6);
+}
+
+.eq {
+    background-color: #fb7730;
+    color: white;
+}
