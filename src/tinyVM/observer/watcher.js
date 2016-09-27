@@ -6,6 +6,10 @@ import {queueWatcher} from './scheduler.js';
 let uid = 0;
 
 
+/**
+ * watcher 解析一个表达式, 收集依赖
+ * 当表达式的值改变时, 调用回调函数
+ */
 export default class Watcher {
     constructor(vm, expOrFn, callback) {
         this.vm = vm;
@@ -19,8 +23,17 @@ export default class Watcher {
         this.depIds = new Set();
         this.newDepIds = new Set();
 
+        // 语法分析表达式, 得到获取该值的getter函数
         if (typeof expOrFn === 'function') {
             this.getter = expOrFn;
+        } else {
+            // todo: parse the expression
+            if (!this.getter) {
+                this.getter = function () {
+                    // do nothing..
+                };
+                console.warn(`${expOrFn} 解析失败`);
+            }
         }
 
         this.value = this.get();
@@ -54,6 +67,7 @@ export default class Watcher {
     }
 
     run() {
+        console.log('this.', uid, 'run调用了');
         const value = this.get();
         if (value !== this.value) {
             const oldValue = this.value;

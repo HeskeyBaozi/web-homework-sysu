@@ -13,7 +13,6 @@ function initData(vm) {
     Object.keys(data).forEach(key => {
         proxy(vm, key);
     });
-    console.log('开始观察', data);
     observe(data);
     data.__ob__ && data.__ob__.vmCount++;
 }

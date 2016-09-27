@@ -5,6 +5,7 @@ import {remove} from '../util/index.js';
 let uid = 0;
 
 /**
+ * 值的依赖
  * @member id {Number}
  * @member subs {Array}
  * @member target {*} @static

@@ -44,7 +44,6 @@ export const observerState = {
 
 export function observe(value) {
     if (!value || typeof value !== 'object') {
-        console.log(value, '不是对象哦');
         return;
     }
 
@@ -53,10 +52,8 @@ export function observe(value) {
     if (value.hasOwnProperty('__ob__') && value.__ob__ instanceof Observer) {
 
         ob = value.__ob__;
-        console.log('直接返回了', ob);
     } else if (observerState.shouldConvert && Object.isExtensible(value)) {
         ob = new Observer(value);
-        console.log('创建了', ob);
     }
 
     return ob;

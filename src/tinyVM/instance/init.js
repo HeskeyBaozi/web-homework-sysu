@@ -15,6 +15,7 @@ export function initMixin(VM) {
         if (options && options._isComponent) {
             // todo fix Component
         } else {
+            console.log(vm, '被赋值了', options);
             vm.$options = options;
         }
 

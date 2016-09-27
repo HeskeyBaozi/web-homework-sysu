@@ -1,6 +1,5 @@
 'use strict';
 
-import {observe} from '../observer/index.js';
 import {initMixin} from './init.js';
 
 export default class VM {
