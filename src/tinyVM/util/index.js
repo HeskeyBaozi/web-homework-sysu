@@ -1,4 +1,5 @@
 'use strict';
+export * from './options';
 
 /**
  * Remove an item from an array
@@ -14,3 +15,4 @@ export function remove(arr, item) {
         }
     }
 }
+

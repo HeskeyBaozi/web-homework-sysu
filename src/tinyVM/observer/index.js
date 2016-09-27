@@ -15,6 +15,7 @@ export class Observer {
     constructor(value) {
         this.value = value;
         this.dep = new Dep();
+        this.vmCount = 0;
         Object.defineProperty(value, '__ob__', {
             value: this,
             enumerable: false,

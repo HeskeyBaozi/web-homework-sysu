@@ -26,11 +26,10 @@ body {
 
 div {
     box-sizing: border-box;
-    border: 1px solid lightcoral;
 }
 
 #app {
-    background-color: #f1f1f1;
+    background-color: #f1f3f3;
 }
 
 #container {
@@ -38,25 +37,62 @@ div {
     max-width: calc(9rem * 5);
     height: calc(9rem * 8);
     margin: 0 auto;
+    color: #595d66;
+    box-shadow: 0 0 10px #434343;
+    border-radius: 10px;
 }
 
 #screen {
     height: 33%;
+    display: flex;
+    flex-direction: column;
+    text-align: right;
 }
 
 #panel {
     display: flex;
     flex-wrap: wrap;
+    font-size: 1.5em;
     align-items: stretch;
     height: 67%;
+}
+
+#output {
+    flex-grow: 2;
+}
+
+#input {
+    flex-grow: 1;
+    color: #181818;
 }
 
 .flex-block {
     width: 20%;
     height: calc(100% / 6);
+    background-color: #f7f8f9;
+    border: 1px solid #d3d5d6;
+    display: flex;
+    text-align: center;
+}
+
+.flex-block:hover {
+    background-color: #e3e4e5;
+}
+
+.eq:hover {
+    background-color: #e06a2b;
+}
+
+.panel-block {
+    align-self: center;
+    flex-basis: 100%;
 }
 
 .eq {
     background-color: #fb7730;
     color: white;
+}
+
+.ce {
+    color: #fb7730;
 }

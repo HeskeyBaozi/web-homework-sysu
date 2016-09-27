@@ -15,6 +15,9 @@ export default class Watcher {
         this.callback = callback;
         this.id = uid++;
         this.deps = [];
+        this.newDeps = [];
+        this.depIds = new Set();
+        this.newDepIds = new Set();
 
         if (typeof expOrFn === 'function') {
             this.getter = expOrFn;

@@ -1,7 +1,7 @@
 'use strict';
 
 import Dep from './dep.js';
-import {observe} from './inex.js';
+import {observe} from './index.js';
 
 /**
  * Define a reactive property on an Object.
@@ -34,6 +34,18 @@ export function defineReactive(obj, key, val) {
                 }
             }
             return value;
+        },
+        set(newVal){
+            const value = propertyGetter ? propertyGetter.call(obj) : val;
+            if (newVal === value)
+                return;
+            if (propertySetter) {
+                propertySetter.call(obj, newVal);
+            } else {
+                val = newVal;
+            }
+            childObserver = observe(newVal);
+            dep.notify();
         }
     });
 }

@@ -1,6 +1,6 @@
 'use strict';
 
-import {remove} from '../util.js';
+import {remove} from '../util/index.js';
 
 let uid = 0;
 
