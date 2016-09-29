@@ -1,8 +1,9 @@
 #f {
     position: fixed;
-    width: 300px;
-    left: 0;
     bottom: 0;
+    left: 0;
+
+    width: 300px;
 }
 
 #f img {
@@ -10,9 +11,10 @@
 }
 
 * {
+    font-family: Consolas, sans-serif;
+
     margin: 0;
     padding: 0;
-    font-family: Consolas, sans-serif;
 }
 
 html {
@@ -21,6 +23,7 @@ html {
 
 body {
     font-size: 1.5em;
+
     text-align: center;
 }
 
@@ -28,33 +31,37 @@ div {
     box-sizing: border-box;
 }
 
-#app {
-    background-color: #f1f3f3;
-}
-
 #container {
+    overflow: hidden;
+
     width: 100%;
     max-width: calc(9rem * 5);
     height: calc(9rem * 8);
-    margin: 0 auto;
+    margin: 2em auto;
+
     color: #595d66;
-    box-shadow: 0 0 10px #434343;
     border-radius: 10px;
+    box-shadow: 0 0 20px #434343;
 }
 
 #screen {
-    height: 33%;
     display: flex;
     flex-direction: column;
+
+    height: 33%;
+
     text-align: right;
 }
 
 #panel {
-    display: flex;
-    flex-wrap: wrap;
     font-size: 1.5em;
-    align-items: stretch;
+
+    display: flex;
+
     height: 67%;
+
+    flex-wrap: wrap;
+    align-items: stretch;
 }
 
 #output {
@@ -62,17 +69,21 @@ div {
 }
 
 #input {
-    flex-grow: 1;
     color: #181818;
+
+    flex-grow: 1;
 }
 
 .flex-block {
+    display: flex;
+
     width: 20%;
     height: calc(100% / 6);
-    background-color: #f7f8f9;
-    border: 1px solid #d3d5d6;
-    display: flex;
+
     text-align: center;
+
+    border: 1px solid #d3d5d6;
+    background-color: #f7f8f9;
 }
 
 .flex-block:hover {
@@ -89,8 +100,8 @@ div {
 }
 
 .eq {
-    background-color: #fb7730;
     color: white;
+    background-color: #fb7730;
 }
 
 .ce {
