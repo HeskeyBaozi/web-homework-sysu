@@ -75,13 +75,11 @@ div {
 }
 
 .flex-block {
-    display: flex;
-
     width: 20%;
     height: calc(100% / 6);
-
-    text-align: center;
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: 1px solid #d3d5d6;
     background-color: #f7f8f9;
 }
@@ -92,11 +90,6 @@ div {
 
 .eq:hover {
     background-color: #e06a2b;
-}
-
-.panel-block {
-    align-self: center;
-    flex-basis: 100%;
 }
 
 .eq {
