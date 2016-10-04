@@ -52,46 +52,97 @@
 	
 	var _index2 = _interopRequireDefault(_index);
 	
+	var _helper = __webpack_require__(7);
+	
+	var _parser = __webpack_require__(8);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var panelList = (0, _MyQuery.MyQuery)('#panel').on('click', function (e) {
-	    console.log(e);
-	});
-	
-	var vm = new _index2.default({
-	    el: '#screen',
+	var ob = new _index2.default({
 	    data: {
-	        output: 'hello',
-	        input: 'world'
+	        output: '',
+	        input: '0',
+	        isEqualed: false,
+	        isWrong: false
 	    }
 	});
 	
-	vm.$watch('input', function (newValue, oldValue) {
-	    console.log('newValue = ', newValue);
-	    console.log('oldValue = ', oldValue);
+	(0, _MyQuery.MyQuery)('#panel').on('click', function (e) {
+	    if (ob.input === '0') {
+	        ob.input = '';
+	    }
+	
+	    if (ob.isEqualed) {
+	        normalizeStyle();
+	        normalizeOutput(ob);
+	        normalizeInput(ob);
+	        ob.isEqualed = false;
+	    }
+	
+	    var directive = _helper.Type[e.target.dataset['directive']];
+	    if (typeof directive === 'string') {
+	        ob.input += directive;
+	    } else if (typeof directive === 'function') {
+	        directive.call(ob);
+	    } else {
+	        console.warn('无法解析该指令:', directive);
+	    }
 	});
 	
-	new Promise(function (resolve, reject) {
-	    setTimeout(function () {
-	        resolve('fuck');
-	    }, 1000);
-	}).then(function (data) {
-	    vm.input = data;
+	ob.$watch('output', function (newValue, oldValue) {
+	    if (newValue !== oldValue) {
+	        (0, _MyQuery.MyQuery)('#output').text(newValue.trim());
+	    }
 	});
 	
-	console.log(vm);
+	ob.$watch('input', function (newValue, oldValue) {
+	    if (newValue !== oldValue) {
+	        (0, _MyQuery.MyQuery)('#input').text(newValue);
+	        var normalized = (0, _parser.normalize)(newValue);
+	        var fn = (0, _parser.parseExpression)(normalized);
+	        var result = null;
+	        try {
+	            this.result = result = fn();
+	            if (typeof result === 'function') {
+	                (0, _MyQuery.MyQuery)('#input-quick').text('Please enter number');
+	                this.isWrong = true;
+	            } else if (result) {
+	                (0, _MyQuery.MyQuery)('#input-quick').text(normalized + ' = ' + result);
+	            } else {
+	                (0, _MyQuery.MyQuery)('#input-quick').text('');
+	                this.isWrong = true;
+	            }
+	        } catch (e) {
+	            this.result = 'Syntax Error';
+	            this.isWrong = true;
+	            (0, _MyQuery.MyQuery)('#input-quick').text(this.result);
+	        }
+	    }
+	});
+	
+	function normalizeStyle() {
+	    (0, _MyQuery.MyQuery)('#input-quick').removeClass('high-light');
+	    (0, _MyQuery.MyQuery)('#input').removeClass('low-light');
+	}
+	
+	function normalizeOutput(ob) {
+	    var outputArray = ob.output.split('\n');
+	    console.log(outputArray);
+	    if (outputArray.length > 6) {
+	        outputArray = outputArray.slice(1, outputArray.length);
+	    }
+	    ob.output = outputArray.join('\n');
+	}
+	
+	function normalizeInput(ob) {
+	    ob.input = '';
+	}
 
 /***/ },
 /* 1 */
 /***/ function(module, exports) {
 
 	'use strict';
-	
-	/**
-	 * 一个简单的类似jQuery的选择器
-	 * @param DOMSelector
-	 * @return {MyElement}
-	 */
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -103,9 +154,23 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
+	var cache = {};
+	
+	/**
+	 * 一个简单实现的精简jQuery
+	 * @param DOMSelector
+	 * @return {MyElement}
+	 */
 	function MyQuery(DOMSelector) {
 	    if (typeof DOMSelector === 'string') {
-	        return new MyElement(DOMSelector);
+	        if (cache[DOMSelector]) {
+	            return cache[DOMSelector];
+	        } else {
+	            return cache[DOMSelector] = new MyElement(DOMSelector);
+	        }
+	    } else if (DOMSelector === document) {
+	        document.on = _on.bind(document);
+	        return document;
 	    }
 	}
 	
@@ -114,28 +179,77 @@
 	        _classCallCheck(this, MyElement);
 	
 	        this.el = document.querySelector(DOMSelector);
-	        Object.defineProperty(this.el, '__myElement__', {
-	            enumerable: false,
-	            writable: true,
-	            configurable: true,
-	            value: this
-	        });
 	    }
+	
+	    /**
+	     * Event binding
+	     * @param EventName {string}
+	     * @param callback {function}
+	     * @return {MyElement}
+	     */
+	
 	
 	    _createClass(MyElement, [{
 	        key: 'on',
 	        value: function on(EventName, callback) {
-	            if (addEventListener) {
-	                this.el.addEventListener(EventName.toLowerCase(), callback);
-	            } else {
-	                this.el['on' + EventName.toLowerCase()] = callback;
+	            _on.call(this.el, EventName, callback);
+	            return this;
+	        }
+	
+	        /**
+	         * add a class to the DOM
+	         * @param className {string}
+	         * @return {MyElement}
+	         */
+	
+	    }, {
+	        key: 'addClass',
+	        value: function addClass(className) {
+	            if (this.el.classList) this.el.classList.add(className);else this.el.className += ' ' + className;
+	            return this;
+	        }
+	
+	        /**
+	         * remove a class
+	         * @param className {string}
+	         * @return {MyElement}
+	         */
+	
+	    }, {
+	        key: 'removeClass',
+	        value: function removeClass(className) {
+	            if (this.el.classList) this.el.classList.remove(className);else this.el.className = this.el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+	            return this;
+	        }
+	
+	        /**
+	         * get/set text
+	         * @param newText
+	         * @return {*}
+	         */
+	
+	    }, {
+	        key: 'text',
+	        value: function text(newText) {
+	            if (typeof newText === 'undefined') {
+	                return this.el.textContent;
 	            }
+	            this.el.textContent = newText;
 	            return this;
 	        }
 	    }]);
-
+	
 	    return MyElement;
 	}();
+	
+	function _on(EventName, callback) {
+	    if (addEventListener) {
+	        this.addEventListener(EventName.toLowerCase(), callback);
+	    } else {
+	        this['on' + EventName.toLowerCase()] = callback;
+	    }
+	    return this;
+	}
 
 /***/ },
 /* 2 */
@@ -159,16 +273,15 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var VM = function () {
-	    function VM() {
+	var Store = function () {
+	    function Store() {
 	        var _this = this;
 	
 	        var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 	
-	        _classCallCheck(this, VM);
+	        _classCallCheck(this, Store);
 	
 	        this.$options = options;
-	        this.$el = options.el;
 	        this._data = options.data;
 	        this._watchers = [];
 	        Object.keys(this._data).forEach(function (key) {
@@ -177,7 +290,7 @@
 	        (0, _index.observe)(this._data);
 	    }
 	
-	    _createClass(VM, [{
+	    _createClass(Store, [{
 	        key: '$watch',
 	        value: function $watch(expOrFn, callback) {
 	            var watcher = new _watcher2.default(this, expOrFn, callback);
@@ -185,17 +298,17 @@
 	        }
 	    }]);
 	
-	    return VM;
+	    return Store;
 	}();
 	
 	/**
 	 * 代理属性
-	 * @param vm {VM}
+	 * @param vm {Store}
 	 * @param key {String}
 	 */
 	
 	
-	exports.default = VM;
+	exports.default = Store;
 	function proxy(vm, key) {
 	    Object.defineProperty(vm, key, {
 	        configurable: true,
@@ -488,6 +601,179 @@
 	}();
 	
 	exports.default = Watcher;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.Type = undefined;
+	
+	var _MyQuery = __webpack_require__(1);
+	
+	var mathRegExp = {
+	    trigonometricFunction: /cos\($|sin\($|tan\($/,
+	    logFunction: /lg\($|ln\($/,
+	    operation: /\+$|\-$|\*$|\/$/,
+	    number: /[0]$/
+	};
+	
+	var Type = exports.Type = {
+	    factorial: '!',
+	    power: '^',
+	    root: '√',
+	
+	    pi: 'π',
+	    e: 'e',
+	
+	    sin: 'sin(',
+	    cos: 'cos(',
+	    tan: 'tan(',
+	
+	    left: '(',
+	    right: ')',
+	
+	    '1': '1',
+	    '2': '2',
+	    '3': '3',
+	    '4': '4',
+	    '5': '5',
+	    '6': '6',
+	    '7': '7',
+	    '8': '8',
+	    '9': '9',
+	
+	    '0': '0',
+	
+	    plus: minusInput(mathRegExp.operation, '+'),
+	    minus: minusInput(mathRegExp.operation, '-'),
+	    multiply: minusInput(mathRegExp.operation, '*'),
+	    divide: minusInput(mathRegExp.operation, '/'),
+	
+	    point: '.',
+	    ln: 'ln(',
+	    lg: 'lg(',
+	
+	    eq: function eq() {
+	        this.isEqualed = true;
+	        (0, _MyQuery.MyQuery)('#input').addClass('low-light');
+	        (0, _MyQuery.MyQuery)('#input-quick').text(this.input ? '=' + this.result : '0').addClass('high-light');
+	        this.output += this.input ? this.input + '=' + this.result + '\n' : '0=0\n';
+	    },
+	    backspace: function backspace() {
+	        if (this.input.length === 0) {
+	            this.input = '0';
+	            return;
+	        }
+	
+	        if (mathRegExp.trigonometricFunction.test(this.input)) {
+	            this.input = this.input.slice(0, this.input.length - 4);
+	        } else if (mathRegExp.logFunction.test(this.input)) {
+	            this.input = this.input.slice(0, this.input.length - 3);
+	        } else {
+	            this.input = this.input.slice(0, this.input.length - 1);
+	        }
+	    },
+	    ce: function ce() {
+	        this.input = '0';
+	    }
+	};
+	
+	function minusInput(reg, stringAdded) {
+	    return function () {
+	        var result = reg.test(this.input) ? this.input.slice(0, this.input.length - 1) : this.input;
+	
+	        this.input = result + stringAdded;
+	    };
+	}
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.normalize = normalize;
+	exports.parseExpression = parseExpression;
+	var MyRegExp = {
+	    braces: /\(\)/g,
+	    power: /\d+\.?\d*\^\d+\.?\d*/g,
+	    sqrt: /\√(\d+\.?\d*)/g,
+	    factorial: /\d+\.?\d*[\!]/g
+	};
+	
+	function normalizeBrace(expression) {
+	    var leftNum = expression.match(/\(/g) && expression.match(/\(/g).length || 0;
+	    var rightNum = expression.match(/\)/g) && expression.match(/\)/g).length || 0;
+	    var differs = leftNum - rightNum;
+	    if (differs < 0) return undefined;
+	    var result = expression;
+	    for (var i = 0; i < differs; i++) {
+	        result += ')';
+	    }
+	    result = result.replace(MyRegExp.braces, '');
+	    return result;
+	}
+	
+	function normalizeFactory(reg, placer) {
+	    return function (expression) {
+	        var regArray = reg.exec(expression);
+	        while (regArray !== null) {
+	            expression = expression.replace(reg, placer(regArray));
+	            regArray = reg.exec(expression);
+	            console.log(expression);
+	        }
+	        return expression;
+	    };
+	}
+	
+	var normalizePower = normalizeFactory(MyRegExp.power, function (regArray) {
+	    return 'pow(' + regArray[0].split('^').join(',') + ')';
+	});
+	
+	var normalizeSqrt = normalizeFactory(MyRegExp.sqrt, function (regArray) {
+	    return 'sqrt(' + regArray[0].split('√')[1] + ')';
+	});
+	
+	var normalizeFactorial = normalizeFactory(MyRegExp.factorial, function (regArray) {
+	    return 'factor(' + regArray[0].split('!')[0] + ')';
+	});
+	
+	function normalize(expression) {
+	    return [expression, normalizeBrace, normalizePower, normalizeSqrt, normalizeFactorial].reduce(function (expression, wrapper) {
+	        return wrapper(expression);
+	    });
+	}
+	
+	function parseExpression(expression) {
+	    var operationMath = [Math.sin, Math.cos, Math.tan, Math.log10, Math.log, Math.E, Math.PI, Math.pow, Math.sqrt, factor];
+	    var operationString = ['sin', 'cos', 'tan', 'lg', 'ln', 'e', 'π', 'pow', 'sqrt', 'factor'];
+	    return function () {
+	        return new (Function.prototype.bind.apply(Function, [null].concat(operationString, ['return ' + expression + ';'])))().apply(null, operationMath);
+	    };
+	}
+	
+	function factor(num) {
+	    if (num === 0) {
+	        return 1;
+	    }
+	    if (num < 0) {
+	        throw new Error('阶乘不能为负数');
+	    }
+	
+	    var result = 1;
+	    for (var i = 1; i <= num; i++) {
+	        result = result * i;
+	    }
+	    return result;
+	}
 
 /***/ }
 /******/ ]);

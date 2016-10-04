@@ -4,7 +4,7 @@
  *
  * @param parent {Object}
  * @param child {Object}
- * @param vm {VM}
+ * @param vm {Store}
  * @return {Object}
  */
 export function mergeOptions(parent, child, vm) {

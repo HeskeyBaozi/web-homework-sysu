@@ -6,9 +6,9 @@ export default class Directive {
     /**
      * @constructor
      * @param {Object} descriptor
-     * @param vm {VM}
+     * @param vm {Store}
      * @param el {Node}
-     * @param host {VM}
+     * @param host {Store}
      */
     constructor(descriptor, vm, el, host) {
         this.vm = vm;

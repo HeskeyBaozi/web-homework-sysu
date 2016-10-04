@@ -19,7 +19,7 @@ function initData(vm) {
 
 /**
  * 代理属性
- * @param vm {VM}
+ * @param vm {Store}
  * @param key {String}
  */
 function proxy(vm, key) {

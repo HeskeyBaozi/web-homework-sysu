@@ -1,14 +1,3 @@
-#f {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-
-    width: 300px;
-}
-
-#f img {
-    width: 300px;
-}
 
 * {
     font-family: Consolas, sans-serif;
@@ -35,11 +24,12 @@ div {
     overflow: hidden;
 
     width: 100%;
-    max-width: calc(9rem * 5);
+    max-width: calc(9rem * 6);
     height: calc(9rem * 8);
     margin: 2em auto;
 
     color: #595d66;
+
     border-radius: 10px;
     box-shadow: 0 0 20px #434343;
 }
@@ -47,10 +37,16 @@ div {
 #screen {
     display: flex;
     flex-direction: column;
-
+    padding: .5em;
+    background-color: #f5f7f8;
     height: 33%;
+    font-size: 3em;
 
     text-align: right;
+}
+
+.transition {
+    transition: all 500ms;
 }
 
 #panel {
@@ -64,14 +60,38 @@ div {
     align-items: stretch;
 }
 
+.right-bottom {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
 #output {
-    flex-grow: 2;
+    flex-basis: 60%;
+    font-size: .6em;
+    color: #a6a8a9;
 }
 
 #input {
     color: #181818;
+    flex-basis: 25%;
+}
 
-    flex-grow: 1;
+#input-quick {
+    font-size: .6em;
+    color: #959798;
+    flex-basis: 15%;
+}
+
+#screen .low-light {
+    font-size: .6em;
+    flex-basis: 15%;
+}
+
+#screen .high-light {
+    font-size: 1em;
+    color: #323232;
+    flex-basis: 25%;
 }
 
 .flex-block {

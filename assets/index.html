@@ -6,16 +6,13 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div id="f">
-    <img src="t.png" alt="k"/>
-</div>
 <div id="app">
     <div id="container">
         <div id="screen">
-            <div id="output">{{output}}</div>
-            <div id="input">{{input}}</div>
+            <pre id="output" class="right-bottom transition"></pre>
+            <div id="input" class="right-bottom transition"></div>
+            <div id="input-quick" class="right-bottom transition"></div>
         </div>
-
         <div id="panel">
             <div class="flex-block" data-directive="factorial">!</div>
             <div class="flex-block" data-directive="power">^</div>
@@ -31,12 +28,12 @@
             <div class="flex-block" data-directive="7">7</div>
             <div class="flex-block" data-directive="8">8</div>
             <div class="flex-block" data-directive="9">9</div>
-            <div class="flex-block" data-directive="divide">÷</div>
+            <div class="flex-block" data-directive="divide">/</div>
             <div class="flex-block" data-directive="tan">tan</div>
             <div class="flex-block" data-directive="4">4</div>
             <div class="flex-block" data-directive="5">5</div>
             <div class="flex-block" data-directive="6">6</div>
-            <div class="flex-block" data-directive="multiply">×</div>
+            <div class="flex-block" data-directive="multiply">*</div>
             <div class="flex-block" data-directive="ln">ln</div>
             <div class="flex-block" data-directive="1">1</div>
             <div class="flex-block" data-directive="2">2</div>
@@ -45,7 +42,7 @@
             <div class="flex-block" data-directive="lg">lg</div>
             <div class="flex-block" data-directive="0">0</div>
             <div class="flex-block" data-directive="point">.</div>
-            <div class="flex-block eq" data-directive="eq">=</div>
+            <div id="eq" class="flex-block eq" data-directive="eq">=</div>
             <div class="flex-block" data-directive="plus">+</div>
         </div>
     </div>

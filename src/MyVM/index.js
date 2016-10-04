@@ -3,10 +3,9 @@
 import {observe} from './Observer/index.js';
 import Watcher from './Observer/watcher.js';
 
-export default class VM {
+export default class Store {
     constructor(options = {}) {
         this.$options = options;
-        this.$el = options.el;
         this._data = options.data;
         this._watchers = [];
         Object.keys(this._data).forEach(key => {
@@ -23,7 +22,7 @@ export default class VM {
 
 /**
  * 代理属性
- * @param vm {VM}
+ * @param vm {Store}
  * @param key {String}
  */
 function proxy(vm, key) {
