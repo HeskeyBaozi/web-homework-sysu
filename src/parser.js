@@ -1,11 +1,15 @@
 'use strict';
 
 const MyRegExp = {
-    braces: /\(\)/g,
-    power: /\d+\.?\d*\^\d+\.?\d*/g,
-    sqrt: /\√(\d+\.?\d*)/g,
-    factorial: /\d+\.?\d*[\!]/g
+    power: /(e|π|\d+\.?\d*|\(+[^\)]*\)+)\^(\d+\.?\d*|\(+[^\)]*\)+)/g,
+    sqrt: /\√(e|π|\d+\.?\d*|\(+[^\)]*\)+)/g,
+    factorial: /(\d+\.?\d*|\(+[^\)]*\)+)[\!]/g,
 };
+
+const operationMath = [Math.sin, Math.cos, Math.tan, Math.log10,
+    Math.log, Math.E, Math.PI, Math.pow, Math.sqrt, factor];
+
+const operationString = ['sin', 'cos', 'tan', 'lg', 'ln', 'e', 'π', 'pow', 'sqrt', 'factor'];
 
 function normalizeBrace(expression) {
     const leftNum = expression.match(/\(/g) && expression.match(/\(/g).length || 0;
@@ -17,7 +21,6 @@ function normalizeBrace(expression) {
     for (let i = 0; i < differs; i++) {
         result += ')';
     }
-    result = result.replace(MyRegExp.braces, '');
     return result;
 }
 
@@ -27,7 +30,6 @@ function normalizeFactory(reg, placer) {
         while (regArray !== null) {
             expression = expression.replace(reg, placer(regArray));
             regArray = reg.exec(expression);
-            console.log(expression);
         }
         return expression;
     }
@@ -53,10 +55,6 @@ export function normalize(expression) {
 }
 
 export function parseExpression(expression) {
-    const operationMath = [Math.sin, Math.cos, Math.tan, Math.log10, Math.log,
-        Math.E, Math.PI, Math.pow, Math.sqrt, factor];
-    const operationString = ['sin', 'cos', 'tan', 'lg', 'ln',
-        'e', 'π', 'pow', 'sqrt', 'factor'];
     return function () {
         return new Function(...operationString, `return ${expression};`).apply(null, operationMath);
     };

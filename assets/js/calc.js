@@ -113,7 +113,7 @@
 	                this.isWrong = true;
 	            }
 	        } catch (e) {
-	            this.result = 'Syntax Error';
+	            this.result = 'Syntax Error :(';
 	            this.isWrong = true;
 	            (0, _MyQuery.MyQuery)('#input-quick').text(this.result);
 	        }
@@ -128,7 +128,7 @@
 	function normalizeOutput(ob) {
 	    var outputArray = ob.output.split('\n');
 	    console.log(outputArray);
-	    if (outputArray.length > 6) {
+	    if (outputArray.length > 5) {
 	        outputArray = outputArray.slice(1, outputArray.length);
 	    }
 	    ob.output = outputArray.join('\n');
@@ -564,7 +564,6 @@
 	        value: function get() {
 	            (0, _dep.pushTarget)(this); // 推入全局依赖栈
 	            var value = this.getter.call(this.vm, this.vm); // 触发了对象的getter, 获取依赖
-	            console.log('目前依赖: ', this.newDeps);
 	            (0, _dep.popTarget)();
 	            return value;
 	        }
@@ -703,11 +702,14 @@
 	exports.normalize = normalize;
 	exports.parseExpression = parseExpression;
 	var MyRegExp = {
-	    braces: /\(\)/g,
-	    power: /\d+\.?\d*\^\d+\.?\d*/g,
-	    sqrt: /\√(\d+\.?\d*)/g,
-	    factorial: /\d+\.?\d*[\!]/g
+	    power: /(e|π|\d+\.?\d*|\(+[^\)]*\)+)\^(\d+\.?\d*|\(+[^\)]*\)+)/g,
+	    sqrt: /\√(e|π|\d+\.?\d*|\(+[^\)]*\)+)/g,
+	    factorial: /(\d+\.?\d*|\(+[^\)]*\)+)[\!]/g
 	};
+	
+	var operationMath = [Math.sin, Math.cos, Math.tan, Math.log10, Math.log, Math.E, Math.PI, Math.pow, Math.sqrt, factor];
+	
+	var operationString = ['sin', 'cos', 'tan', 'lg', 'ln', 'e', 'π', 'pow', 'sqrt', 'factor'];
 	
 	function normalizeBrace(expression) {
 	    var leftNum = expression.match(/\(/g) && expression.match(/\(/g).length || 0;
@@ -718,7 +720,6 @@
 	    for (var i = 0; i < differs; i++) {
 	        result += ')';
 	    }
-	    result = result.replace(MyRegExp.braces, '');
 	    return result;
 	}
 	
@@ -728,7 +729,6 @@
 	        while (regArray !== null) {
 	            expression = expression.replace(reg, placer(regArray));
 	            regArray = reg.exec(expression);
-	            console.log(expression);
 	        }
 	        return expression;
 	    };
@@ -753,8 +753,6 @@
 	}
 	
 	function parseExpression(expression) {
-	    var operationMath = [Math.sin, Math.cos, Math.tan, Math.log10, Math.log, Math.E, Math.PI, Math.pow, Math.sqrt, factor];
-	    var operationString = ['sin', 'cos', 'tan', 'lg', 'ln', 'e', 'π', 'pow', 'sqrt', 'factor'];
 	    return function () {
 	        return new (Function.prototype.bind.apply(Function, [null].concat(operationString, ['return ' + expression + ';'])))().apply(null, operationMath);
 	    };

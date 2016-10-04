@@ -1,6 +1,6 @@
 
 * {
-    font-family: Consolas, sans-serif;
+    font-family: 'Myriad-Set-Pro-Thin', Consolas, sans-serif;
 
     margin: 0;
     padding: 0;
@@ -24,20 +24,20 @@ div {
     overflow: hidden;
 
     width: 100%;
-    max-width: calc(9rem * 6);
-    height: calc(9rem * 8);
+    max-width: calc(108px * 5.5);
+    height: calc(108px * 8);
     margin: 2em auto;
 
     color: #595d66;
 
     border-radius: 10px;
-    box-shadow: 0 0 20px #434343;
+    box-shadow: 0 0 40px #434343;
 }
 
 #screen {
     display: flex;
     flex-direction: column;
-    padding: .5em;
+    padding: .2em .3em;
     background-color: #f5f7f8;
     height: 33%;
     font-size: 3em;
@@ -66,6 +66,12 @@ div {
     align-items: flex-end;
 }
 
+.right-middle {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
 #output {
     flex-basis: 60%;
     font-size: .6em;
@@ -74,24 +80,24 @@ div {
 
 #input {
     color: #181818;
-    flex-basis: 25%;
+    flex-basis: 20%;
 }
 
 #input-quick {
     font-size: .6em;
     color: #959798;
-    flex-basis: 15%;
+    flex-basis: 20%;
 }
 
 #screen .low-light {
     font-size: .6em;
-    flex-basis: 15%;
+    flex-basis: 20%;
 }
 
 #screen .high-light {
     font-size: 1em;
     color: #323232;
-    flex-basis: 25%;
+    flex-basis: 20%;
 }
 
 .flex-block {
@@ -102,10 +108,12 @@ div {
     justify-content: center;
     border: 1px solid #d3d5d6;
     background-color: #f7f8f9;
+    transition: all 200ms;
 }
 
 .flex-block:hover {
     background-color: #e3e4e5;
+    font-size: 2em;
 }
 
 .eq:hover {

@@ -61,7 +61,7 @@ ob.$watch('input', function (newValue, oldValue) {
                 this.isWrong = true;
             }
         } catch (e) {
-            this.result = 'Syntax Error';
+            this.result = 'Syntax Error :(';
             this.isWrong = true;
             $('#input-quick').text(this.result);
         }
@@ -76,7 +76,7 @@ function normalizeStyle() {
 function normalizeOutput(ob) {
     let outputArray = ob.output.split('\n');
     console.log(outputArray);
-    if (outputArray.length > 6) {
+    if (outputArray.length > 5) {
         outputArray = outputArray.slice(1, outputArray.length);
     }
     ob.output = outputArray.join('\n');

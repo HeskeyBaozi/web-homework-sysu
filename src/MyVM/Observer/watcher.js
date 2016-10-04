@@ -28,7 +28,6 @@ export default class Watcher {
     get() {
         pushTarget(this); // 推入全局依赖栈
         const value = this.getter.call(this.vm, this.vm); // 触发了对象的getter, 获取依赖
-        console.log('目前依赖: ', this.newDeps);
         popTarget();
         return value;
     }
