@@ -138,19 +138,6 @@ div {
     align-items: stretch;
 }
 
-.eq {
-    color: white;
-    background-color: #fb7730;
-}
-
-.eq:hover {
-    background-color: #e06a2b;
-}
-
-.ce {
-    color: #fb7730;
-}
-
 .flex-block {
     width: 20%;
     height: calc(100% / 6);
@@ -166,3 +153,17 @@ div {
 
     background-color: #e3e4e5;
 }
+
+.eq {
+    color: white;
+    background-color: #fb7730;
+}
+
+.eq:hover {
+    background-color: #e06a2b;
+}
+
+.ce {
+    color: #fb7730;
+}
+

@@ -1,12 +1,10 @@
 'use strict';
 
-import {defineReactive} from './helper.js';
 import Dep from './dep.js';
 
 class Observer {
     constructor(value) {
         this.value = value;
-        this.dep = new Dep();
         Object.defineProperty(value, '__ob__', {
             value: this,
             enumerable: false,
@@ -43,4 +41,24 @@ export function observe(value) {
         ob = new Observer(value);
     }
     return ob;
+}
+
+function defineReactive(obj, key, val) {
+    const dep = new Dep();
+    Object.defineProperty(obj, key, {
+        enumerable: true,
+        configurable: true,
+        get(){
+            if (Dep.target) {
+                dep.depend();
+            }
+            return val;
+        },
+        set(newVal){
+            if (newVal === val)
+                return;
+            val = newVal;
+            dep.notify();
+        }
+    });
 }

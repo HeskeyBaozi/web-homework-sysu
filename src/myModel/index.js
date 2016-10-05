@@ -1,8 +1,11 @@
 'use strict';
 
-import {observe} from './Observer/index.js';
-import Watcher from './Observer/watcher.js';
+import {observe} from './observer/index.js';
+import Watcher from './observer/watcher.js';
 
+/**
+ * Just like the part of the model in MVVM!
+ */
 export default class Model {
     constructor(options = {}) {
         this._data = options.data;

@@ -7,12 +7,12 @@ const cache = {};
  * @param DOMSelector {string|document}
  * @return {*}
  */
-export default function MyQuery(DOMSelector) {
+export default DOMSelector => {
     if (typeof DOMSelector === 'string') {
         if (cache[DOMSelector]) {
             return cache[DOMSelector];
         } else {
-            return cache[DOMSelector] = new MyElement(DOMSelector);
+            return cache[DOMSelector] = new HzyElement(DOMSelector);
         }
     } else if (DOMSelector === document) {
         document.on = on.bind(document);
@@ -21,7 +21,7 @@ export default function MyQuery(DOMSelector) {
 }
 
 
-class MyElement {
+class HzyElement {
     constructor(DOMSelector) {
         this.el = document.querySelector(DOMSelector);
     }
@@ -30,7 +30,7 @@ class MyElement {
      * Event binding
      * @param EventName {string}
      * @param callback {function}
-     * @return {MyElement}
+     * @return {HzyElement}
      */
     on(EventName, callback) {
         on.call(this.el, EventName, callback);
@@ -40,7 +40,7 @@ class MyElement {
     /**
      * add a class to the DOM
      * @param className {string}
-     * @return {MyElement}
+     * @return {HzyElement}
      */
     addClass(className) {
         if (this.el.classList)
@@ -53,7 +53,7 @@ class MyElement {
     /**
      * remove a class
      * @param className {string}
-     * @return {MyElement}
+     * @return {HzyElement}
      */
     removeClass(className) {
         if (this.el.classList)
