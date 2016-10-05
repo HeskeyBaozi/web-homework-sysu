@@ -3,9 +3,8 @@
 import {observe} from './Observer/index.js';
 import Watcher from './Observer/watcher.js';
 
-export default class Store {
+export default class Model {
     constructor(options = {}) {
-        this.$options = options;
         this._data = options.data;
         this._watchers = [];
         Object.keys(this._data).forEach(key => {
@@ -14,6 +13,14 @@ export default class Store {
         observe(this._data);
     }
 
+    /**
+     * when the vale of the expression changes,
+     * the callback would be called
+     * callback example:
+     *        (newValue, oldValue) => *, this <===> model
+     * @param expOrFn {string|function}
+     * @param callback {function}
+     */
     $watch(expOrFn, callback) {
         const watcher = new Watcher(this, expOrFn, callback);
         this._watchers.push(watcher);
@@ -21,19 +28,21 @@ export default class Store {
 }
 
 /**
- * 代理属性
- * @param vm {Store}
+ * proxy the properties
+ * example:
+ *      model.key <===> model._data.key
+ * @param model {Model}
  * @param key {String}
  */
-function proxy(vm, key) {
-    Object.defineProperty(vm, key, {
+function proxy(model, key) {
+    Object.defineProperty(model, key, {
         configurable: true,
         enumerable: true,
         get: () => {
-            return vm._data[key];
+            return model._data[key];
         },
         set: val => {
-            vm._data[key] = val;
+            model._data[key] = val;
         }
     })
 }

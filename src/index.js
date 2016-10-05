@@ -1,20 +1,19 @@
 'use strict';
 
-import {MyQuery as $} from './MyQuery.js';
-import Store from './MyVM/index.js';
+import Hzy from './MyQuery.js';
+import Model from './MyVM/index.js';
 import {Type} from './helper.js';
 import {parseExpression, normalize} from './parser.js';
 
-const ob = new Store({
+const ob = new Model({
     data: {
         output: '',
         input: '0',
-        isEqualed: false,
-        isWrong: false
+        isEqualed: false
     }
 });
 
-$('#panel').on('click', e => {
+Hzy('#panel').on('click', e => {
     if (ob.input === '0') {
         ob.input = '';
     }
@@ -33,44 +32,41 @@ $('#panel').on('click', e => {
     } else if (typeof directive === 'function') {
         directive.call(ob);
     } else {
-        console.warn('无法解析该指令:', directive);
+        console.warn('cannot parse this directive:', directive);
     }
 });
 
 ob.$watch('output', function (newValue, oldValue) {
     if (newValue !== oldValue) {
-        $('#output').text(newValue.trim());
+        Hzy('#output').text(newValue.trim());
     }
 });
 
 ob.$watch('input', function (newValue, oldValue) {
     if (newValue !== oldValue) {
-        $('#input').text(newValue);
-        let normalized = normalize(newValue);
-        let fn = parseExpression(normalized);
+        Hzy('#input').text(newValue);
+        const normalized = normalize(newValue);
+        const getter = parseExpression(normalized);
         let result = null;
         try {
-            this.result = result = fn();
+            this.result = result = getter();
             if (typeof result === 'function') {
-                $('#input-quick').text('Please enter number');
-                this.isWrong = true;
+                Hzy('#input-quick').text('Please enter number');
             } else if (result) {
-                $('#input-quick').text(`${normalized} = ${result}`);
+                Hzy('#input-quick').text(`${normalized} = ${result}`);
             } else {
-                $('#input-quick').text('');
-                this.isWrong = true;
+                Hzy('#input-quick').text('');
             }
         } catch (e) {
             this.result = 'Syntax Error :(';
-            this.isWrong = true;
-            $('#input-quick').text(this.result);
+            Hzy('#input-quick').text(this.result);
         }
     }
 });
 
 function normalizeStyle() {
-    $('#input-quick').removeClass('high-light');
-    $('#input').removeClass('low-light');
+    Hzy('#input-quick').removeClass('high-light');
+    Hzy('#input').removeClass('low-light');
 }
 
 function normalizeOutput(ob) {

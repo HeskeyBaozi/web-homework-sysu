@@ -3,9 +3,9 @@
 import {popTarget, pushTarget} from './dep.js';
 
 export default class Watcher {
-    constructor(vm, expOrFn, callback) {
+    constructor(model, expOrFn, callback) {
         this.callback = callback;
-        this.vm = vm;
+        this.model = model;
 
         this.depIds = new Set();
         this.newDepIds = new Set();
@@ -14,7 +14,7 @@ export default class Watcher {
         if (typeof expOrFn === 'function') {
             this.getter = expOrFn;
         } else if (typeof expOrFn === 'string') {
-            this.getter = new Function('vm', `return vm.${expOrFn};`);
+            this.getter = new Function('model', `return model.${expOrFn};`);
         } else {
             this.getter = function () {
                 // do nothing..
@@ -27,7 +27,7 @@ export default class Watcher {
 
     get() {
         pushTarget(this); // 推入全局依赖栈
-        const value = this.getter.call(this.vm, this.vm); // 触发了对象的getter, 获取依赖
+        const value = this.getter.call(this.model, this.model); // 触发了对象的getter, 获取依赖
         popTarget();
         return value;
     }
@@ -52,7 +52,7 @@ export default class Watcher {
         if (value !== this.value) {
             const oldValue = this.value;
             this.value = value;
-            this.callback.call(this.vm, value, oldValue);
+            this.callback.call(this.model, value, oldValue);
         }
     }
 }

@@ -3,11 +3,11 @@
 const cache = {};
 
 /**
- * 一个简单实现的精简jQuery
- * @param DOMSelector
- * @return {MyElement}
+ * a tiny small Query just like jQuery 2333
+ * @param DOMSelector {string|document}
+ * @return {*}
  */
-export function MyQuery(DOMSelector) {
+export default function MyQuery(DOMSelector) {
     if (typeof DOMSelector === 'string') {
         if (cache[DOMSelector]) {
             return cache[DOMSelector];
@@ -78,6 +78,12 @@ class MyElement {
     }
 }
 
+/**
+ * add events
+ * @param EventName {string}
+ * @param callback {function}
+ * @return {object} the context of the function: this.
+ */
 function on(EventName, callback) {
     if (addEventListener) {
         this.addEventListener(EventName.toLowerCase(), callback);

@@ -1,4 +1,6 @@
-
+/**************************************************
+                   normalize
+***************************************************/
 * {
     font-family: 'Myriad-Set-Pro-Thin', Consolas, sans-serif;
 
@@ -14,12 +16,17 @@ body {
     font-size: 1.5em;
 
     text-align: center;
+
+    background-color: #d3d5d6;
 }
 
 div {
     box-sizing: border-box;
 }
 
+/**************************************************
+                   container
+***************************************************/
 #container {
     overflow: hidden;
 
@@ -29,26 +36,97 @@ div {
     margin: 2em auto;
 
     color: #595d66;
-
     border-radius: 10px;
     box-shadow: 0 0 40px #434343;
 }
 
+/**************************************************
+                       screen
+***************************************************/
 #screen {
-    display: flex;
-    flex-direction: column;
-    padding: .2em .3em;
-    background-color: #f5f7f8;
-    height: 33%;
     font-size: 3em;
 
+    display: flex;
+    flex-direction: column;
+
+    height: 33%;
+    padding: .2em .3em;
+
     text-align: right;
+
+    background-color: #f1edf3;
 }
 
+#output {
+    font-size: .6em;
+
+    color: #a6a8a9;
+
+    flex-basis: 60%;
+}
+
+#input {
+    color: #181818;
+
+    flex-basis: 20%;
+}
+
+#input-quick {
+    font-size: .6em;
+
+    color: #959798;
+
+    flex-basis: 20%;
+}
+
+/**************************************************
+                 screen animate
+***************************************************/
 .transition {
     transition: all 500ms;
 }
 
+#screen .low-light {
+    font-size: .6em;
+
+    flex-basis: 20%;
+}
+
+#screen .high-light {
+    font-size: 1em;
+
+    color: #323232;
+
+    flex-basis: 20%;
+}
+
+/**************************************************
+                 position fixing
+***************************************************/
+.right-bottom {
+    display: flex;
+
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.right-middle {
+    display: flex;
+
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.flex-center {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+/**************************************************
+                      panel
+***************************************************/
 #panel {
     font-size: 1.5em;
 
@@ -60,71 +138,31 @@ div {
     align-items: stretch;
 }
 
-.right-bottom {
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
-}
-
-.right-middle {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-}
-
-#output {
-    flex-basis: 60%;
-    font-size: .6em;
-    color: #a6a8a9;
-}
-
-#input {
-    color: #181818;
-    flex-basis: 20%;
-}
-
-#input-quick {
-    font-size: .6em;
-    color: #959798;
-    flex-basis: 20%;
-}
-
-#screen .low-light {
-    font-size: .6em;
-    flex-basis: 20%;
-}
-
-#screen .high-light {
-    font-size: 1em;
-    color: #323232;
-    flex-basis: 20%;
-}
-
-.flex-block {
-    width: 20%;
-    height: calc(100% / 6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #d3d5d6;
-    background-color: #f7f8f9;
-    transition: all 200ms;
-}
-
-.flex-block:hover {
-    background-color: #e3e4e5;
-    font-size: 2em;
+.eq {
+    color: white;
+    background-color: #fb7730;
 }
 
 .eq:hover {
     background-color: #e06a2b;
 }
 
-.eq {
-    color: white;
-    background-color: #fb7730;
-}
-
 .ce {
     color: #fb7730;
+}
+
+.flex-block {
+    width: 20%;
+    height: calc(100% / 6);
+
+    transition: all 200ms;
+
+    border: 1px solid #d3d5d6;
+    background-color: #f7f8f9;
+}
+
+.flex-block:hover {
+    font-size: 2em;
+
+    background-color: #e3e4e5;
 }
