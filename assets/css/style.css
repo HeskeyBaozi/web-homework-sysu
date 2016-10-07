@@ -142,6 +142,11 @@ div {
     width: 20%;
     height: calc(100% / 6);
 
+    cursor: pointer;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
     transition: all 200ms;
 
     border: 1px solid #d3d5d6;

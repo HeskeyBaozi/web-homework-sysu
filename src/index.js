@@ -21,10 +21,10 @@ const model = new Model({
 });
 
 /**
- * Add Events
+ * Add and Bind Events
  */
 Hzy('#panel').on('click', e => {
-    if (model.input === '0') model.input = '';
+    if (model.input === '0') model.input = ''; // normalize zero
     if (model.isEqualed) {
         normalizeStyle(model);
         model.isEqualed = false;
@@ -33,19 +33,20 @@ Hzy('#panel').on('click', e => {
 });
 
 /**
+ * Bind the data with the View!!!
  * Observe the Model, Update the View when the model's data change!
  */
-model.$watch('output', function (newValue, oldValue) {
+model.$watch('output', (newValue, oldValue) => {
     if (newValue !== oldValue) {
         Hzy('#output').text(newValue.trim());
     }
 });
 
-model.$watch('input', function (newValue, oldValue) {
+model.$watch('input', (newValue, oldValue) => {
     if (newValue !== oldValue) {
         Hzy('#input').text(newValue);
         const normalizedExpression = normalizeExpression(newValue);
         const getter = parseExpression(normalizedExpression);
-        showResult(this, normalizedExpression, getter);
+        showResult(model, normalizedExpression, getter);
     }
 });

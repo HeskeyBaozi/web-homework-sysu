@@ -1,5 +1,10 @@
 'use strict';
 
+const webpack = require('webpack');
+const myPackage = require('./package.json');
+const banner = `${myPackage.name} ${myPackage.version} - ${myPackage.description}\nCopyright (c)`
+    + ` ${ new Date().getFullYear() } ${myPackage.author} - ${myPackage.homepage}\nLicense: ${myPackage.license}`;
+
 module.exports = {
     context: __dirname,
     entry: {
@@ -21,5 +26,8 @@ module.exports = {
             }
         ]
     },
+    plugins: [
+        new webpack.BannerPlugin(banner)
+    ],
     devtool: '#source-map'
 };

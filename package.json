@@ -1,5 +1,5 @@
 {
-  "name": "web-homework-sysu",
+  "name": "simple-calculator",
   "version": "0.0.0",
   "description": "Modern Web Programming HomeWork - SYSU",
   "main": "index.js",
@@ -22,6 +22,7 @@
   "homepage": "https://github.com/HeskeyBaozi/web-homework-sysu#readme",
   "devDependencies": {
     "babel-loader": "^6.2.5",
-    "babel-preset-es2015": "^6.14.0"
+    "babel-preset-es2015": "^6.14.0",
+    "webpack": "^1.13.2"
   }
 }

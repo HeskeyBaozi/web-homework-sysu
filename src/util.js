@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * Compute the factorial of the number
+ * @param num {number}
+ * @return {number}
+ */
 export function factor(num) {
     if (num === 0) {
         return 1;
