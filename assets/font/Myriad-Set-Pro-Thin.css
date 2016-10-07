@@ -1,0 +1,14 @@
+@font-face {
+    font-family: "Myriad-Set-Pro-Thin";
+    src: url("Myriad-Set-Pro-Thin.eot"); /* IE9 */
+    src: url("Myriad-Set-Pro-Thin.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+    
+    url("Myriad-Set-Pro-Thin.woff") format("woff"), /* chrome、firefox */
+    url("Myriad-Set-Pro-Thin.ttf") format("truetype"), /* chrome、firefox、opera、Safari, Android, iOS 4.2+ */
+    
+    url("Myriad-Set-Pro-Thin.svg#Myriad-Set-Pro-Thin") format("svg"); /* iOS 4.1- */
+    font-style: normal;
+    font-weight: normal;
+}
+
+
