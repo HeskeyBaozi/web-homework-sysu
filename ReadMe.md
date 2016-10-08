@@ -2,8 +2,11 @@
 
 > ![overview](./overview.png)
 
+## [Github地址](https://github.com/HeskeyBaozi/web-homework-sysu/tree/5-Calc)
+develop building
 ```bash
 $ npm install
+$ webpack -p
 ```
 
 ## 目录
