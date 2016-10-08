@@ -80,7 +80,7 @@ function onEqual() {
     this.isEqualed = true;
     Hzy('#input').addClass('low-light');
     Hzy('#input-quick').text(this.input ? `=${this.result}` : `0`).addClass('high-light');
-    this.output += this.input ? `${this.input}=${this.result}\n` : '0=0\n';
+    this.output += this.input ? `${this.input} = ${this.result}\n` : '0=0\n';
 }
 
 /**
