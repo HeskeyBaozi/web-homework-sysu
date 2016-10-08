@@ -41,11 +41,9 @@ function proxy(model, key) {
     Object.defineProperty(model, key, {
         configurable: true,
         enumerable: true,
-        get: () => {
-            return model._data[key];
-        },
+        get: () => model._data[key],
         set: val => {
-            model._data[key] = val;
+            model._data[key] = val
         }
-    })
+    });
 }

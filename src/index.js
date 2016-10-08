@@ -42,11 +42,11 @@ model.$watch('output', (newValue, oldValue) => {
     }
 });
 
-model.$watch('input', (newValue, oldValue) => {
+model.$watch('input', function (newValue, oldValue) {
     if (newValue !== oldValue) {
         Hzy('#input').text(newValue);
         const normalizedExpression = normalizeExpression(newValue);
         const getter = parseExpression(normalizedExpression);
-        showResult(model, normalizedExpression, getter);
+        showResult(this, normalizedExpression, getter);
     }
 });
