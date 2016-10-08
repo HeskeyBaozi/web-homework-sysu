@@ -4,6 +4,7 @@ const MyRegExp = {
     power: /(e|π|\d+\.?\d*|\(+[^\)]*\)+)\^(\d+\.?\d*|\(+[^\)]*\)+)/g,
     sqrt: /\√(e|π|\d+\.?\d*|\(+[^\)]*\)+)/g,
     factorial: /(\d+\.?\d*|\(+[^\)]*\)+)[\!]/g,
+    numberBeforeOperation: /\d+\.?\d*(sin|cos|tan|lg|ln|pow|sqrt|e|π)/g
 };
 
 function normalizeBrace(expression) {
@@ -42,9 +43,14 @@ const normalizeFactorial = normalizeFactory(MyRegExp.factorial, regArray => {
     return `factor(${regArray[0].split('!')[0]})`;
 });
 
+const normalizeNumberMultiply = normalizeFactory(MyRegExp.numberBeforeOperation, regArray => {
+    return regArray[0].replace(/\d+\.?\d*/g, match => match + '*');
+});
+
 
 export default function normalizeExpression(expression) {
-    return [expression, normalizeBrace, normalizePower, normalizeSqrt, normalizeFactorial].reduce((expression, wrapper) => {
+    return [expression, normalizeBrace, normalizePower,
+        normalizeSqrt, normalizeFactorial, normalizeNumberMultiply].reduce((expression, wrapper) => {
         return wrapper(expression);
     });
 }
