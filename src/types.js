@@ -1,7 +1,5 @@
 'use strict';
 
-import Hzy from './myQuery.js';
-
 /**
  * Regular Expressions collections used to delete chars.
  * @type {{trigonometricFunction: RegExp, logFunction: RegExp, operation: RegExp, number: RegExp}}
@@ -51,7 +49,7 @@ export default {
     eq: onEqual,
     backspace: onDelete,
 
-    ce(){
+    ce() {
         this.input = '0';
     }
 };
@@ -78,8 +76,6 @@ function minusInput(reg, stringAdded) {
  */
 function onEqual() {
     this.isEqualed = true;
-    Hzy('#input').addClass('low-light');
-    Hzy('#input-quick').text(this.input ? `=${this.result}` : `0`).addClass('high-light');
     this.output += this.input ? `${this.input} = ${this.result}\n` : '0=0\n';
 }
 

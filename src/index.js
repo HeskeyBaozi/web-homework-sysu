@@ -50,3 +50,12 @@ model.$watch('input', function (newValue, oldValue) {
         showResult(this, normalizedExpression, getter);
     }
 });
+
+model.$watch('isEqualed', function (newValue, oldValue) {
+    if (newValue !== oldValue) {
+        if (newValue === true) {
+            Hzy('#input').addClass('low-light');
+            Hzy('#input-quick').text(this.input ? `=${this.result}` : `0`).addClass('high-light');
+        }
+    }
+});
