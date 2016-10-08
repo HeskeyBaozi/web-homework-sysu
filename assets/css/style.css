@@ -17,7 +17,7 @@ body {
 
     text-align: center;
 
-    background-color: #d3d5d6;
+    background: #d3d5d6 url('../img/bg.jpg') 0 / cover fixed;
 }
 
 div {
@@ -37,7 +37,23 @@ div {
 
     color: #595d66;
     border-radius: 10px;
-    box-shadow: 0 0 40px #434343;
+    box-shadow: 0 0 50px #b0b0b0;
+}
+
+/**************************************************
+                       text
+***************************************************/
+#text {
+    font-size: 60px;
+
+    position: fixed;
+    z-index: -1;
+    top: 34%;
+    left: 10%;
+
+    text-align: right;
+
+    color: white;
 }
 
 /**************************************************
@@ -144,9 +160,9 @@ div {
 
     cursor: pointer;
     -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     transition: all 200ms;
 
     border: 1px solid #d3d5d6;
