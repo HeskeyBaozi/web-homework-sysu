@@ -1,0 +1,136 @@
+/***************************************
+              Normalize
+***************************************/
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-size: 1.5rem;
+    text-align: center;
+    font-family: 'Century Gothic', Consolas, sans-serif;
+}
+
+div {
+    box-sizing: border-box;
+
+}
+
+.container {
+    width: 800px;
+    margin: 10px auto;
+}
+
+#maze {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+}
+
+.maze-content {
+    margin: 20px;
+    width: 500px;
+    height: 450px;
+    position: relative;
+}
+
+/***************************************
+                 Util
+***************************************/
+.middle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/***************************************
+                 Maze
+***************************************/
+
+.location {
+    width: calc(100% / 12);
+    height: calc(100% / 11);
+    position: absolute;
+    z-index: 1;
+    transition: transform 200ms;
+    font-size: 1.5em;
+}
+
+.location:hover {
+    transform: scale(1.5);
+}
+
+.wall {
+    width: 50px;
+    height: 50px;
+
+    background-color: #dcdcdc;
+    position: absolute;
+    transition: background 300ms;
+}
+
+.highlight {
+    background-color: lightcoral;
+}
+
+.start {
+    background-color: lightgreen;
+}
+
+.end {
+    background-color: lightblue;
+}
+
+/***************************************
+               Circle-Wall
+***************************************/
+.circle-group {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+}
+
+.circle-center {
+    border-radius: 50%;
+}
+
+.hit-bar {
+    width: 24px;
+    height: 55px;
+
+    left: calc(24px / 2);
+    top: -50px;
+
+    transform-origin: 50% 75px;
+}
+
+.animation-circle {
+    animation: rotation 1s infinite linear;
+}
+
+.animation-moving {
+    animation: moving 1800ms infinite linear;
+    animation-direction: alternate;
+}
+
+.moving-group .wall:nth-child(1) {
+    animation-delay: 500ms;
+}
+
+.moving-group .wall:nth-child(2) {
+    animation-delay: 0ms;
+}
+
+.moving-group .wall:nth-child(3) {
+    animation-delay: 2000ms;
+}
+
+.moving-group .wall:nth-child(4) {
+    animation-delay: 1500ms;
+
+}
