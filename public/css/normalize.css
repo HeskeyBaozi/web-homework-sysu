@@ -1,0 +1,22 @@
+/***************************************
+              Normalize
+***************************************/
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-size: 1.5rem;
+    text-align: center;
+    font-family: 'Century Gothic', Consolas, sans-serif;
+}
+
+div {
+    box-sizing: border-box;
+
+}

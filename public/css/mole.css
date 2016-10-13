@@ -1,0 +1,14 @@
+.block {
+    width: calc(100% / 12);
+    height: calc(100% / 11);
+    transform: scale(0.7);
+    box-shadow: 0 0 1px #a8a8a8;
+    background-color: #DCDCDC;
+}
+
+#mole .playground {
+    border-radius: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 5px;
+}

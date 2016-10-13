@@ -2,6 +2,7 @@
 
 import {observe} from './observer/index.js';
 import {compile} from './compiler.js';
+import Watcher from './observer/watcher.js';
 
 export default class Model {
     constructor(options = {}) {
@@ -13,6 +14,11 @@ export default class Model {
         });
         observe(this._data);
         compile(this._target, this);
+    }
+
+    $watch(expOrFn, callback) {
+        const watcher = new Watcher(this, expOrFn, callback);
+        this._watchers.push(watcher);
     }
 }
 

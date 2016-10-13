@@ -1,42 +1,51 @@
-/***************************************
-              Normalize
-***************************************/
-* {
-    margin: 0;
-    padding: 0;
-}
 
-html {
-    font-size: 62.5%;
-}
-
-body {
-    font-size: 1.5rem;
-    text-align: center;
-    font-family: 'Century Gothic', Consolas, sans-serif;
-}
-
-div {
-    box-sizing: border-box;
-
-}
 
 .container {
-    width: 800px;
+    width: 1000px;
+    height: 682px;
     margin: 10px auto;
-}
-
-#maze {
+    padding: 8px 0;
+    box-shadow: 1px 1px 10px gray;
+    border-radius: 20px;
     display: flex;
+    position: relative;
     flex-flow: column nowrap;
     align-items: center;
 }
 
-.maze-content {
-    margin: 20px;
-    width: 500px;
-    height: 450px;
+/***************************************
+              Pages
+***************************************/
+
+.message {
+    font-size: 1.5em;
+    padding: 10px 0;
+}
+
+.playground {
+    width: 540px;
+    height: 440px;
     position: relative;
+    box-shadow: 0 0 5px gray;
+    border-radius: 30px;
+    overflow: hidden;
+    z-index: 1;
+}
+
+#next {
+    position: absolute;
+    background-color: #e3e3e3;
+    color: white;
+    width: 100px;
+    height: 100px;
+    right: 0;
+    top: calc(50% - 50px);
+    font-size: 45px;
+    transition: all 200ms;
+}
+
+#next:hover {
+    background-color: #bababa;
 }
 
 /***************************************
@@ -46,6 +55,17 @@ div {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.disable-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.highlight-text {
+    color: lightcoral;
 }
 
 /***************************************
@@ -86,6 +106,24 @@ div {
     background-color: lightblue;
 }
 
+.sample {
+    padding: 10px;
+}
+
+.sample .wall {
+    display: inline-block;
+    width: 100px;
+    height: 34px;
+    position: static;
+}
+
+/***************************************
+                 State
+***************************************/
+.maze-pending {
+    cursor: pointer;
+}
+
 /***************************************
                Circle-Wall
 ***************************************/
@@ -114,7 +152,7 @@ div {
 }
 
 .animation-moving {
-    animation: moving 1800ms infinite linear;
+    animation: moving 3s infinite linear;
     animation-direction: alternate;
 }
 
@@ -132,5 +170,4 @@ div {
 
 .moving-group .wall:nth-child(4) {
     animation-delay: 1500ms;
-
 }
