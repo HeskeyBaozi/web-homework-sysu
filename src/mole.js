@@ -101,7 +101,7 @@ model.$watch('gameState', function (newValue, oldValue) {
                             this.hasHit = false;
                         });
 
-                    if (this.time <= 0) {
+                    if (this.time <= 0 || this.gameState === Type.Unstarted) {
                         this.time = 0;
                         resolve({timeUID, randomUID});
                     }
@@ -117,7 +117,8 @@ model.$watch('gameState', function (newValue, oldValue) {
                  */
                 clearInterval(timeUID);
                 clearInterval(randomUID);
-                this.gameState = Type.Over;
+                if (this.gameState === Type.Pending)
+                    this.gameState = Type.Over;
             });
             break;
 
@@ -129,6 +130,12 @@ model.$watch('gameState', function (newValue, oldValue) {
             this.button = 'Start!!';
             this.message = `You have got the Points: ${this.score}`;
             break;
+
+        case Type.Unstarted:
+            this.time = 30;
+            this.button = 'Start!!';
+            this.score = this.combo = 0;
+            this.message = 'Welcome to play Mole!!';
     }
 });
 

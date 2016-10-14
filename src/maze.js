@@ -80,6 +80,10 @@ model.$watch('gameState', function (newValue, oldValue) {
         case Type.Lose:
             this.message = 'You Lose!';
             break;
+
+        case Type.Unstarted:
+            this.message = 'Welcome to Play the Maze!!!';
+            break;
     }
 });
 
