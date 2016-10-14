@@ -21,7 +21,7 @@
     width: calc(100% / 12);
     height: calc(100% / 11);
 
-    transition: all 100ms;
+    transition: all 50ms;
     transform: scale(.7);
 
     border: 1px solid #af91af;
@@ -69,19 +69,3 @@
     color: white;
     background-color: #4e4e4e;
 }
-
-/***************************************
-            UI Reminder
-***************************************/
-.great {
-    color: #e32781;
-    font-weight: bold;
-    transform: scale(1.2);
-}
-
-.hit-on {
-    box-shadow: 0 0 5px 5px #e3b0d0;
-    transform: scale(1.05);
-    background-color: lightpink;
-}
-

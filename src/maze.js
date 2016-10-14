@@ -1,7 +1,7 @@
 'use strict';
 
-import $ from  './myQuery/index.js';
-import {hasClass, addClass, removeClass} from './myQuery/helper.js';
+import Query from  './myQuery/index.js';
+import {hasClass, addClassTemp} from './myQuery/helper.js';
 import Model from './myModel/index.js';
 import Type from './types.js';
 
@@ -16,7 +16,7 @@ export const model = new Model({
 
 
 model.$watch('gameState', function (newValue, oldValue) {
-    const content = $('.playground').removeClass('maze-pending');
+    const content = Query('.playground').removeClass('maze-pending');
     switch (newValue) {
         case Type.Pending:
             this.message = 'The Game have been started!';
@@ -38,41 +38,29 @@ model.$watch('gameState', function (newValue, oldValue) {
     }
 });
 
-model.$watch('isCheating', function (newValue, oldValue) {
-    if (newValue === true) {
-        model.message = 'Oops! You have got outside!?';
-    }
-});
-
-
-$('.start')
+Query('.start')
     .on('mouseover', e => {
         model.gameState = Type.Pending;
-    })
-    .on('mouseleave', e => {
+    });
+
+Query('.end')
+    .on('mouseenter', e => {
         if (hasClass.call(e.relatedTarget, 'container')) {
             model.isCheating = true;
         }
     });
 
-$('.playground')
+Query('.playground')
     .on('mousemove', e => {
         if (model.gameState === Type.Pending) {
             if (hasClass.call(e.target, 'wall')) {
                 model.gameState = Type.Lose;
-                displayWall(e.target);
+                addClassTemp(e.target, 'highlight', 2000);
             }
             if (hasClass.call(e.target, 'end')) {
                 model.gameState = Type.Win;
             }
         }
     });
-
-function displayWall(element) {
-    addClass.call(element, 'highlight');
-    setTimeout(() => {
-        removeClass.call(element, 'highlight');
-    }, 2000);
-}
 
 export default model;

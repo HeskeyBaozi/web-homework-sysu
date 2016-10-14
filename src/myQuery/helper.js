@@ -39,7 +39,7 @@ export function removeClass(className) {
         this.classList.remove(className);
     else
         this.className = this.className.replace(new RegExp('(^|\\b)' +
-            className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+            className.split(' ').join('|') + '(\\b|Query)', 'gi'), ' ');
     return this;
 }
 
@@ -52,7 +52,7 @@ export function hasClass(className) {
     if (this.classList)
         return this.classList.contains(className);
     else
-        return new RegExp('(^| )' + className + '( |$)', 'gi').test(this.className);
+        return new RegExp('(^| )' + className + '( |Query)', 'gi').test(this.className);
 }
 
 /**
@@ -66,4 +66,27 @@ export function text(newText) {
     }
     this.textContent = newText;
     return undefined;
+}
+
+/**
+ * AddClass in a time
+ * @param ele {HTMLElement}
+ * @param className {string}
+ * @param time {number} ms
+ */
+export function addClassTemp(ele, className, time) {
+    className = className instanceof Array ? className : [className];
+    return new Promise((resolve, reject) => {
+        className.forEach(klass => {
+            addClass.call(ele, klass);
+        });
+        setTimeout(() => {
+            resolve(ele);
+        }, time);
+    }).then(ele => {
+        className.forEach(klass => {
+            removeClass.call(ele, klass);
+        });
+        return ele;
+    });
 }

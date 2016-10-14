@@ -37,6 +37,33 @@
     color: lightcoral;
 }
 
+.great {
+    color: #e32781;
+    font-weight: bold;
+    transform: scale(1.2);
+}
+
+.hit-on {
+    animation: o 500ms;
+    box-shadow: 0 0 5px 5px #e3b0d0;
+    transform: scale(1.05);
+    background-color: lightpink;
+}
+
+@keyframes o {
+    from {
+        box-shadow: 0 0 5px 5px #e3b0d0;
+        transform: scale(1.05);
+        background-color: lightpink;
+    }
+
+    to {
+        background-color: #dcdcdc;
+        box-shadow: 0 0 3px 3px #dcdcdc;
+        transform: scale(0.6);
+    }
+}
+
 /***************************************
          Nav between the router
 ***************************************/
