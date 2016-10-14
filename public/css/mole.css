@@ -1,3 +1,21 @@
+/***************************************
+           Special Container
+***************************************/
+#mole .playground {
+    display: flex;
+
+    width: 480px;
+    padding: 5px;
+    margin-top: 10px;
+
+    border-radius: 5px;
+
+    flex-wrap: wrap;
+}
+
+/***************************************
+              Mole Block
+***************************************/
 .block {
     box-sizing: border-box;
     width: calc(100% / 12);
@@ -20,6 +38,9 @@
     box-shadow: 0 0 10px 5px #6176af;
 }
 
+/***************************************
+             Start Button
+***************************************/
 .btn-group {
     width: 50%;
     display: flex;
@@ -49,6 +70,9 @@
     background-color: #4e4e4e;
 }
 
+/***************************************
+            UI Reminder
+***************************************/
 .great {
     color: #e32781;
     font-weight: bold;
@@ -61,14 +85,3 @@
     background-color: lightpink;
 }
 
-#mole .playground {
-    display: flex;
-
-    width: 480px;
-    padding: 5px;
-    margin-top: 10px;
-
-    border-radius: 5px;
-
-    flex-wrap: wrap;
-}

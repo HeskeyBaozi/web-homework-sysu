@@ -1,112 +1,21 @@
-
-.container {
-    width: 1000px;
-    height: 682px;
-    margin: 10px auto;
-    padding: 8px 0;
-    box-shadow: 1px 1px 10px gray;
-    border-radius: 20px;
-    display: flex;
-    position: relative;
-    flex-flow: column nowrap;
-    align-items: center;
-}
-
 /***************************************
-              Pages
-***************************************/
-
-.message {
-    font-size: 1.5em;
-}
-
-.playground {
-    width: 540px;
-    height: 440px;
-    position: relative;
-    box-shadow: 0 0 5px gray;
-    border-radius: 30px;
-    overflow: hidden;
-    z-index: 1;
-}
-
-.trans {
-    position: absolute;
-    background-color: #e3e3e3;
-    color: white;
-    width: 100px;
-    height: 100px;
-    top: calc(50% - 50px);
-    font-size: 45px;
-    transition: all 200ms;
-}
-
-.trans-next {
-    right: 0;
-}
-
-.trans-pre {
-    left: 0;
-}
-
-.trans:hover {
-    background-color: #bababa;
-}
-
-/***************************************
-                 Util
-***************************************/
-.middle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.disable-select {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-.highlight-text {
-    color: lightcoral;
-}
-
-.hidden {
-    opacity: 0;
-    visibility: hidden;
-    display: none;
-}
-
-/***************************************
-                 Maze
+        Location: Start and End
 ***************************************/
 
 .location {
-    width: calc(100% / 12);
-    height: calc(100% / 11);
+    font-size: 1.5em;
+
     position: absolute;
     z-index: 1;
+
+    width: calc(100% / 12);
+    height: calc(100% / 11);
+
     transition: transform 200ms;
-    font-size: 1.5em;
 }
 
 .location:hover {
     transform: scale(1.5);
-}
-
-.wall {
-    width: 50px;
-    height: 50px;
-
-    background-color: #dcdcdc;
-    position: absolute;
-    transition: background 300ms;
-}
-
-.highlight {
-    background-color: lightcoral;
 }
 
 .start {
@@ -117,15 +26,27 @@
     background-color: lightblue;
 }
 
-.sample {
-    padding: 10px;
+/***************************************
+                 Wall
+***************************************/
+.wall {
+    position: absolute;
+
+    width: 50px;
+    height: 50px;
+
+    transition: background 300ms;
+
+    background-color: #dcdcdc;
 }
 
 .sample .wall {
+    position: static;
+
     display: inline-block;
+
     width: 100px;
     height: 34px;
-    position: static;
 }
 
 /***************************************
@@ -139,9 +60,10 @@
                Circle-Wall
 ***************************************/
 .circle-group {
+    position: absolute;
+
     width: 50px;
     height: 50px;
-    position: absolute;
 }
 
 .circle-center {
@@ -149,36 +71,11 @@
 }
 
 .hit-bar {
+    top: -50px;
+    left: calc(24px / 2);
+
     width: 24px;
     height: 55px;
 
-    left: calc(24px / 2);
-    top: -50px;
-
     transform-origin: 50% 75px;
-}
-
-.animation-circle {
-    animation: rotation 1s infinite linear;
-}
-
-.animation-moving {
-    animation: moving 3s infinite linear;
-    animation-direction: alternate;
-}
-
-.moving-group .wall:nth-child(1) {
-    animation-delay: 500ms;
-}
-
-.moving-group .wall:nth-child(2) {
-    animation-delay: 0ms;
-}
-
-.moving-group .wall:nth-child(3) {
-    animation-delay: 2000ms;
-}
-
-.moving-group .wall:nth-child(4) {
-    animation-delay: 1500ms;
 }

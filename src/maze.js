@@ -75,5 +75,4 @@ function displayWall(element) {
     }, 2000);
 }
 
-
-console.log(model);
+export default model;

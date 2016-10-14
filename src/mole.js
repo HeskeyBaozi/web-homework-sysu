@@ -5,7 +5,7 @@ import $ from './myQuery/index.js';
 import {addClass, removeClass, hasClass} from  './myQuery/helper.js';
 import Type from './types.js';
 
-export const model = new Model({
+const model = new Model({
     target: '#mole',
     data: {
         time: 30,
@@ -98,3 +98,5 @@ function addClassTemp(element, className, time, addClass, removeClass) {
 function rnd(start, end) {
     return Math.floor(Math.random() * (end - start) + start);
 }
+
+export default model;
