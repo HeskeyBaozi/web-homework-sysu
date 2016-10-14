@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="./css/normalize.css">
 
-    <link rel="stylesheet" href="./css/style.css">
+
     <link rel="stylesheet" href="./css/animate.css">
 
 
     <link rel="stylesheet" href="./css/mole.css">
+    <link rel="stylesheet" href="css/maze.css">
     <link rel="stylesheet" href="./css/grid.css">
     <title>Games</title>
 </head>
@@ -60,154 +61,163 @@
         <div class="wall"></div>
     </div>
     <p>Good Luck! : )</p>
-    <div id="next" class="middle disable-select maze-pending">&gt</div>
+    <div id="next" class="middle disable-select maze-pending trans trans-next">&gt</div>
 </div>
 
 <div id="mole" class="container">
     <h1 class="game-title">Whac-a-mole</h1>
     <p class="description">Test your skill. How many moles can you hit in 30 seconds?</p>
-    <p class="message">Time: {{time}} Score: {{score}}</p>
-    <div class="playground">
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
+    <p class="message highlight-text">{{message}}</p>
+    <ul class="message btn-group">
+        <li>Score: {{score}}</li>
+        <li>Time: {{time}}</li>
+        <li id="combo">Combo: {{combo}}</li>
+    </ul>
+    <div class="btn-group">
+        <a id="mole-start" href="#" class="btn">{{button}}</a>
+    </div>
+
+    <div id="mole-playground" class="playground">
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
+        <a href="#" class="block"></a>
     </div>
     <div class="sample">
-        <p>The object of this game is to guide the mouse cursor through the star area and get to the end area.</p>
-        <p> Be sure to avoid the walls;</p>
-        <div class="wall"></div>
+        <h3>Instructions:</h3>
+        <p>Click on the moles as they appear randomly by the computer.</p>
+        <p>1 point per hit, minus 1 point per miss.</p>
     </div>
     <p>Good Luck! : )</p>
-    <div id="pre" class="middle disable-select maze-pending">&gt</div>
+    <div id="pre" class="middle disable-select maze-pending trans trans-pre">&lt</div>
 </div>
 <script src="./js/bundle.js"></script>
 </body>

@@ -1,14 +1,74 @@
 .block {
+    box-sizing: border-box;
     width: calc(100% / 12);
     height: calc(100% / 11);
-    transform: scale(0.7);
+
+    transition: all 100ms;
+    transform: scale(.7);
+
+    border: 1px solid #af91af;
+    border-radius: 50%;
+    background-color: #dcdcdc;
     box-shadow: 0 0 1px #a8a8a8;
-    background-color: #DCDCDC;
+}
+
+.block:hover {
+    box-shadow: 0 0 10px 5px #bfc5e6;
+}
+
+.block:active {
+    box-shadow: 0 0 10px 5px #6176af;
+}
+
+.btn-group {
+    width: 50%;
+    display: flex;
+
+    align-items: center;
+    justify-content: space-around;
+}
+
+.btn {
+    display: flex;
+
+    padding: 5px 50px;
+
+    transition: all 200ms;
+    text-decoration: none;
+
+    color: gray;
+    border: 1px solid #bcbcbc;
+    border-radius: 5px;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.btn:hover {
+    color: white;
+    background-color: #4e4e4e;
+}
+
+.great {
+    color: #e32781;
+    font-weight: bold;
+    transform: scale(1.2);
+}
+
+.hit-on {
+    box-shadow: 0 0 5px 5px #e3b0d0;
+    transform: scale(1.05);
+    background-color: lightpink;
 }
 
 #mole .playground {
-    border-radius: 5px;
     display: flex;
-    flex-wrap: wrap;
+
+    width: 480px;
     padding: 5px;
+    margin-top: 10px;
+
+    border-radius: 5px;
+
+    flex-wrap: wrap;
 }

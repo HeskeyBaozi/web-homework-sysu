@@ -18,5 +18,8 @@ body {
 
 div {
     box-sizing: border-box;
+}
 
+ul {
+    list-style: none;
 }

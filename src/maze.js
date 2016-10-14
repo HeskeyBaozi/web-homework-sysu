@@ -3,15 +3,9 @@
 import $ from  './myQuery/index.js';
 import {hasClass, addClass, removeClass} from './myQuery/helper.js';
 import Model from './myModel/index.js';
+import Type from './types.js';
 
-const Type = {
-    Unstarted: 'UNSTARTED',
-    Pending: 'PENDING',
-    Win: 'WIN',
-    Lose: 'LOSE'
-};
-
-export const modelMaze = new Model({
+export const model = new Model({
     target: '#maze .message',
     data: {
         gameState: Type.Unstarted,
@@ -21,7 +15,7 @@ export const modelMaze = new Model({
 });
 
 
-modelMaze.$watch('gameState', function (newValue, oldValue) {
+model.$watch('gameState', function (newValue, oldValue) {
     const content = $('.playground').removeClass('maze-pending');
     switch (newValue) {
         case Type.Pending:
@@ -44,32 +38,32 @@ modelMaze.$watch('gameState', function (newValue, oldValue) {
     }
 });
 
-modelMaze.$watch('isCheating', function (newValue, oldValue) {
+model.$watch('isCheating', function (newValue, oldValue) {
     if (newValue === true) {
-        modelMaze.message = 'Oops! You have got outside!?';
+        model.message = 'Oops! You have got outside!?';
     }
 });
 
 
 $('.start')
     .on('mouseover', e => {
-        modelMaze.gameState = Type.Pending;
+        model.gameState = Type.Pending;
     })
     .on('mouseleave', e => {
         if (hasClass.call(e.relatedTarget, 'container')) {
-            modelMaze.isCheating = true;
+            model.isCheating = true;
         }
     });
 
 $('.playground')
     .on('mousemove', e => {
-        if (modelMaze.gameState === Type.Pending) {
+        if (model.gameState === Type.Pending) {
             if (hasClass.call(e.target, 'wall')) {
-                modelMaze.gameState = Type.Lose;
+                model.gameState = Type.Lose;
                 displayWall(e.target);
             }
             if (hasClass.call(e.target, 'end')) {
-                modelMaze.gameState = Type.Win;
+                model.gameState = Type.Win;
             }
         }
     });
@@ -82,4 +76,4 @@ function displayWall(element) {
 }
 
 
-console.log(modelMaze);
+console.log(model);

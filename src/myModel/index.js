@@ -8,12 +8,13 @@ export default class Model {
     constructor(options = {}) {
         this._data = options.data;
         this._watchers = [];
-        this._target = document.querySelector(options.target);
+        this._target = options.target ? document.querySelector(options.target) : undefined;
         Object.keys(this._data).forEach(key => {
             proxy(this, key);
         });
         observe(this._data);
-        compile(this._target, this);
+        if (this._target)
+            compile(this._target, this);
     }
 
     $watch(expOrFn, callback) {
