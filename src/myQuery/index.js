@@ -1,3 +1,9 @@
+/**
+ * myQuery is just like jQuery.
+ * but it has only the event related, class related functions.
+ *
+ * @Updated 2016/10/14 Zhiyu He
+ */
 'use strict';
 
 import {on, addClass, removeClass, hasClass, text} from './helper.js';

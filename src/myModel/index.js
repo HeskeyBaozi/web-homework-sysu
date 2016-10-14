@@ -1,3 +1,9 @@
+/**
+ * myModel is a very very very tiny MVVM lib.
+ *
+ * @Updated 2016/10/14 Zhiyu He
+ */
+
 'use strict';
 
 import {observe} from './observer/index.js';
@@ -17,12 +23,27 @@ export default class Model {
             compile(this._target, this);
     }
 
+    /**
+     * when the vale of the expression changes,
+     * the callback would be called
+     * callback example:
+     *        (newValue, oldValue) => *, this <===> model
+     * @param expOrFn {string|function}
+     * @param callback {function}
+     */
     $watch(expOrFn, callback) {
         const watcher = new Watcher(this, expOrFn, callback);
         this._watchers.push(watcher);
     }
 }
 
+/**
+ * proxy the properties
+ * example:
+ *      model.key <===> model._data.key
+ * @param model {Model}
+ * @param key {String}
+ */
 function proxy(model, key) {
     Object.defineProperty(model, key, {
         configurable: true,

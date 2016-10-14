@@ -17,6 +17,7 @@ export default class Dependency {
 
     /**
      * 通知依赖
+     * 这样Watcher就可以知道所维护的值需要依赖于哪些Model里面的其他值
      */
     depend() {
         if (Dependency.target) {
@@ -35,10 +36,17 @@ export default class Dependency {
     }
 }
 
+/**
+ * 该依赖的全局监视者
+ */
 Dependency.target = null;
 
 const targetStack = [];
 
+/**
+ * 全局每次更新只能有一个监视者更新, 使用栈维护
+ * @param _target {Watcher}
+ */
 export function pushTarget(_target) {
     if (Dependency.target)
         targetStack.push(Dependency.target);

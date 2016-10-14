@@ -64,6 +64,11 @@ export default class Watcher {
     }
 }
 
+/**
+ * get the getter function of the expression after parsing.
+ * @param expOrFn {string|Function}
+ * @return {function}
+ */
 export function getGetter(expOrFn) {
     let getter = function () {
         // do nothing..

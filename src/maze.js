@@ -5,6 +5,10 @@ import {hasClass, addClassTemp} from './myQuery/helper.js';
 import Model from './myModel/index.js';
 import Type from './types.js';
 
+/**
+ * The model of the game: Maze
+ * @type {Model}
+ */
 export const model = new Model({
     target: '#maze .message',
     data: {
@@ -14,7 +18,48 @@ export const model = new Model({
     }
 });
 
+/**
+ * When your mouse get into the start box,
+ * the game starts.
+ */
+Query('.start')
+    .on('mouseover', e => {
+        model.gameState = Type.Pending;
+    });
 
+/**
+ * Check if you are cheating.
+ */
+Query('.end')
+    .on('mouseenter', e => {
+        if (hasClass.call(e.relatedTarget, 'container')) {
+            model.isCheating = true;
+        }
+    });
+
+/**
+ * When you're playing the game,
+ * if you hit the wall careless, you'll lose.
+ * And then the wall you hit will be clear to recognize.
+ */
+Query('.playground')
+    .on('mousemove', e => {
+        if (model.gameState === Type.Pending) {
+            if (hasClass.call(e.target, 'wall')) {
+                model.gameState = Type.Lose;
+                addClassTemp(e.target, 'highlight', 2000);
+            }
+            if (hasClass.call(e.target, 'end')) {
+                model.gameState = Type.Win;
+            }
+        }
+    });
+
+
+/**
+ * Watch the state of the game,
+ * display different message when there're different game's state.
+ */
 model.$watch('gameState', function (newValue, oldValue) {
     const content = Query('.playground').removeClass('maze-pending');
     switch (newValue) {
@@ -37,30 +82,5 @@ model.$watch('gameState', function (newValue, oldValue) {
             break;
     }
 });
-
-Query('.start')
-    .on('mouseover', e => {
-        model.gameState = Type.Pending;
-    });
-
-Query('.end')
-    .on('mouseenter', e => {
-        if (hasClass.call(e.relatedTarget, 'container')) {
-            model.isCheating = true;
-        }
-    });
-
-Query('.playground')
-    .on('mousemove', e => {
-        if (model.gameState === Type.Pending) {
-            if (hasClass.call(e.target, 'wall')) {
-                model.gameState = Type.Lose;
-                addClassTemp(e.target, 'highlight', 2000);
-            }
-            if (hasClass.call(e.target, 'end')) {
-                model.gameState = Type.Win;
-            }
-        }
-    });
 
 export default model;
