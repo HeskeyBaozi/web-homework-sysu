@@ -4,7 +4,7 @@
 
 
 ## Current Project
-[Calculator](https://github.com/HeskeyBaozi/web-homework-sysu/tree/5-Calc)
+[Games](https://github.com/HeskeyBaozi/web-homework-sysu/tree/6-Games)
 
 ## License
 [MIT](/LICENSE)
