@@ -44,7 +44,7 @@
 }
 
 .hit-on {
-    animation: o 500ms;
+    animation: o 500ms forwards;
     box-shadow: 0 0 5px 5px #e3b0d0;
     transform: scale(1.05);
     background-color: lightpink;

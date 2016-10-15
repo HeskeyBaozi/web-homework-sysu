@@ -12,7 +12,7 @@ const cache = {};
 
 /**
  * a tiny small Query just like jQuery 2333
- * @param DOMSelector {string|document}
+ * @param DOMSelector {string|document|Element}
  * @return {*}
  */
 export default DOMSelector => {
@@ -22,6 +22,8 @@ export default DOMSelector => {
         } else {
             return cache[DOMSelector] = new HzyElement(DOMSelector);
         }
+    } else if (DOMSelector instanceof Element) {
+        return new HzyElement(DOMSelector);
     } else if (DOMSelector === document) {
         document.on = on.bind(document);
         return document;
@@ -31,7 +33,11 @@ export default DOMSelector => {
 
 class HzyElement {
     constructor(DOMSelector) {
-        this.el = document.querySelector(DOMSelector);
+        if (typeof DOMSelector === 'string')
+            this.el = document.querySelector(DOMSelector);
+        else if (DOMSelector instanceof Element) {
+            this.el = DOMSelector;
+        }
     }
 
     /**
