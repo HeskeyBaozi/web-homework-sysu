@@ -14,6 +14,7 @@ body {
     font-size: 1.5rem;
     text-align: center;
     font-family: 'Century Gothic', Consolas, sans-serif;
+    background: lightgrey url('../img/lowpoly.jpg') 0 / cover fixed;
 }
 
 div {
