@@ -1,26 +1,40 @@
-/***************************************
-              Normalize
-***************************************/
-* {
-    margin: 0;
-    padding: 0;
-}
-
 html {
-    font-size: 62.5%;
+    font-family: Consolas, sans-serif;
+    line-height: 1.15;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
 }
 
 body {
-    font-size: 1.5rem;
-    text-align: center;
-    font-family: 'Century Gothic', Consolas, sans-serif;
-    background: lightgrey url('../img/lowpoly.jpg') 0 / cover fixed;
+    margin: 0;
+    background: url('../img/lp2.jpg') 0 / cover fixed;
+}
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
 }
 
 div {
     box-sizing: border-box;
 }
 
-ul {
-    list-style: none;
+figure {
+    margin: 1em 40px;
 }
+
+a {
+    background-color: transparent;
+    -webkit-text-decoration-skip: objects;
+    text-decoration: none;
+}
+
+a:active,
+a:hover {
+    outline-width: 0;
+}
+
+canvas {
+    display: inline-block;
+}
+

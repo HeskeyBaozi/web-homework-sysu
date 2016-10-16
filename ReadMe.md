@@ -1,7 +1,6 @@
-## Games
+## Puzzle
 
-![001](./img/001.png)
-![002](./img/002.png)
+Coming soon...
 
 ## License
 [MIT](/LICENSE)
