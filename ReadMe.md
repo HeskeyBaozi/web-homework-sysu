@@ -10,5 +10,8 @@
 
 使用的库是自己写的。其中`myModel`里类似`MVVM`的框架参考了`Vue.js`。详见`《Vue.js权威指南》`
 
+
+## Bug 已经修复
+![bug](./img/have-been-fixed.png)
 ## License
 [MIT](/LICENSE)
