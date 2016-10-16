@@ -35,6 +35,11 @@ Query('.end')
         if (hasClass.call(e.relatedTarget, 'container')) {
             model.isCheating = true;
         }
+
+        if (model.gameState !== Type.Pending) {
+            model.isCheating = true;
+            model.gameState = Type.Win;
+        }
     });
 
 /**

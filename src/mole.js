@@ -50,12 +50,13 @@ Query('#mole-playground').on('click', e => {
             model.hasHit = true; // trigger the callback of the Watcher of the 'hasHit'
             model.score += 1 + Math.round(model.combo / 2);
             model.combo += 1;
+            removeClass.call(e.target, 'highlight');
             selectHole(model);
 
             /**
              * the style of the box will change if you hit it.
              */
-            addClassTemp(e.target, ['hit-on', 'highlight'], 500);
+            addClassTemp(e.target, ['hit-on'], 500);
         } else {
             model.score -= 1;
             model.combo = 0;
@@ -98,6 +99,7 @@ model.$watch('gameState', function (newValue, oldValue) {
                  * clear all the timer, the game is over
                  */
                 clearInterval(timeUID);
+                this.time = 0;
                 if (this.gameState === Type.Pending)
                     this.gameState = Type.Over;
                 if (this.currentHole) {
