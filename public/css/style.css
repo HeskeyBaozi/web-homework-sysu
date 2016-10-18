@@ -1,50 +1,60 @@
 .center-content {
     display: flex;
+
     align-content: center;
     justify-content: center;
 }
 
 .container {
-    background-color: white;
-    text-align: center;
     display: flex;
-    flex-flow: column nowrap;
-    align-items: center;
-    margin: 20px auto;
-    padding: 10px;
+
     width: 550px;
     height: 680px;
+    margin: 20px auto;
+    padding: 10px;
 
-    box-shadow: 0 0 20px gray;
+    text-align: center;
+
     border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 0 20px gray;
+
+    flex-flow: column nowrap;
+    align-items: center;
 }
 
 .playground {
-    display: flex;
+    position: relative;
+    z-index: 2;
+
+    overflow: hidden;
+
     box-sizing: content-box;
-    flex-flow: row wrap;
     width: 400px;
     height: 400px;
 
-    box-shadow: 0 0 5px gray;
     border-radius: 10px;
-    overflow: hidden;
+    box-shadow: 0 0 5px gray;
 }
 
 .btn-group {
     display: flex;
-    justify-content: center;
+
     margin: 10px 0;
+
+    justify-content: center;
 }
 
 .btn {
-    transition: all 200ms;
-    color: #65b0b2;
-    background-color: white;
-    border: 1px solid #65b0b2;
-    border-radius: 5px;
     margin: 0 5px;
     padding: 5px 30px;
+
+    transition: all 200ms;
+
+    color: #65b0b2;
+    border: 1px solid #65b0b2;
+    border-radius: 5px;
+    background-color: white;
 }
 
 .btn:hover {
@@ -59,10 +69,12 @@ h1 {
 }
 
 .message {
-    margin:  0;
-    color: #65b0b2;
     font-size: 20px;
     font-weight: bold;
+
+    margin: 0;
+
+    color: #65b0b2;
 }
 
 .game-data {
@@ -71,18 +83,50 @@ h1 {
 
 .img-groups {
     display: flex;
+
     width: 70%;
     margin: 10px 0;
+
     justify-content: space-around;
 }
 
 .select-block {
-    box-shadow: 0 0 4px gray;
-    border-radius: 50%;
     transition: all 200ms;
+
+    border-radius: 50%;
+    box-shadow: 0 0 4px gray;
 }
 
 .select-block:hover {
-    box-shadow: 0 0 4px 4px gray;
     transform: rotate(1turn);
+
+    box-shadow: 0 0 4px 4px gray;
+}
+
+.block {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+
+    transition: all 200ms;
+}
+
+.block:hover {
+    z-index: 2;
+
+    transform: scale(1.1);
+
+    border: 1px solid white;
+}
+
+.no-hover {
+    z-index: 0;
+}
+
+.no-hover:hover {
+    transform: none;
+
+    border: none;
+    box-shadow: none;
 }

@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="./css/normalize.css">
+
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/grid.css">
     <title>Puzzle</title>
 </head>
 <body>
@@ -12,22 +14,26 @@
     <p class="message">Welcome to play the Puzzle!!</p>
     <p class="game-data">Time: {{time}} Count: {{count}}</p>
     <div class="playground">
-        <canvas class="block" width="100" height="100"></canvas>
-        <canvas class="block" width="100" height="100"></canvas>
-        <canvas class="block" width="100" height="100"></canvas>
-        <canvas class="block" width="100" height="100"></canvas>
-        <canvas class="block" width="100" height="100"></canvas>
-        <canvas class="block" width="100" height="100"></canvas>
-        <canvas class="block" width="100" height="100"></canvas>
-        <canvas class="block" width="100" height="100"></canvas>
-        <canvas class="block" width="100" height="100"></canvas>
-        <canvas class="block" width="100" height="100"></canvas>
-        <canvas class="block" width="100" height="100"></canvas>
-        <canvas class="block" width="100" height="100"></canvas>
-        <canvas class="block" width="100" height="100"></canvas>
-        <canvas class="block" width="100" height="100"></canvas>
-        <canvas class="block" width="100" height="100"></canvas>
-        <canvas class="block" width="100" height="100"></canvas>
+        <canvas id="0" class="block X-0 Y-0" width="100" height="100"></canvas>
+        <canvas id="1" class="block X-1 Y-0" width="100" height="100"></canvas>
+        <canvas id="2" class="block X-2 Y-0" width="100" height="100"></canvas>
+        <canvas id="3" class="block X-3 Y-0" width="100" height="100"></canvas>
+
+        <canvas id="4" class="block X-0 Y-1" width="100" height="100"></canvas>
+        <canvas id="5" class="block X-1 Y-1" width="100" height="100"></canvas>
+        <canvas id="6" class="block X-2 Y-1" width="100" height="100"></canvas>
+        <canvas id="7" class="block X-3 Y-1" width="100" height="100"></canvas>
+
+        <canvas id="8" class="block X-0 Y-2" width="100" height="100"></canvas>
+        <canvas id="9" class="block X-1 Y-2" width="100" height="100"></canvas>
+        <canvas id="10" class="block X-2 Y-2" width="100" height="100"></canvas>
+        <canvas id="11" class="block X-3 Y-2" width="100" height="100"></canvas>
+
+        <canvas id="12" class="block X-0 Y-3" width="100" height="100"></canvas>
+        <canvas id="13" class="block X-1 Y-3" width="100" height="100"></canvas>
+        <canvas id="14" class="block X-2 Y-3" width="100" height="100"></canvas>
+        <canvas id="15" class="block no-hover X-3 Y-3" width="100" height="100"></canvas>
+
     </div>
     <div class="btn-group">
         <a href="#" class="btn">Start</a>
@@ -40,17 +46,6 @@
         <canvas id="up-img" class="select-block" width="80" height="80"></canvas>
     </div>
 </div>
-<script>
-    const img = new Image();
-    img.src = './img/panda.jpg';
-    const map = Array.from(document.querySelectorAll('.block'))
-            .map(canvas => canvas.getContext('2d'));
-
-    map.forEach(ctx => {
-        ctx.drawImage(img, 0, 0, 100, 100, 0, 0, 100, 100);
-    });
-    console.log(map);
-
-</script>
+<script src="js/bundle.js"></script>
 </body>
 </html>
