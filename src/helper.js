@@ -1,5 +1,11 @@
 'use strict';
 
+import {getRandomInt} from './util.js';
+
+/***********************************************************
+ Public Helper Function
+ ***********************************************************/
+
 /**
  *
  * @param target {Element}
@@ -37,6 +43,46 @@ export function move(target, blankTarget, map) {
     }
 }
 
+/**
+ * baffle the blocks.
+ * @param times {number} the times.
+ * @param speed {number} the speed of the block when moving. (ms)
+ * @return {function}
+ */
+export function randomlySelectAndMove(times, speed) {
+    times--;
+    /**
+     * randomly move the blank block
+     * @param previousBlock {Element} the element that will be ignore in the next randomly move.
+     * @param blankTargetIndex {number} the blank object in the map.
+     * @param map {Array} the state.
+     * @param updater {function} update the view if called.
+     */
+    function randomlyMove(previousBlock, blankTargetIndex, map, updater) {
+        const blankTargetNeighbours =
+            getNeighbours(blankTargetIndex, map)
+                .filter(object => object.element !== previousBlock);
+
+        const moveBlock = getSample(blankTargetNeighbours).element;
+        const nextDescriptor = move(moveBlock, map[blankTargetIndex].element, map);
+        blankTargetIndex = nextDescriptor.blankTargetPath.to;
+        updater(nextDescriptor);
+
+        if (times) {
+            setTimeout(() => {
+                times--;
+                randomlyMove(moveBlock, blankTargetIndex, nextDescriptor.nextState, updater);
+            }, speed);
+        }
+    }
+
+    return randomlyMove;
+}
+
+/**
+ * Update the view according to the descriptor.
+ * @param nextDescriptor
+ */
 export function update(nextDescriptor) {
     const patches = diff(nextDescriptor.nextState, this.blockMap);
     render(patches, nextDescriptor.nextState);
@@ -68,10 +114,20 @@ export function getterFactory(map) {
     return target => map.findIndex(object => object.element === target);
 }
 
-export function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
+export function getSample(array) {
+    return array[getRandomInt(0, array.length - 1)];
 }
 
+/***********************************************************
+ Private Helper Function
+ ***********************************************************/
+
+/**
+ * Show the difference between the new map and the old map.
+ * @param newMap {Array}
+ * @param oldMap {Array}
+ * @return {Array} tokens.
+ */
 function diff(newMap, oldMap) {
     const tokens = [];
     newMap.forEach((newObject, index) => {

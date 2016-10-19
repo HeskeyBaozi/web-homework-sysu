@@ -109,7 +109,7 @@ h1 {
     top: 0;
     left: 0;
 
-    transition: all 200ms;
+    transition: all 300ms;
 }
 
 .block:hover {
