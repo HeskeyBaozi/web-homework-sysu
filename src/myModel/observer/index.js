@@ -1,17 +1,24 @@
 'use strict';
 
 import Dependency from './dependency.js';
+import {arrayMethods} from './array.js';
 
 class Observer {
     constructor(value) {
         this.value = value;
+        this.dep = new Dependency();
         Object.defineProperty(value, '__ob__', {
             value: this,
             enumerable: false,
             writable: true,
             configurable: true
         });
-        this.walk(value);
+
+        if (Array.isArray(value)) {
+            augment(value, arrayMethods);
+            this.observeArray(value);
+        } else
+            this.walk(value);
     }
 
     /**
@@ -21,6 +28,16 @@ class Observer {
     walk(obj) {
         Object.keys(obj).forEach(key => {
             defineReactive(obj, key, obj[key]);
+        });
+    }
+
+    /**
+     * Observe a list of Array items.
+     * @param items {Array}
+     */
+    observeArray(items) {
+        items.forEach(value => {
+            observe(value);
         });
     }
 }
@@ -52,12 +69,23 @@ export function observe(value) {
  */
 function defineReactive(obj, key, val) {
     const dep = new Dependency();
+
+    let childObserver = observe(val);
+
     Object.defineProperty(obj, key, {
         enumerable: true,
         configurable: true,
         get: () => {
             if (Dependency.target) {
                 dep.depend();
+                if (childObserver) {
+                    childObserver.dep.depend();
+                }
+                if (Array.isArray(val)) {
+                    val.forEach(item => {
+                        item && item['__ob__'] && item['__ob__'].dep.depend();
+                    });
+                }
             }
             return val;
         },
@@ -68,4 +96,8 @@ function defineReactive(obj, key, val) {
             dep.notify();
         }
     });
+}
+
+function augment(target, src) {
+    target.__proto__ = src;
 }

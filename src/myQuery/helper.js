@@ -52,7 +52,7 @@ export function hasClass(className) {
     if (this.classList)
         return this.classList.contains(className);
     else
-        return new RegExp('(^| )' + className + '( |Query)', 'gi').test(this.className);
+        return new RegExp('(^| )' + className + '( |$)', 'gi').test(this.className);
 }
 
 /**

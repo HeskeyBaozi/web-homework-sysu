@@ -56,7 +56,7 @@ export default class Watcher {
      */
     run() {
         const value = this.get();
-        if (value !== this.value) {
+        if (value !== this.value || typeof value === 'object') {
             const oldValue = this.value;
             this.value = value;
             this.callback.call(this.model, value, oldValue);
