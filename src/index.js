@@ -16,6 +16,7 @@ import Node from './node.js';
 import {selectElement, selectNumber} from './selector.js';
 
 const model = new Model({
+    target: '.container',
     data: {
         imgUrl: '',
         blockMap: Array.from(document.querySelectorAll('.block'))
@@ -24,6 +25,7 @@ const model = new Model({
                 correctIndex: index
             })),
         blankBlock: document.querySelector('#blk-15'),
+        startButton: 'Start!',
         isReset: true,
         isBaffling: false
     }
@@ -70,7 +72,7 @@ Query('#start')
         new Promise((resolve, reject) => {
             model.isBaffling = true;
             e.target.classList.add('disable-click');
-            randomlySelectAndMoveAsync(30, 120, resolve)(targetIndex, blankTargetIndex, model.blockMap, updater);
+            randomlySelectAndMoveAsync(25, 120, resolve)(targetIndex, blankTargetIndex, model.blockMap, updater);
         }).then(node => {
             model.isBaffling = false;
             e.target.classList.remove('disable-click');
@@ -91,37 +93,105 @@ Query('.playground')
 Query('#solution')
     .on('click', e => {
         e.preventDefault();
-        const initialState = model.blockMap.map(selectNumber);
+        const loadingElement = document.querySelector('#loading');
+
+        const updater = update.bind(model);
+        const initialState = model.blockMap;
         const getIndex = getterFactory(model.blockMap, selectElement);
         const blankTargetIndex = getIndex(model.blankBlock);
-        const result = BFS(new Node(initialState, blankTargetIndex, null));
-        console.log(result);
-    });
+        new Promise((resolve, reject) => {
+            loadingElement.classList.remove('disable-see');
+            resolve();
+        }).then(() => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    resolve(AStar(new Node(initialState, blankTargetIndex, null)));
+                }, 20);
+            });
+        }).then(result => {
 
-function BFS(initialNode) {
-    const Q = [initialNode];
+            const path = [];
+            let target = result;
+            while (target.parentNode) {
+                path.push(target);
+                target = target.parentNode;
+            }
+
+            return new Promise((resolve, reject) => {
+                e.target.classList.add('disable-click');
+                loadingElement.classList.add('disable-see');
+                showSolutionAsync(path, updater, resolve);
+            });
+        }).then(path => {
+            e.target.classList.remove('disable-click');
+        });
+    })
+;
+
+function showSolutionAsync(path, updater, resolve) {
+    if (path.length) {
+        updater(path.pop().state);
+        setTimeout(() => {
+            showSolutionAsync(path, updater, resolve);
+        }, 200);
+    } else {
+        resolve(path);
+    }
+}
+
+function AStar(rootNode) {
+    const Queue = [rootNode];
     const S = new Set();
-
-    while (Q.length) {
-        const currentNode = Q.shift();
-        console.log('current currentNode: ', currentNode);
-        console.log(Q);
-        console.log(S);
-
-        if (currentNode.state[15] === 15) {
+    console.time('AStar');
+    while (Queue.length) {
+        const currentNode = Queue.shift();
+        if (currentNode.state.map(selectNumber).every((object, index) => object === index)) {
+            console.timeEnd('AStar');
             return currentNode;
         }
 
         const neighbours = getNeighboursIndex(currentNode.blankTargetIndex);
         neighbours.forEach(targetIndex => {
             const nextNode = search(targetIndex, currentNode);
-            const signature = nextNode.state.join('-');
+            const signature = nextNode.state.map(selectNumber).join('-');
             if (!S.has(signature)) {
-                Q.push(nextNode);
+                Queue.push(nextNode);
+                Queue.sort((left, right) => {
+                    return (left.h + left.depth) - (right.h + right.depth);
+                });
                 S.add(signature);
             }
         });
     }
+}
+
+function IDAStar(rootNode) {
+    const Stack = [rootNode];
+    let bound = rootNode.h;
+    console.time('IDAStar');
+    while (bound) {
+        while (Stack.length) {
+            const currentNode = Stack.pop();
+            if (currentNode.state.map(selectNumber).every((object, index) => object === index)) {
+                console.timeEnd('IDAStar');
+                return currentNode;
+            }
+
+            const neighbours = getNeighboursIndex(currentNode.blankTargetIndex);
+            neighbours.forEach(targetIndex => {
+                const nextNode = search(targetIndex, currentNode);
+                const cost = nextNode.h + nextNode.depth;
+                if (cost <= bound) {
+                    Stack.push(nextNode);
+                    console.log(Stack);
+                }
+            });
+        }
+
+        Stack.push(rootNode);
+        bound++;
+    }
+
 }
 
 

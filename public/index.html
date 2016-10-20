@@ -13,6 +13,7 @@
     <h1>Fifteen Puzzle!!</h1>
     <p class="message">Welcome to play the Puzzle!!</p>
     <p class="game-data">Time: {{time}} Count: {{count}}</p>
+
     <div class="playground">
         <canvas id="blk-0" class="block order-0" width="100" height="100"></canvas>
         <canvas id="blk-1" class="block order-1" width="100" height="100"></canvas>
@@ -33,10 +34,15 @@
         <canvas id="blk-13" class="block order-13" width="100" height="100"></canvas>
         <canvas id="blk-14" class="block order-14" width="100" height="100"></canvas>
         <canvas id="blk-15" class="block no-hover order-15" width="100" height="100"></canvas>
-
+        <div id="loading" class="center-content disable-see">
+            <div class="square-spin">
+                <div id="loading-icon"></div>
+            </div>
+            <p>Resolving...</p>
+        </div>
     </div>
     <div class="btn-group">
-        <a href="#" id="start" class="btn">Start</a>
+        <a href="#" id="start" class="btn">{{startButton}}</a>
         <a href="#" id="solution" class="btn">Solution</a>
     </div>
     <div class="img-groups">

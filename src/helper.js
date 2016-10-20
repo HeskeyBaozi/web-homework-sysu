@@ -25,16 +25,17 @@ export function move(targetIndex, blankTargetIndex, map) {
             map[blankTargetIndex],
             map[targetIndex]
         ];
-        return new Node(nextMap, targetIndex, map);
+        return {
+            state: nextMap,
+            blankTargetIndex: targetIndex,
+            parentState: map
+        }
     }
 }
 
 export function search(targetIndex, currentNode) {
     const subNode = move(targetIndex, currentNode.blankTargetIndex, currentNode.state);
-    if (subNode) {
-        subNode.parentNode = currentNode;
-    }
-    return subNode;
+    return new Node(subNode.state, subNode.blankTargetIndex, currentNode);
 }
 
 /**
