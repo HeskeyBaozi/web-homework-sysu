@@ -109,7 +109,7 @@ Query('#start')
                     );
                 }).then(node => {
                     model.isRunning = false;
-                    model.startButton = 'Admit Defeat! : (';
+                    model.startButton = 'Give Up : (';
                     model.gameState = Type.Pending;
                 });
                 break;

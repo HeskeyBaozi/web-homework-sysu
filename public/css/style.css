@@ -34,7 +34,7 @@
     width: 400px;
     height: 400px;
 
-    background-color: #f2f2f2;
+    background: url('../img/jy.jpg') 0 / cover fixed;
     box-shadow: 0 0 5px #a4a4a4;
 }
 
