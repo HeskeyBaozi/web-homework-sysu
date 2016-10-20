@@ -17,7 +17,7 @@ export function on(EventName, callback, isCapture) {
 }
 
 /**
- * add a class to the DOM
+ * add a class nextBlankTargetIndex the DOM
  * @param className {string}
  * @return this
  */

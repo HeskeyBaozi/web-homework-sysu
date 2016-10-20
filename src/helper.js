@@ -1,6 +1,7 @@
 'use strict';
 
 import {getRandomInt} from './util.js';
+import Node from './node.js';
 
 /***********************************************************
  Public Helper Function
@@ -8,71 +9,62 @@ import {getRandomInt} from './util.js';
 
 /**
  *
- * @param target {Element}
- * @param blankTarget {Element}
- * @param map {{element:Element,correctIndex:number}[]}
- * @return {{nextState: (ArrayBuffer|string|Buffer|Blob), blankTargetPath: {from, to}}}
+ * @param targetIndex {number}
+ * @param blankTargetIndex {number}
+ * @param map {{element:Element,correctIndex:number}[] | number[]}
+ * @return {Node}
  */
-export function move(target, blankTarget, map) {
-    const getIndex = getterFactory(map);
-    const [
-        targetIndex,
-        blankIndex
-    ] = [
-        getIndex(target),
-        getIndex(blankTarget)
-    ];
-
-    const neighbours = getNeighbours(targetIndex, map);
-    if (neighbours.some(object => object.element === blankTarget)) {
-        const nextBlockMap = map.slice();
+export function move(targetIndex, blankTargetIndex, map) {
+    if (getNeighboursIndex(targetIndex)
+            .some(neighboursIndex => neighboursIndex === blankTargetIndex)) {
+        const nextMap = map.slice();
         [
-            nextBlockMap[targetIndex],
-            nextBlockMap[blankIndex]
+            nextMap[targetIndex],
+            nextMap[blankTargetIndex]
         ] = [
-            map[blankIndex],
+            map[blankTargetIndex],
             map[targetIndex]
         ];
-        return {
-            nextState: nextBlockMap,
-            blankTargetPath: {
-                from: blankIndex,
-                to: targetIndex
-            }
-        }
+        return new Node(nextMap, targetIndex, map);
     }
+}
+
+export function search(targetIndex, currentNode) {
+    const subNode = move(targetIndex, currentNode.blankTargetIndex, currentNode.state);
+    if (subNode) {
+        subNode.parentNode = currentNode;
+    }
+    return subNode;
 }
 
 /**
  * baffle the blocks.
  * @param times {number} the times.
  * @param speed {number} the speed of the block when moving. (ms)
+ * @param resolve {function} promise resolve
  * @return {function}
  */
-export function randomlySelectAndMove(times, speed) {
+export function randomlySelectAndMoveAsync(times, speed, resolve) {
     times--;
     /**
      * randomly move the blank block
-     * @param previousBlock {Element} the element that will be ignore in the next randomly move.
+     * @param preTargetIndex {number} the index of element that will be ignore in the next randomly move.
      * @param blankTargetIndex {number} the blank object in the map.
      * @param map {Array} the state.
      * @param updater {function} update the view if called.
      */
-    function randomlyMove(previousBlock, blankTargetIndex, map, updater) {
-        const blankTargetNeighbours =
-            getNeighbours(blankTargetIndex, map)
-                .filter(object => object.element !== previousBlock);
-
-        const moveBlock = getSample(blankTargetNeighbours).element;
-        const nextDescriptor = move(moveBlock, map[blankTargetIndex].element, map);
-        blankTargetIndex = nextDescriptor.blankTargetPath.to;
-        updater(nextDescriptor);
+    function randomlyMove(preTargetIndex, blankTargetIndex, map, updater) {
+        const targetIndex = getSample(getNeighboursIndex(blankTargetIndex).filter(index => index !== preTargetIndex));
+        const nextDescriptor = move(targetIndex, blankTargetIndex, map);
+        updater(nextDescriptor.state);
 
         if (times) {
             setTimeout(() => {
                 times--;
-                randomlyMove(moveBlock, blankTargetIndex, nextDescriptor.nextState, updater);
+                randomlyMove(blankTargetIndex, nextDescriptor.blankTargetIndex, nextDescriptor.state, updater);
             }, speed);
+        } else {
+            resolve(nextDescriptor);
         }
     }
 
@@ -80,13 +72,13 @@ export function randomlySelectAndMove(times, speed) {
 }
 
 /**
- * Update the view according to the descriptor.
- * @param nextDescriptor
+ * Update the view according nextBlankTargetIndex the descriptor.
+ * @param nextState
  */
-export function update(nextDescriptor) {
-    const patches = diff(nextDescriptor.nextState, this.blockMap);
-    render(patches, nextDescriptor.nextState);
-    this.blockMap = nextDescriptor.nextState;
+export function update(nextState) {
+    const patches = diff(nextState, this.blockMap);
+    render(patches, nextState);
+    this.blockMap = nextState;
 }
 
 /**
@@ -110,8 +102,23 @@ export function getNeighbours(targetIndex, map) {
     )).map(position => map[position.X + position.Y * 4]);
 }
 
-export function getterFactory(map) {
-    return target => map.findIndex(object => object.element === target);
+export function getNeighboursIndex(targetIndex) {
+    return [
+        {X: 0, Y: -1}, // up
+        {X: 1, Y: 0}, // right
+        {X: 0, Y: 1}, // down
+        {X: -1, Y: 0} // left
+    ].map(offset => ({
+        X: targetIndex % 4 + offset.X,
+        Y: Math.floor(targetIndex / 4) + offset.Y
+    })).filter(position => (
+        position.X >= 0 && position.X < 4 &&
+        position.Y >= 0 && position.Y < 4
+    )).map(position => position.Y * 4 + position.X);
+}
+
+export function getterFactory(map, selector) {
+    return target => map.map(selector).findIndex(object => object === target);
 }
 
 export function getSample(array) {

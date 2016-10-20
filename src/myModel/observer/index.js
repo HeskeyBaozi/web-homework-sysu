@@ -44,7 +44,7 @@ class Observer {
 
 /**
  * observe a property and set a observer if the property doesn't own one;
- * @param value {object} the property that needs to be observed
+ * @param value {object} the property that needs nextBlankTargetIndex be observed
  * @return {Observer|undefined} if it is a string or number, returns undefined
  */
 export function observe(value) {

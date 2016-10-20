@@ -53,7 +53,7 @@ class HzyElement {
     }
 
     /**
-     * add a class to the DOM
+     * add a class nextBlankTargetIndex the DOM
      * @param className {string}
      * @return {HzyElement}
      */
