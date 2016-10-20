@@ -10,15 +10,15 @@
 
     display: flex;
 
-    width: 550px;
+    width: 400px;
     height: 680px;
-    margin: 20px auto;
-    padding: 10px;
+
+    padding: 10px 0;
 
     text-align: center;
 
     background-color: rgba(255, 255, 255, 1);
-    box-shadow: 0 0 30px 10px rgba(87, 87, 87, .49);
+    box-shadow: 0 0 50px #5c5c5c;
 
     flex-flow: column nowrap;
     align-items: center;
@@ -38,6 +38,10 @@
     box-shadow: 0 0 5px #a4a4a4;
 }
 
+.no-see {
+
+}
+
 .no-see:before {
     position: absolute;
     z-index: 3;
@@ -51,8 +55,6 @@
     content: '';
 
     background-color: rgba(255, 255, 255, .52);
-
-    filter: blur(50px);
 }
 
 .btn-group {
@@ -69,15 +71,15 @@
 
     transition: all 200ms;
 
-    color: #65b0b2;
-    border: 1px solid #65b0b2;
+    color: #5c5c5c;
+    border: 1px solid #5c5c5c;
     border-radius: 5px;
     background-color: white;
 }
 
 .btn:hover {
     color: white;
-    background-color: #65b0b2;
+    background-color: #5c5c5c;
 }
 
 .disable-click {
@@ -103,7 +105,7 @@ h1 {
 
     margin: 0;
 
-    color: rgba(101, 176, 178, 1);
+    color: #5c5c5c;
 }
 
 .game-data {
@@ -112,24 +114,27 @@ h1 {
 
 .img-groups {
     display: flex;
+    position: relative;
 
-    width: 70%;
+    width: 380px;
     margin: 10px 0;
 
     justify-content: space-around;
 }
 
 .select-block {
-    transition: all 200ms;
-
+    transition: all 500ms;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     box-shadow: 0 0 4px gray;
+    cursor: pointer;
 }
 
 .select-block:hover {
     transform: rotate(1turn);
 
-    box-shadow: 0 0 4px 4px gray;
+    box-shadow: 0 0 20px gray;
 }
 
 .block {
@@ -206,4 +211,20 @@ h1 {
 
 .disable-see {
     display: none;
+}
+
+.select-block:nth-child(1) {
+    background: url("../img/icon_gfpanda.png") 0/cover;
+}
+
+.select-block:nth-child(2) {
+    background: url("../img/icon_overwatch.jpg") 0/cover;
+}
+
+.select-block:nth-child(3) {
+    background: url("../img/icon_zoo.png") 0/cover;
+}
+
+.select-block:nth-child(4) {
+    background: url("../img/icon_baymax.png") 0/cover;
 }

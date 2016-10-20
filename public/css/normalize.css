@@ -7,7 +7,11 @@ html {
 
 body {
     margin: 0;
-    background: url('../img/lp2.jpg') 0 / cover fixed;
+    background: url('../img/bg_gfpanda.jpg') 0 / cover fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
 }
 
 h1 {
