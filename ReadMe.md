@@ -1,3 +1,0 @@
-# OverView
-
-![Overview](./overview.png)
