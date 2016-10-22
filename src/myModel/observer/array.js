@@ -8,7 +8,7 @@ export const arrayMethods = Object.create(Array.prototype);
 
 [
     'push',
-    'pop',
+    'dequeue',
     'shift',
     'unshift',
     'sort',

@@ -157,3 +157,14 @@ function render(patches, map) {
         target.className = target.className.replace(/order-\d*/, `order-${patch.index}`);
     });
 }
+
+export function showSolutionAsync(path, updater, resolve) {
+    if (path.length) {
+        updater(path.pop().state);
+        setTimeout(() => {
+            showSolutionAsync(path, updater, resolve);
+        }, 120);
+    } else {
+        resolve(path);
+    }
+}

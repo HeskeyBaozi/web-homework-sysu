@@ -9,11 +9,12 @@ import {
     getSample,
     update,
     randomlySelectAndMoveAsync,
-    search
+    showSolutionAsync
 } from  './helper.js'
 import Node from './node.js';
 import {Type, Img} from './type.js';
-import {selectElement, selectNumber} from './selector.js';
+import {selectElement} from './selector.js';
+import {AStar} from './algorithm.js';
 
 const model = new Model({
     target: '.container',
@@ -62,6 +63,12 @@ model.$watch('gameState', function (newValue, oldValue) {
     switch (newValue) {
         case Type.Pending:
             util.selectorsElement.classList.add('no-see');
+            const timeUid = setInterval(() => {
+                this.time++;
+                if (this.gameState !== Type.Pending) {
+                    clearInterval(timeUid);
+                }
+            }, 1000);
             break;
     }
 
@@ -104,7 +111,7 @@ Query('#start')
 
                 new Promise((resolve, reject) => {
                     model.isRunning = true;
-                    randomlySelectAndMoveAsync(20, 120, resolve)(
+                    randomlySelectAndMoveAsync(30, 120, resolve)(
                         targetIndex, getElementIndex(util.blankElement), model.blockMap, util.updater
                     );
                 }).then(node => {
@@ -116,6 +123,7 @@ Query('#start')
 
             case Type.Pending:
                 new Promise((resolve, reject) => {
+                    model.gameState = Type.Unstarted;
                     model.startButton = 'Getting Solution...';
                     util.loadingElement.classList.remove('disable-see');
                     const getIndex = getterFactory(model.blockMap, selectElement);
@@ -140,7 +148,7 @@ Query('#start')
                 }).then(path => {
                     model.startButton = 'Try Again! : )';
                     model.isRunning = false;
-                    model.gameState = Type.Unstarted;
+
                 });
                 break;
         }
@@ -154,73 +162,6 @@ Query('.playground')
         if (!nextDescriptor) return;
         update.call(model, nextDescriptor.state);
     });
-
-
-function showSolutionAsync(path, updater, resolve) {
-    if (path.length) {
-        updater(path.pop().state);
-        setTimeout(() => {
-            showSolutionAsync(path, updater, resolve);
-        }, 120);
-    } else {
-        resolve(path);
-    }
-}
-
-function AStar(rootNode) {
-    const Queue = [rootNode];
-    const S = new Set();
-    console.time('AStar');
-    while (Queue.length) {
-        const currentNode = Queue.shift();
-        if (currentNode.state.map(selectNumber).every((object, index) => object === index)) {
-            console.timeEnd('AStar');
-            return currentNode;
-        }
-
-        const neighbours = getNeighboursIndex(currentNode.blankTargetIndex);
-        neighbours.forEach(targetIndex => {
-            const nextNode = search(targetIndex, currentNode);
-            const signature = nextNode.state.map(selectNumber).join('-');
-            if (!S.has(signature)) {
-                Queue.push(nextNode);
-                Queue.sort((left, right) => {
-                    return (left.h + left.depth) - (right.h + right.depth);
-                });
-                S.add(signature);
-            }
-        });
-    }
-}
-
-function IDAStar(rootNode) {
-    const Stack = [rootNode];
-    let bound = rootNode.h;
-    console.time('IDAStar');
-    while (bound) {
-        while (Stack.length) {
-            const currentNode = Stack.pop();
-            if (currentNode.state.map(selectNumber).every((object, index) => object === index)) {
-                console.timeEnd('IDAStar');
-                return currentNode;
-            }
-
-            const neighbours = getNeighboursIndex(currentNode.blankTargetIndex);
-            neighbours.forEach(targetIndex => {
-                const nextNode = search(targetIndex, currentNode);
-                const cost = nextNode.h + nextNode.depth;
-                if (cost <= bound) {
-                    Stack.push(nextNode);
-                    console.log(Stack);
-                }
-            });
-        }
-
-        Stack.push(rootNode);
-        bound++;
-    }
-
-}
 
 Query('.img-groups')
     .on('click', e => {
