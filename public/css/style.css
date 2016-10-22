@@ -93,9 +93,10 @@
 }
 
 h1 {
-    font-size: 25px;
+    font-family: 'ChannelSlanted26917119261611c', Consolas, sans-serif;
+    font-size: 18px;
 
-    margin: 5px 0;
+    margin: 15px 0;
 }
 
 .message {
