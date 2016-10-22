@@ -219,7 +219,8 @@ Query('.img-groups')
         e.preventDefault();
         if (model.gameState === Type.Unstarted) {
             const currentImg = Img.find(imageInfo => imageInfo.name === e.target.id);
-            model.imgUrl = currentImg.url.img;
+            if (currentImg)
+                model.imgUrl = currentImg.url.img;
         }
     });
 
