@@ -1,10 +1,36 @@
 'use strict';
 
-class PriorityQueue extends Array {
+import {selectNumber} from './selector.js';
+
+export class Node {
+    /**
+     *
+     * @param state {Array}
+     * @param blankTargetIndex {Number}
+     * @param parentNode {Node}
+     */
+    constructor(state, blankTargetIndex, parentNode) {
+        this.state = state;
+        this.blankTargetIndex = blankTargetIndex;
+        this.parentNode = parentNode;
+        this.depth = parentNode !== null ? parentNode.depth + 1 : 0;
+        this.h = this.state
+            .map(selectNumber)
+            .map((number, index) => Math.abs(number % 4 - index % 4) + Math.abs(Math.floor(number / 4) - Math.floor(index / 4)))
+            .reduce((left, right) => left + right, 0);
+    }
+}
+
+export class PriorityQueue extends Array {
     constructor(compare) {
         super();
         this.push(null);
         this.compare = compare;
+
+        /**
+         * push
+         * @param item {*}
+         */
         this.enqueue = function (item) {
             this.push(item);
 
@@ -20,6 +46,10 @@ class PriorityQueue extends Array {
             }
         };
 
+        /**
+         * Pop
+         * @return {*}
+         */
         this.dequeue = function () {
             const TopItem = this[1];
             this[1] = this.pop();
@@ -50,12 +80,14 @@ class PriorityQueue extends Array {
             return TopItem;
         };
 
+        /**
+         * is empty?
+         * @return {boolean}
+         */
         this.empty = function () {
             return this.length <= 1;
         }
     }
-
-
 }
 
 function swap(array, leftIndex, rightIndex) {
@@ -63,5 +95,3 @@ function swap(array, leftIndex, rightIndex) {
     array[leftIndex] = array[rightIndex];
     array[rightIndex] = temp;
 }
-
-export default PriorityQueue;

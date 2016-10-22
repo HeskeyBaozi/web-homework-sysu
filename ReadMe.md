@@ -1,6 +1,6 @@
 ## Puzzle
 
-Coming soon...
+![overview](./overview.png)
 
 ## License
 [MIT](/LICENSE)

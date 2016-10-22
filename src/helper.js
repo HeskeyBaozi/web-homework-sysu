@@ -1,7 +1,7 @@
 'use strict';
 
 import {getRandomInt} from './util.js';
-import Node from './node.js';
+import {Node} from './data-structure.js';
 
 /***********************************************************
  Public Helper Function
@@ -167,4 +167,33 @@ export function showSolutionAsync(path, updater, resolve) {
     } else {
         resolve(path);
     }
+}
+
+export function drawCanvas(canvasContextArray, image) {
+    canvasContextArray.forEach((ctx, index) => {
+        ctx.drawImage(image,
+            (index % 4) * (image.width / 4), Math.floor(index / 4) * (image.height / 4),
+            (image.width / 4), (image.height / 4),
+            0, 0, 100, 100
+        );
+    });
+    const last = canvasContextArray[canvasContextArray.length - 1];
+    last.fillStyle = 'rgba(120, 120, 120, 0.7)';
+    last.fillRect(0, 0, 100, 100);
+}
+
+export function mix(model, blankElement, updater, selector) {
+    const getElementIndex = getterFactory(model.blockMap, selector);
+    const targetIndex = [
+        blankElement,
+        getElementIndex,
+        getNeighboursIndex,
+        getSample
+    ].reduce((value, wrapper) => wrapper(value));
+    return new Promise((resolve, reject) => {
+        model.isRunning = true;
+        randomlySelectAndMoveAsync(model.stepNumber, 120, resolve)(
+            targetIndex, getElementIndex(blankElement), model.blockMap, updater
+        );
+    });
 }

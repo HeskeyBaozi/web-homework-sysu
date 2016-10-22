@@ -1,9 +1,16 @@
 'use strict';
 
-import PriorityQueue from './PQ.js';
+import {PriorityQueue} from './data-structure.js';
 import {selectNumber} from './selector.js';
 import {search, getNeighboursIndex} from './helper.js';
 
+/**
+ * A* Algorithm
+ * based on BFS with a function f to give an standard to choice
+ * which node is the best when getting next state.
+ * @param rootNode {Node} the root node. (Current State)
+ * @return {undefined|Node} the last node
+ */
 export function AStar(rootNode) {
     const PQ = new PriorityQueue((left, right) => {
         return (4 * left.h + left.depth) - (4 * right.h + right.depth);
@@ -30,6 +37,12 @@ export function AStar(rootNode) {
     }
 }
 
+/**
+ * Iterative Deepening A*
+ * @param rootNode {Node}
+ * @return {*}
+ * @constructor
+ */
 export function IDAStar(rootNode) {
     const Stack = [rootNode];
     let bound = rootNode.h;

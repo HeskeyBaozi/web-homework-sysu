@@ -3,19 +3,23 @@
 import Model from './myModel/index.js';
 import Query from './myQuery/index.js';
 import {
-    getNeighboursIndex,
     move,
     getterFactory,
-    getSample,
     update,
-    randomlySelectAndMoveAsync,
-    showSolutionAsync
+    showSolutionAsync,
+    drawCanvas,
+    mix
 } from  './helper.js'
-import Node from './node.js';
+import {Node} from './data-structure.js';
 import {Type, Img} from './type.js';
 import {selectElement} from './selector.js';
 import {AStar} from './algorithm.js';
 
+/**
+ *           That's Me!
+ *              ↓ ↓
+ * View <==> View-Model <==> Model
+ */
 const model = new Model({
     target: '.container',
     data: {
@@ -26,12 +30,16 @@ const model = new Model({
         startButton: 'Start!',
         gameState: Type.Unstarted,
         isRunning: false,
+        isWinner: false,
         time: 0,
-        count: 0
+        count: 0,
+        message: 'Welcome to play the Puzzle!!',
+        stepNumber: 20
     }
 });
 
-const util = {
+
+const cache = {
     blankElement: document.querySelector('#blk-15'),
     loadingElement: document.querySelector('#loading'),
     btnElement: document.querySelector('#start'),
@@ -39,99 +47,148 @@ const util = {
     updater: update.bind(model)
 };
 
+/****************************************************************
+ View-Callbacks
+ 1. watch the variable of the model.
+ 2. call the callback when the variable change.
+ 3. then update the view by operating on the DOM node.
+ ****************************************************************/
 
+/**
+ * change the image.
+ */
 model.$watch('imgUrl', function (newValue, oldValue) {
     const img = new Image();
     const ctxArray = this.blockMap.map(object => object.element.getContext('2d'));
     img.src = newValue;
     img.onload = () => {
-        ctxArray.forEach((ctx, index) => {
-            ctx.drawImage(img,
-                (index % 4) * (img.width / 4), Math.floor(index / 4) * (img.height / 4),
-                (img.width / 4), (img.height / 4),
-                0, 0, 100, 100
-            );
-        });
-
-        const last = ctxArray[ctxArray.length - 1];
-        last.fillStyle = 'rgba(120, 120, 120, 0.7)';
-        last.fillRect(0, 0, 100, 100);
+        drawCanvas(ctxArray, img);
     };
 });
 
+/**
+ * use the default image: KongFu Panda.
+ * @type {string}
+ */
+model.imgUrl = './img/panda.jpg';
+
+/**
+ * be reactive to the state of the game.
+ */
 model.$watch('gameState', function (newValue, oldValue) {
     switch (newValue) {
+        /**
+         * When the game starts...
+         */
         case Type.Pending:
-            util.selectorsElement.classList.add('no-see');
+            this.time = 0;
+            this.count = 0;
+            this.isWinner = false;
+            this.message = 'Game Starting...';
+            cache.selectorsElement.classList.add('no-see');
             const timeUid = setInterval(() => {
-                this.time++;
-                if (this.gameState !== Type.Pending) {
+                if (this.gameState === Type.Pending) {
+                    this.time++;
+                } else
                     clearInterval(timeUid);
-                }
+
             }, 1000);
             break;
     }
 
     switch (oldValue) {
+        /**
+         * When the game over or give up.
+         */
         case Type.Pending:
-            util.selectorsElement.classList.remove('no-see');
+            this.message = `${this.isWinner ? 'Congratulations!' : 'Try your best.'} Time:${this.time}, Count:${this.count}`;
+            if (this.isWinner) {
+                this.startButton = 'Start!';
+                cache.selectorsElement.classList.remove('no-see');
+            }
+            this.time = 0;
+            this.count = 0;
             break;
     }
 });
 
+/**
+ * watch the block moving. update the style.
+ */
 model.$watch('isRunning', function (isRunning) {
     if (isRunning) {
-        util.btnElement.classList.add('disable-click');
-        util.selectorsElement.classList.add('no-see');
+        cache.btnElement.classList.add('disable-click');
+        cache.selectorsElement.classList.add('no-see');
     } else {
-        util.btnElement.classList.remove('disable-click');
+        cache.btnElement.classList.remove('disable-click');
     }
 });
 
-model.imgUrl = './img/panda.jpg';
+/****************************************************************
+ Event Handler
+ ****************************************************************/
+
+/**
+ * Move the block when it was clicked
+ * if it is near the blank Block.
+ */
+Query('.playground')
+    .on('click', e => {
+        e.preventDefault();
+        const getIndex = getterFactory(model.blockMap, selectElement);
+        const nextDescriptor = move(getIndex(e.target), getIndex(cache.blankElement), model.blockMap);
+        if (!nextDescriptor) return;
+        update.call(model, nextDescriptor.state);
+        if (model.blockMap.every((object, index) => object.correctIndex === index)) {
+            model.isWinner = true;
+            model.gameState = Type.Unstarted;
+        }
+        if (model.gameState === Type.Pending) {
+            model.count++;
+        }
+    });
+
 
 Query('#start')
     .on('click', e => {
         e.preventDefault();
+        /**
+         * refuse when the animate running.
+         */
         if (model.isRunning) {
             return;
         }
         switch (model.gameState) {
-
             case Type.Unstarted:
-
+                /**
+                 * Mix the puzzle.
+                 * @type {string}
+                 */
                 model.startButton = 'Mixing...';
-                const getElementIndex = getterFactory(model.blockMap, selectElement);
-                const targetIndex = [
-                    util.blankElement,
-                    getElementIndex,
-                    getNeighboursIndex,
-                    getSample
-                ].reduce((value, wrapper) => wrapper(value));
-
-                new Promise((resolve, reject) => {
-                    model.isRunning = true;
-                    randomlySelectAndMoveAsync(30, 120, resolve)(
-                        targetIndex, getElementIndex(util.blankElement), model.blockMap, util.updater
-                    );
-                }).then(node => {
-                    model.isRunning = false;
-                    model.startButton = 'Give Up : (';
-                    model.gameState = Type.Pending;
-                });
+                mix(model, cache.blankElement, cache.updater, selectElement)
+                    .then(() => {
+                        model.isRunning = false;
+                        model.startButton = 'Give Up : (';
+                        model.gameState = Type.Pending;
+                    });
                 break;
 
             case Type.Pending:
                 new Promise((resolve, reject) => {
                     model.gameState = Type.Unstarted;
                     model.startButton = 'Getting Solution...';
-                    util.loadingElement.classList.remove('disable-see');
+                    cache.loadingElement.classList.remove('disable-see');
                     const getIndex = getterFactory(model.blockMap, selectElement);
                     setTimeout(() => {
-                        resolve(AStar(new Node(model.blockMap, getIndex(util.blankElement), null)));
+                        /**
+                         * Use Algorithm to solve the problem.
+                         */
+                        resolve(AStar(new Node(model.blockMap, getIndex(cache.blankElement), null)));
                     }, 20);
                 }).then(result => {
-
+                    /**
+                     * Display the Solution.
+                     */
                     const path = [];
                     let target = result;
                     while (target.parentNode) {
@@ -141,28 +198,22 @@ Query('#start')
 
                     return new Promise((resolve, reject) => {
                         model.isRunning = true;
-                        util.loadingElement.classList.add('disable-see');
+                        cache.loadingElement.classList.add('disable-see');
                         model.startButton = 'Recovering...';
-                        showSolutionAsync(path, util.updater, resolve);
+                        showSolutionAsync(path, cache.updater, resolve);
                     });
-                }).then(path => {
+                }).then(() => {
+                    cache.selectorsElement.classList.remove('no-see');
                     model.startButton = 'Try Again! : )';
                     model.isRunning = false;
-
                 });
                 break;
         }
     });
 
-Query('.playground')
-    .on('click', e => {
-        e.preventDefault();
-        const getIndex = getterFactory(model.blockMap, selectElement);
-        const nextDescriptor = move(getIndex(e.target), getIndex(util.blankElement), model.blockMap);
-        if (!nextDescriptor) return;
-        update.call(model, nextDescriptor.state);
-    });
-
+/**
+ * the image switcher.
+ */
 Query('.img-groups')
     .on('click', e => {
         e.preventDefault();
