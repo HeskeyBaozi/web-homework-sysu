@@ -16,7 +16,7 @@ export class Node {
         this.depth = parentNode !== null ? parentNode.depth + 1 : 0;
         this.h = this.state
             .map(selectNumber)
-            .map((number, index) => Math.abs(number % 4 - index % 4) + Math.abs(Math.floor(number / 4) - Math.floor(index / 4)))
+            .map((number, index) => Math.abs(number % 4 - index % 4) + Math.abs(number >> 2 - index >> 2))
             .reduce((left, right) => left + right, 0);
     }
 }

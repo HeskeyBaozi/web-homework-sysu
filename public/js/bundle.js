@@ -3,5 +3,1641 @@
  * Copyright (c) 2016 He Zhiyu - https://github.com/HeskeyBaozi/web-homework-sysu#readme
  * License: MIT
  */
-!function(e){function t(r){if(n[r])return n[r].exports;var o=n[r]={exports:{},id:r,loaded:!1};return e[r].call(o.exports,o,o.exports,t),o.loaded=!0,o.exports}var n={};return t.m=e,t.c=n,t.p="",t(0)}([function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}var o=n(8),i=r(o),a=n(12),u=r(a),s=n(3),c=n(1),l=n(13),f=n(2),d=n(6),p=new i["default"]({target:".container",data:{imgUrl:"",blockMap:Array.from(document.querySelectorAll(".block")).map(function(e,t){return{element:e,correctIndex:t}}),startButton:"Start!",gameState:l.Type.Unstarted,isRunning:!1,isWinner:!1,time:0,count:0,message:"Welcome to play the Puzzle!!",stepNumber:20}}),h={blankElement:document.querySelector("#blk-15"),loadingElement:document.querySelector("#loading"),btnElement:document.querySelector("#start"),selectorsElement:document.querySelector(".img-groups"),updater:s.update.bind(p)};p.$watch("imgUrl",function(e,t){var n=new Image,r=this.blockMap.map(function(e){return e.element.getContext("2d")});n.src=e,n.onload=function(){(0,s.drawCanvas)(r,n)}}),p.imgUrl="./img/panda.jpg",p.$watch("gameState",function(e,t){var n=this;switch(function(){switch(e){case l.Type.Pending:n.time=0,n.count=0,n.isWinner=!1,n.message="Game Starting...",h.selectorsElement.classList.add("no-see");var t=setInterval(function(){n.gameState===l.Type.Pending?n.time++:clearInterval(t)},1e3)}}(),t){case l.Type.Pending:this.message=(this.isWinner?"Congratulations!":"Try your best.")+" Time:"+this.time+", Count:"+this.count,this.isWinner&&(this.startButton="Start!",h.selectorsElement.classList.remove("no-see")),this.time=0,this.count=0}}),p.$watch("isRunning",function(e){e?(h.btnElement.classList.add("disable-click"),h.selectorsElement.classList.add("no-see")):h.btnElement.classList.remove("disable-click")}),(0,u["default"])(".playground").on("click",function(e){e.preventDefault();var t=(0,s.getterFactory)(p.blockMap,f.selectElement),n=(0,s.move)(t(e.target),t(h.blankElement),p.blockMap);n&&(s.update.call(p,n.state),p.blockMap.every(function(e,t){return e.correctIndex===t})&&(p.isWinner=!0,p.gameState=l.Type.Unstarted),p.gameState===l.Type.Pending&&p.count++)}),(0,u["default"])("#start").on("click",function(e){if(e.preventDefault(),!p.isRunning)switch(p.gameState){case l.Type.Unstarted:p.startButton="Mixing...",(0,s.mix)(p,h.blankElement,h.updater,f.selectElement).then(function(){p.isRunning=!1,p.startButton="Give Up : (",p.gameState=l.Type.Pending});break;case l.Type.Pending:new Promise(function(e,t){p.gameState=l.Type.Unstarted,p.startButton="Getting Solution...",h.loadingElement.classList.remove("disable-see");var n=(0,s.getterFactory)(p.blockMap,f.selectElement);setTimeout(function(){e((0,d.AStar)(new c.Node(p.blockMap,n(h.blankElement),null)))},20)}).then(function(e){for(var t=[],n=e;n.parentNode;)t.push(n),n=n.parentNode;return new Promise(function(e,n){p.isRunning=!0,h.loadingElement.classList.add("disable-see"),p.startButton="Recovering...",(0,s.showSolutionAsync)(t,h.updater,e)})}).then(function(){h.selectorsElement.classList.remove("no-see"),p.startButton="Try Again! : )",p.isRunning=!1})}}),(0,u["default"])(".img-groups").on("click",function(e){if(e.preventDefault(),p.gameState===l.Type.Unstarted){var t=l.Img.find(function(t){return t.name===e.target.id});t&&(p.imgUrl=t.url.img)}}),console.log(p)},function(e,t,n){"use strict";function r(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}function o(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}function i(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function a(e,t,n){var r=e[t];e[t]=e[n],e[n]=r}Object.defineProperty(t,"__esModule",{value:!0}),t.PriorityQueue=t.Node=void 0;var u=n(2);t.Node=function s(e,t,n){i(this,s),this.state=e,this.blankTargetIndex=t,this.parentNode=n,this.depth=null!==n?n.depth+1:0,this.h=this.state.map(u.selectNumber).map(function(e,t){return Math.abs(e%4-t%4)+Math.abs(Math.floor(e/4)-Math.floor(t/4))}).reduce(function(e,t){return e+t},0)},t.PriorityQueue=function(e){function t(e){i(this,t);var n=r(this,(t.__proto__||Object.getPrototypeOf(t)).call(this));return n.push(null),n.compare=e,n.enqueue=function(e){this.push(e);for(var t=this.length-1;t>1;){var n=t>>1;if(!(this.compare(this[t],this[n])<0))break;a(this,n,t),t=n}},n.dequeue=function(){var e=this,t=this[1];this[1]=this.pop(),2===this.length&&this.pop();for(var n=[1],r=function(){var t=n.shift(),r=t,o=[t<<1,t<<1|1];o.filter(function(t){return t<e.length}).forEach(function(t){e.compare(e[t],e[r])<0&&(r=t)}),t!==r&&(a(e,t,r),n.push(r))};n.length;)r();return t},n.empty=function(){return this.length<=1},n}return o(t,e),t}(Array)},function(e,t){"use strict";Object.defineProperty(t,"__esModule",{value:!0});t.selectElement=function(e){return e.element},t.selectNumber=function(e){return e.correctIndex},t.selectOriginal=function(e){return e}},function(e,t,n){"use strict";function r(e,t,n){if(s(e).some(function(e){return e===t})){var r=n.slice(),o=[n[t],n[e]];return r[e]=o[0],r[t]=o[1],{state:r,blankTargetIndex:e,parentState:n}}}function o(e,t){var n=r(e,t.blankTargetIndex,t.state);return new v.Node(n.state,n.blankTargetIndex,t)}function i(e,t,n){function o(i,a,u,c){var f=l(s(a).filter(function(e){return e!==i})),d=r(f,a,u);c(d.state),e?setTimeout(function(){e--,o(a,d.blankTargetIndex,d.state,c)},t):n(d)}return e--,o}function a(e){var t=f(e,this.blockMap);d(t,e),this.blockMap=e}function u(e,t){return[{X:0,Y:-1},{X:1,Y:0},{X:0,Y:1},{X:-1,Y:0}].map(function(t){return{X:e%4+t.X,Y:Math.floor(e/4)+t.Y}}).filter(function(e){return e.X>=0&&e.X<4&&e.Y>=0&&e.Y<4}).map(function(e){return t[e.X+4*e.Y]})}function s(e){return[{X:0,Y:-1},{X:1,Y:0},{X:0,Y:1},{X:-1,Y:0}].map(function(t){return{X:e%4+t.X,Y:Math.floor(e/4)+t.Y}}).filter(function(e){return e.X>=0&&e.X<4&&e.Y>=0&&e.Y<4}).map(function(e){return 4*e.Y+e.X})}function c(e,t){return function(n){return e.map(t).findIndex(function(e){return e===n})}}function l(e){return e[(0,y.getRandomInt)(0,e.length-1)]}function f(e,t){var n=[];return e.forEach(function(e,r){var o=t[r];e.correctIndex!==o.correctIndex&&n.push({before:o.correctIndex,after:e.correctIndex,index:r})}),n}function d(e,t){e.forEach(function(e){var n=t[e.index].element;n.className=n.className.replace(/order-\d*/,"order-"+e.index)})}function p(e,t,n){e.length?(t(e.pop().state),setTimeout(function(){p(e,t,n)},120)):n(e)}function h(e,t){e.forEach(function(e,n){e.drawImage(t,n%4*(t.width/4),Math.floor(n/4)*(t.height/4),t.width/4,t.height/4,0,0,100,100)});var n=e[e.length-1];n.fillStyle="rgba(120, 120, 120, 0.7)",n.fillRect(0,0,100,100)}function m(e,t,n,r){var o=c(e.blockMap,r),a=[t,o,s,l].reduce(function(e,t){return t(e)});return new Promise(function(r,u){e.isRunning=!0,i(e.stepNumber,120,r)(a,o(t),e.blockMap,n)})}Object.defineProperty(t,"__esModule",{value:!0}),t.move=r,t.search=o,t.randomlySelectAndMoveAsync=i,t.update=a,t.getNeighbours=u,t.getNeighboursIndex=s,t.getterFactory=c,t.getSample=l,t.showSolutionAsync=p,t.drawCanvas=h,t.mix=m;var y=n(14),v=n(1)},function(e,t){"use strict";function n(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function r(e){u.target&&s.push(u.target),u.target=e}function o(){u.target=s.pop()}Object.defineProperty(t,"__esModule",{value:!0});var i=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}();t.pushTarget=r,t.popTarget=o;var a=0,u=function(){function e(){n(this,e),this.id=a++,this.subs=[]}return i(e,[{key:"addSub",value:function(e){this.subs.push(e)}},{key:"depend",value:function(){e.target&&e.target.addDependency(this)}},{key:"notify",value:function(){var e=this.subs.slice();e.forEach(function(e){e.update()})}}]),e}();t["default"]=u,u.target=null;var s=[]},function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function o(e){var t=function(){};return"function"==typeof e?t=e:"string"==typeof e?t=new Function("model","return model."+e+";"):console.warn(e+" fail to parse!!"),t}Object.defineProperty(t,"__esModule",{value:!0});var i="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol?"symbol":typeof e},a=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}();t.getGetter=o;var u=n(4),s=function(){function e(t,n,i){r(this,e),this.callback=i,this.model=t,this.newDepIds=new Set,this.newDeps=[],this._getter=o(n),this.value=this.get()}return a(e,[{key:"get",value:function(){(0,u.pushTarget)(this);var e=this._getter.call(this.model,this.model);return(0,u.popTarget)(),e}},{key:"addDependency",value:function(e){var t=e.id;this.newDepIds.has(t)||(this.newDepIds.add(t),this.newDeps.push(e),e.addSub(this))}},{key:"update",value:function(){return this.run(),this}},{key:"run",value:function(){var e=this.get();if(e!==this.value||"object"===("undefined"==typeof e?"undefined":i(e))){var t=this.value;this.value=e,this.callback.call(this.model,e,t)}}}]),e}();t["default"]=s},function(e,t,n){"use strict";function r(e){var t=new a.PriorityQueue(function(e,t){return 4*e.h+e.depth-(4*t.h+t.depth)});t.enqueue(e);var n=new Set;console.time("AStar算法用时");for(var r=function(){var e=t.dequeue();if(e.state.map(u.selectNumber).every(function(e,t){return e===t}))return console.timeEnd("AStar算法用时"),{v:e};var r=(0,s.getNeighboursIndex)(e.blankTargetIndex);r.forEach(function(r){var o=(0,s.search)(r,e),i=o.state.map(u.selectNumber).toString();n.has(i)||(t.enqueue(o),n.add(i))})};!t.empty();){var o=r();if("object"===("undefined"==typeof o?"undefined":i(o)))return o.v}}function o(e){var t=[e],n=e.h;for(console.time("IDAStar");n;){for(var r=function(){var e=t.pop();if(e.state.map(u.selectNumber).every(function(e,t){return e===t}))return console.timeEnd("IDAStar"),{v:e};var r=(0,s.getNeighboursIndex)(e.blankTargetIndex);r.forEach(function(r){var o=(0,s.search)(r,e),i=o.h+o.depth;i<=n&&(t.push(o),console.log(t))})};t.length;){var o=r();if("object"===("undefined"==typeof o?"undefined":i(o)))return o.v}t.push(e),n++}}Object.defineProperty(t,"__esModule",{value:!0});var i="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol?"symbol":typeof e};t.AStar=r,t.IDAStar=o;var a=n(1),u=n(2),s=n(3)},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}function o(e,t){var n=e.childNodes,r=!0,a=!1,u=void 0;try{for(var s,c=n[Symbol.iterator]();!(r=(s=c.next()).done);r=!0){var l=s.value;3===l.nodeType?i(l,t):1===l.nodeType&&o(l,t)}}catch(f){a=!0,u=f}finally{try{!r&&c["return"]&&c["return"]()}finally{if(a)throw u}}}function i(e,t){var n=a(e.textContent);if(n){var r=document.createDocumentFragment();n.forEach(function(e){var n=void 0;e.expression?(n=document.createTextNode((0,u.getGetter)(e.expression)(t)),t._watchers.push(new s["default"](t,e.expression,function(e,t){n.textContent=e}))):n=document.createTextNode(e.value),r.appendChild(n)});var o=e.parentNode;o.replaceChild(r,e)}}function a(e){if(c.test(e)){for(var t=[],n=c.lastIndex=0,r=void 0,o=void 0;r=c.exec(e);){o=r.index,o>n&&t.push({value:e.slice(n,o)});var i=r[1];t.push({expression:i,value:i}),n=o+r[0].length}return n<e.length&&t.push({value:e.slice(n)}),t}}Object.defineProperty(t,"__esModule",{value:!0}),t.compile=o;var u=n(5),s=r(u),c=/\{\{((?:.|\n)+?)\}\}/g},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}function o(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function i(e,t){Object.defineProperty(e,t,{configurable:!0,enumerable:!0,get:function(){return e._data[t]},set:function(n){e._data[t]=n}})}Object.defineProperty(t,"__esModule",{value:!0});var a=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),u=n(10),s=n(7),c=n(5),l=r(c),f=function(){function e(){var t=this,n=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};o(this,e),this._data=n.data,this._watchers=[],this._target=n.target?document.querySelector(n.target):void 0,Object.keys(this._data).forEach(function(e){i(t,e)}),(0,u.observe)(this._data),this._target&&(0,s.compile)(this._target,this)}return a(e,[{key:"$watch",value:function(e,t){var n=new l["default"](this,e,t);this._watchers.push(n)}}]),e}();t["default"]=f},function(e,t){"use strict";function n(e,t,n){var r=void 0;switch(e){case"push":r=t;break;case"unshift":r=t;break;case"splice":r=t.slice(2)}r&&n.observeArray(r)}Object.defineProperty(t,"__esModule",{value:!0});var r=t.arrayMethods=Object.create(Array.prototype);["push","dequeue","shift","unshift","sort","reverse","splice"].forEach(function(e){var t=Array.prototype[e];Object.defineProperty(r,e,{enumerable:!1,writable:!0,configurable:!0,value:function(){var r=Array.from(arguments),o=t.apply(this,r),i=this.__ob__;return n(e,r,i),i.dep.notify(),o}})})},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}function o(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function i(e){if(e&&"object"===("undefined"==typeof e?"undefined":s(e))){var t=void 0;return e.hasOwnProperty("__ob__")&&e.__ob__ instanceof p?t=e.__ob__:Object.isExtensible(e)&&(t=new p(e)),t}}function a(e,t,n){var r=new f["default"],o=i(n);Object.defineProperty(e,t,{enumerable:!0,configurable:!0,get:function(){return f["default"].target&&(r.depend(),o&&o.dep.depend(),Array.isArray(n)&&n.forEach(function(e){e&&e.__ob__&&e.__ob__.dep.depend()})),n},set:function(e){e!==n&&(n=e,r.notify())}})}function u(e,t){e.__proto__=t}Object.defineProperty(t,"__esModule",{value:!0});var s="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol?"symbol":typeof e},c=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}();t.observe=i;var l=n(4),f=r(l),d=n(9),p=function(){function e(t){o(this,e),this.value=t,this.dep=new f["default"],Object.defineProperty(t,"__ob__",{value:this,enumerable:!1,writable:!0,configurable:!0}),Array.isArray(t)?(u(t,d.arrayMethods),this.observeArray(t)):this.walk(t)}return c(e,[{key:"walk",value:function(e){Object.keys(e).forEach(function(t){a(e,t,e[t])})}},{key:"observeArray",value:function(e){e.forEach(function(e){i(e)})}}]),e}()},function(e,t){"use strict";function n(e,t,n){return addEventListener?this.addEventListener(e.toLowerCase(),t,n):this["on"+e.toLowerCase()]=t,this}function r(e){return this.classList?this.classList.add(e):this.className+=" "+e,this}function o(e){return this.classList?this.classList.remove(e):this.className=this.className.replace(new RegExp("(^|\\b)"+e.split(" ").join("|")+"(\\b|Query)","gi")," "),this}function i(e){return this.classList?this.classList.contains(e):new RegExp("(^| )"+e+"( |$)","gi").test(this.className)}function a(e){return"undefined"==typeof e?this.textContent:void(this.textContent=e)}function u(e,t,n){return t=t instanceof Array?t:[t],new Promise(function(o,i){t.forEach(function(t){r.call(e,t)}),setTimeout(function(){o(e)},n)}).then(function(e){return t.forEach(function(t){o.call(e,t)}),e})}Object.defineProperty(t,"__esModule",{value:!0}),t.on=n,t.addClass=r,t.removeClass=o,t.hasClass=i,t.text=a,t.addClassTemp=u},function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var o=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),i=n(11),a={};t["default"]=function(e){return"string"==typeof e?a[e]?a[e]:a[e]=new u(e):e instanceof Element?new u(e):e===document?(document.on=i.on.bind(document),document):void 0};var u=function(){function e(t){r(this,e),"string"==typeof t?this.el=document.querySelector(t):t instanceof Element&&(this.el=t)}return o(e,[{key:"on",value:function(e,t,n){return i.on.call(this.el,e,t,n),this}},{key:"addClass",value:function(e){return i.addClass.apply(this.el,arguments),this}},{key:"removeClass",value:function(e){return i.removeClass.apply(this.el,arguments),this}},{key:"hasClass",value:function(e){return i.hasClass.apply(this.el,arguments)}},{key:"text",value:function(e){var t=i.text.apply(this.el,arguments);return"undefined"==typeof t&&(t=this),t}}]),e}()},function(e,t){"use strict";Object.defineProperty(t,"__esModule",{value:!0});t.Type={Unstarted:"UNSTARTED",Pending:"PENDING",Win:"WIN",Lose:"LOSE",Over:"OVER"},t.Img=[{name:"panda",url:{img:"./img/panda.jpg",bg:"./img/bg_gfpanda.jpg"}},{name:"overwatch",url:{img:"./img/img_overwatch.jpg",bg:"./img/bg_overwatch.jpg"}},{name:"zootopia",url:{img:"./img/img_zootopia.jpeg",bg:"./img/bg_zootopia.jpeg"}},{name:"baymax",url:{img:"./img/img_baymax.jpg",bg:"./img/bg_baymax.jpg"}}]},function(e,t){"use strict";function n(e,t){return Math.floor(Math.random()*(t-e+1)+e)}Object.defineProperty(t,"__esModule",{value:!0}),t.getRandomInt=n}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+/******/
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _index = __webpack_require__(1);
+	
+	var _index2 = _interopRequireDefault(_index);
+	
+	var _index3 = __webpack_require__(7);
+	
+	var _index4 = _interopRequireDefault(_index3);
+	
+	var _helper = __webpack_require__(9);
+	
+	var _dataStructure = __webpack_require__(11);
+	
+	var _type = __webpack_require__(13);
+	
+	var _selector = __webpack_require__(12);
+	
+	var _algorithm = __webpack_require__(14);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	/**
+	 *           That's Me!
+	 *              ↓ ↓
+	 * View <==> View-Model <==> Model
+	 */
+	var model = new _index2.default({
+	    target: '.container',
+	    data: {
+	        imgUrl: '',
+	        blockMap: Array.from(document.querySelectorAll('.block')).map(function (element, index) {
+	            return { element: element, correctIndex: index };
+	        }),
+	        startButton: 'Start!',
+	        gameState: _type.Type.Unstarted,
+	        isRunning: false,
+	        isWinner: false,
+	        time: 0,
+	        count: 0,
+	        message: 'Welcome to play the Puzzle!!',
+	        stepNumber: 15
+	    }
+	});
+	
+	var cache = {
+	    blankElement: document.querySelector('#blk-15'),
+	    loadingElement: document.querySelector('#loading'),
+	    btnElement: document.querySelector('#start'),
+	    selectorsElement: document.querySelector('.img-groups'),
+	    updater: _helper.update.bind(model)
+	};
+	
+	/****************************************************************
+	 View-Callbacks
+	 1. watch the variable of the model.
+	 2. call the callback when the variable change.
+	 3. then update the view by operating on the DOM node.
+	 ****************************************************************/
+	
+	/**
+	 * change the image.
+	 */
+	model.$watch('imgUrl', function (newValue, oldValue) {
+	    var img = new Image();
+	    var ctxArray = this.blockMap.map(function (object) {
+	        return object.element.getContext('2d');
+	    });
+	    img.src = newValue;
+	    img.onload = function () {
+	        (0, _helper.drawCanvas)(ctxArray, img);
+	    };
+	});
+	
+	/**
+	 * use the default image: KongFu Panda.
+	 * @type {string}
+	 */
+	model.imgUrl = './img/panda.jpg';
+	
+	/**
+	 * be reactive to the state of the game.
+	 */
+	model.$watch('gameState', function (newValue, oldValue) {
+	    var _this = this;
+	
+	    (function () {
+	        switch (newValue) {
+	            /**
+	             * When the game starts...
+	             */
+	            case _type.Type.Pending:
+	                _this.time = 0;
+	                _this.count = 0;
+	                _this.isWinner = false;
+	                _this.message = 'Game Starting...';
+	                cache.selectorsElement.classList.add('no-see');
+	                var timeUid = setInterval(function () {
+	                    if (_this.gameState === _type.Type.Pending) {
+	                        _this.time++;
+	                    } else clearInterval(timeUid);
+	                }, 1000);
+	                break;
+	        }
+	    })();
+	
+	    switch (oldValue) {
+	        /**
+	         * When the game over or give up.
+	         */
+	        case _type.Type.Pending:
+	            this.message = (this.isWinner ? 'Congratulations!' : 'Try your best.') + ' Time:' + this.time + ', Count:' + this.count;
+	            if (this.isWinner) {
+	                this.startButton = 'Start!';
+	                cache.selectorsElement.classList.remove('no-see');
+	            }
+	            this.time = 0;
+	            this.count = 0;
+	            break;
+	    }
+	});
+	
+	/**
+	 * watch the block moving. update the style.
+	 */
+	model.$watch('isRunning', function (isRunning) {
+	    if (isRunning) {
+	        cache.btnElement.classList.add('disable-click');
+	        cache.selectorsElement.classList.add('no-see');
+	    } else {
+	        cache.btnElement.classList.remove('disable-click');
+	    }
+	});
+	
+	/****************************************************************
+	 Event Handler
+	 ****************************************************************/
+	
+	/**
+	 * Move the block when it was clicked
+	 * if it is near the blank Block.
+	 */
+	(0, _index4.default)('.playground').on('click', function (e) {
+	    e.preventDefault();
+	    var getIndex = (0, _helper.getterFactory)(model.blockMap, _selector.selectElement);
+	    var nextDescriptor = (0, _helper.move)(getIndex(e.target), getIndex(cache.blankElement), model.blockMap);
+	    if (!nextDescriptor) return;
+	    _helper.update.call(model, nextDescriptor.state);
+	    if (model.blockMap.every(function (object, index) {
+	        return object.correctIndex === index;
+	    })) {
+	        model.isWinner = true;
+	        model.gameState = _type.Type.Unstarted;
+	    }
+	    if (model.gameState === _type.Type.Pending) {
+	        model.count++;
+	    }
+	});
+	
+	(0, _index4.default)('#start').on('click', function (e) {
+	    e.preventDefault();
+	    /**
+	     * refuse when the animate running.
+	     */
+	    if (model.isRunning) {
+	        return;
+	    }
+	    switch (model.gameState) {
+	        case _type.Type.Unstarted:
+	            /**
+	             * Mix the puzzle.
+	             * @type {string}
+	             */
+	            model.startButton = 'Mixing...';
+	            (0, _helper.mix)(model, cache.blankElement, cache.updater, _selector.selectElement).then(function () {
+	                model.isRunning = false;
+	                model.startButton = 'Give Up : (';
+	                model.gameState = _type.Type.Pending;
+	            });
+	            break;
+	
+	        case _type.Type.Pending:
+	            new Promise(function (resolve, reject) {
+	                model.gameState = _type.Type.Unstarted;
+	                model.startButton = 'Getting Solution...';
+	                cache.loadingElement.classList.remove('disable-see');
+	                var getIndex = (0, _helper.getterFactory)(model.blockMap, _selector.selectElement);
+	                setTimeout(function () {
+	                    /**
+	                     * Use Algorithm to solve the problem.
+	                     */
+	                    resolve((0, _algorithm.AStar)(new _dataStructure.Node(model.blockMap, getIndex(cache.blankElement), null)));
+	                }, 20);
+	            }).then(function (result) {
+	                /**
+	                 * Display the Solution.
+	                 */
+	                var path = [];
+	                var target = result;
+	                while (target.parentNode) {
+	                    path.push(target);
+	                    target = target.parentNode;
+	                }
+	
+	                return new Promise(function (resolve, reject) {
+	                    model.isRunning = true;
+	                    cache.loadingElement.classList.add('disable-see');
+	                    model.startButton = 'Recovering...';
+	                    (0, _helper.showSolutionAsync)(path, cache.updater, resolve);
+	                });
+	            }).then(function () {
+	                cache.selectorsElement.classList.remove('no-see');
+	                model.startButton = 'Try Again! : )';
+	                model.isRunning = false;
+	            });
+	            break;
+	    }
+	});
+	
+	/**
+	 * the image switcher.
+	 */
+	(0, _index4.default)('.img-groups').on('click', function (e) {
+	    e.preventDefault();
+	    if (model.gameState === _type.Type.Unstarted) {
+	        var currentImg = _type.Img.find(function (imageInfo) {
+	            return imageInfo.name === e.target.id;
+	        });
+	        if (currentImg) model.imgUrl = currentImg.url.img;
+	    }
+	});
+	
+	console.log(model);
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * myModel is a very very very tiny MVVM lib.
+	 *
+	 * @Updated 2016/10/14 Zhiyu He
+	 */
+	
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _index = __webpack_require__(2);
+	
+	var _compiler = __webpack_require__(5);
+	
+	var _watcher = __webpack_require__(6);
+	
+	var _watcher2 = _interopRequireDefault(_watcher);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Model = function () {
+	    function Model() {
+	        var _this = this;
+	
+	        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	
+	        _classCallCheck(this, Model);
+	
+	        this._data = options.data;
+	        this._watchers = [];
+	        this._target = options.target ? document.querySelector(options.target) : undefined;
+	        Object.keys(this._data).forEach(function (key) {
+	            proxy(_this, key);
+	        });
+	        (0, _index.observe)(this._data);
+	        if (this._target) (0, _compiler.compile)(this._target, this);
+	    }
+	
+	    /**
+	     * when the vale of the expression changes,
+	     * the callback would be called
+	     * callback example:
+	     *        (newValue, oldValue) => *, this <===> model
+	     * @param expOrFn {string|function}
+	     * @param callback {function}
+	     */
+	
+	
+	    _createClass(Model, [{
+	        key: '$watch',
+	        value: function $watch(expOrFn, callback) {
+	            var watcher = new _watcher2.default(this, expOrFn, callback);
+	            this._watchers.push(watcher);
+	        }
+	    }]);
+	
+	    return Model;
+	}();
+	
+	/**
+	 * proxy the properties
+	 * example:
+	 *      model.key <===> model._data.key
+	 * @param model {Model}
+	 * @param key {String}
+	 */
+	
+	
+	exports.default = Model;
+	function proxy(model, key) {
+	    Object.defineProperty(model, key, {
+	        configurable: true,
+	        enumerable: true,
+	        get: function get() {
+	            return model._data[key];
+	        },
+	        set: function set(newVal) {
+	            model._data[key] = newVal;
+	        }
+	    });
+	}
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	exports.observe = observe;
+	
+	var _dependency = __webpack_require__(3);
+	
+	var _dependency2 = _interopRequireDefault(_dependency);
+	
+	var _array = __webpack_require__(4);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Observer = function () {
+	    function Observer(value) {
+	        _classCallCheck(this, Observer);
+	
+	        this.value = value;
+	        this.dep = new _dependency2.default();
+	        Object.defineProperty(value, '__ob__', {
+	            value: this,
+	            enumerable: false,
+	            writable: true,
+	            configurable: true
+	        });
+	
+	        if (Array.isArray(value)) {
+	            augment(value, _array.arrayMethods);
+	            this.observeArray(value);
+	        } else this.walk(value);
+	    }
+	
+	    /**
+	     * travel all the props of the object, and set reactive props.
+	     * @param obj {object}
+	     */
+	
+	
+	    _createClass(Observer, [{
+	        key: 'walk',
+	        value: function walk(obj) {
+	            Object.keys(obj).forEach(function (key) {
+	                defineReactive(obj, key, obj[key]);
+	            });
+	        }
+	
+	        /**
+	         * Observe a list of Array items.
+	         * @param items {Array}
+	         */
+	
+	    }, {
+	        key: 'observeArray',
+	        value: function observeArray(items) {
+	            items.forEach(function (value) {
+	                observe(value);
+	            });
+	        }
+	    }]);
+	
+	    return Observer;
+	}();
+	
+	/**
+	 * observe a property and set a observer if the property doesn't own one;
+	 * @param value {object} the property that needs nextBlankTargetIndex be observed
+	 * @return {Observer|undefined} if it is a string or number, returns undefined
+	 */
+	
+	
+	function observe(value) {
+	    if (!value || (typeof value === 'undefined' ? 'undefined' : _typeof(value)) !== 'object') {
+	        return;
+	    }
+	    var ob = void 0;
+	    if (value.hasOwnProperty('__ob__') && value['__ob__'] instanceof Observer) {
+	        ob = value['__ob__'];
+	    } else if (Object.isExtensible(value)) {
+	        ob = new Observer(value);
+	    }
+	    return ob;
+	}
+	
+	/**
+	 * Make the prop reactified
+	 * @param obj {Object}
+	 * @param key {String}
+	 * @param val {*}
+	 * @return {*}
+	 */
+	function defineReactive(obj, key, val) {
+	    var dep = new _dependency2.default();
+	
+	    var childObserver = observe(val);
+	
+	    Object.defineProperty(obj, key, {
+	        enumerable: true,
+	        configurable: true,
+	        get: function get() {
+	            if (_dependency2.default.target) {
+	                dep.depend();
+	                if (childObserver) {
+	                    childObserver.dep.depend();
+	                }
+	                if (Array.isArray(val)) {
+	                    val.forEach(function (item) {
+	                        item && item['__ob__'] && item['__ob__'].dep.depend();
+	                    });
+	                }
+	            }
+	            return val;
+	        },
+	        set: function set(newVal) {
+	            if (newVal === val) return;
+	            val = newVal;
+	            dep.notify();
+	        }
+	    });
+	}
+	
+	function augment(target, src) {
+	    target.__proto__ = src;
+	}
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	exports.pushTarget = pushTarget;
+	exports.popTarget = popTarget;
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var uid = 0;
+	
+	/**
+	 * 订阅者模式
+	 */
+	
+	var Dependency = function () {
+	    function Dependency() {
+	        _classCallCheck(this, Dependency);
+	
+	        this.id = uid++;
+	        this.subs = [];
+	    }
+	
+	    _createClass(Dependency, [{
+	        key: 'addSub',
+	        value: function addSub(sub) {
+	            this.subs.push(sub);
+	        }
+	
+	        /**
+	         * 通知依赖
+	         * 这样Watcher就可以知道所维护的值需要依赖于哪些Model里面的其他值
+	         */
+	
+	    }, {
+	        key: 'depend',
+	        value: function depend() {
+	            if (Dependency.target) {
+	                Dependency.target.addDependency(this);
+	            }
+	        }
+	
+	        /**
+	         * 广播更新
+	         */
+	
+	    }, {
+	        key: 'notify',
+	        value: function notify() {
+	            var subs = this.subs.slice();
+	            subs.forEach(function (sub) {
+	                sub.update();
+	            });
+	        }
+	    }]);
+	
+	    return Dependency;
+	}();
+	
+	/**
+	 * 该依赖的全局监视者
+	 */
+	
+	
+	exports.default = Dependency;
+	Dependency.target = null;
+	
+	var targetStack = [];
+	
+	/**
+	 * 全局每次更新只能有一个监视者更新, 使用栈维护
+	 * @param _target {Watcher}
+	 */
+	function pushTarget(_target) {
+	    if (Dependency.target) targetStack.push(Dependency.target);
+	    Dependency.target = _target;
+	}
+	
+	function popTarget() {
+	    Dependency.target = targetStack.pop();
+	}
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	/**
+	 * []
+	 * @type {Array}
+	 */
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var arrayMethods = exports.arrayMethods = Object.create(Array.prototype);
+	
+	['push', 'dequeue', 'shift', 'unshift', 'sort', 'reverse', 'splice'].forEach(function (methodName) {
+	    var original = Array.prototype[methodName];
+	    Object.defineProperty(arrayMethods, methodName, {
+	        enumerable: false,
+	        writable: true,
+	        configurable: true,
+	        value: function value() {
+	            var args = Array.from(arguments);
+	            var result = original.apply(this, args);
+	            var observer = this['__ob__'];
+	            observeNewItems(methodName, args, observer);
+	            observer.dep.notify();
+	            return result;
+	        }
+	    });
+	});
+	
+	function observeNewItems(methodName, args, observer) {
+	    var inserted = undefined;
+	    switch (methodName) {
+	        case 'push':
+	            inserted = args;
+	            break;
+	        case 'unshift':
+	            inserted = args;
+	            break;
+	        case 'splice':
+	            inserted = args.slice(2);
+	            break;
+	    }
+	    if (inserted) {
+	        observer.observeArray(inserted);
+	    }
+	}
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.compile = compile;
+	
+	var _watcher = __webpack_require__(6);
+	
+	var _watcher2 = _interopRequireDefault(_watcher);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function compile(element, model) {
+	    var nodeList = element.childNodes;
+	    var _iteratorNormalCompletion = true;
+	    var _didIteratorError = false;
+	    var _iteratorError = undefined;
+	
+	    try {
+	        for (var _iterator = nodeList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	            var node = _step.value;
+	
+	            if (node.nodeType === 3) {
+	                compileTextNode(node, model);
+	            } else if (node.nodeType === 1) {
+	                compile(node, model);
+	            }
+	        }
+	    } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion && _iterator.return) {
+	                _iterator.return();
+	            }
+	        } finally {
+	            if (_didIteratorError) {
+	                throw _iteratorError;
+	            }
+	        }
+	    }
+	}
+	
+	var tagRE = /\{\{((?:.|\n)+?)\}\}/g;
+	
+	function compileTextNode(textNode, model) {
+	    var tokens = parseText(textNode.textContent);
+	    if (!tokens) return;
+	    var frag = document.createDocumentFragment();
+	    tokens.forEach(function (obj) {
+	        var ele = void 0;
+	        if (obj.expression) {
+	            ele = document.createTextNode((0, _watcher.getGetter)(obj.expression)(model));
+	            model._watchers.push(new _watcher2.default(model, obj.expression, function (newValue, oldValue) {
+	                ele.textContent = newValue;
+	            }));
+	        } else {
+	            ele = document.createTextNode(obj.value);
+	        }
+	        frag.appendChild(ele);
+	    });
+	
+	    var parentNode = textNode.parentNode;
+	    parentNode.replaceChild(frag, textNode);
+	}
+	
+	function parseText(text) {
+	    if (!tagRE.test(text)) return;
+	
+	    var tokens = [];
+	    var lastIndex = tagRE.lastIndex = 0;
+	    var match = void 0,
+	        index = void 0;
+	    while (match = tagRE.exec(text)) {
+	        index = match.index;
+	        // push text token
+	        if (index > lastIndex) {
+	            tokens.push({
+	                value: text.slice(lastIndex, index)
+	            });
+	        }
+	        // tag token
+	        var exp = match[1];
+	        tokens.push({
+	            expression: exp,
+	            value: exp
+	        });
+	        lastIndex = index + match[0].length;
+	    }
+	    if (lastIndex < text.length) {
+	        tokens.push({
+	            value: text.slice(lastIndex)
+	        });
+	    }
+	    return tokens;
+	}
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	exports.getGetter = getGetter;
+	
+	var _dependency = __webpack_require__(3);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	/**
+	 * Watcher will call the callback when the value of the expression changes!
+	 */
+	var Watcher = function () {
+	    /**
+	     * @constructor
+	     * @param model {model}
+	     * @param expOrFn {string|function}
+	     * @param callback {function}
+	     */
+	    function Watcher(model, expOrFn, callback) {
+	        _classCallCheck(this, Watcher);
+	
+	        this.callback = callback;
+	        this.model = model;
+	
+	        this.newDepIds = new Set();
+	        this.newDeps = [];
+	        this._getter = getGetter(expOrFn);
+	        this.value = this.get();
+	    }
+	
+	    /**
+	     * get the value of the expression and collects the dep!
+	     * @return {*}
+	     */
+	
+	
+	    _createClass(Watcher, [{
+	        key: 'get',
+	        value: function get() {
+	            (0, _dependency.pushTarget)(this);
+	            var value = this._getter.call(this.model, this.model); // collects the deps!
+	            (0, _dependency.popTarget)();
+	            return value;
+	        }
+	
+	        /**
+	         * add dependency for the watcher
+	         * @param dep {Dependency}
+	         */
+	
+	    }, {
+	        key: 'addDependency',
+	        value: function addDependency(dep) {
+	            var id = dep.id;
+	            if (!this.newDepIds.has(id)) {
+	                this.newDepIds.add(id);
+	                this.newDeps.push(dep);
+	                dep.addSub(this);
+	            }
+	        }
+	    }, {
+	        key: 'update',
+	        value: function update() {
+	            this.run();
+	            return this;
+	        }
+	
+	        /**
+	         * run the callback to update the value
+	         */
+	
+	    }, {
+	        key: 'run',
+	        value: function run() {
+	            var value = this.get();
+	            if (value !== this.value || (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object') {
+	                var oldValue = this.value;
+	                this.value = value;
+	                this.callback.call(this.model, value, oldValue);
+	            }
+	        }
+	    }]);
+	
+	    return Watcher;
+	}();
+	
+	/**
+	 * get the getter function of the expression after parsing.
+	 * @param expOrFn {string|Function}
+	 * @return {function}
+	 */
+	
+	
+	exports.default = Watcher;
+	function getGetter(expOrFn) {
+	    var getter = function getter() {
+	        // do nothing..
+	    };
+	    if (typeof expOrFn === 'function') {
+	        getter = expOrFn;
+	    } else if (typeof expOrFn === 'string') {
+	        getter = new Function('model', 'return model.' + expOrFn + ';');
+	    } else {
+	        console.warn(expOrFn + ' fail to parse!!');
+	    }
+	    return getter;
+	}
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * myQuery is just like jQuery.
+	 * but it has only the event related, class related functions.
+	 *
+	 * @Updated 2016/10/14 Zhiyu He
+	 */
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _helper = __webpack_require__(8);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var cache = {};
+	
+	/**
+	 * a tiny small Query just like jQuery 2333
+	 * @param DOMSelector {string|document|Element}
+	 * @return {*}
+	 */
+	
+	exports.default = function (DOMSelector) {
+	    if (typeof DOMSelector === 'string') {
+	        if (cache[DOMSelector]) {
+	            return cache[DOMSelector];
+	        } else {
+	            return cache[DOMSelector] = new HzyElement(DOMSelector);
+	        }
+	    } else if (DOMSelector instanceof Element) {
+	        return new HzyElement(DOMSelector);
+	    } else if (DOMSelector === document) {
+	        document.on = _helper.on.bind(document);
+	        return document;
+	    }
+	};
+	
+	var HzyElement = function () {
+	    function HzyElement(DOMSelector) {
+	        _classCallCheck(this, HzyElement);
+	
+	        if (typeof DOMSelector === 'string') this.el = document.querySelector(DOMSelector);else if (DOMSelector instanceof Element) {
+	            this.el = DOMSelector;
+	        }
+	    }
+	
+	    /**
+	     * Event binding
+	     * @param EventName {string}
+	     * @param callback {function}
+	     * @param isCapture {boolean}
+	     * @return {HzyElement}
+	     */
+	
+	
+	    _createClass(HzyElement, [{
+	        key: 'on',
+	        value: function on(EventName, callback, isCapture) {
+	            _helper.on.call(this.el, EventName, callback, isCapture);
+	            return this;
+	        }
+	
+	        /**
+	         * add a class nextBlankTargetIndex the DOM
+	         * @param className {string}
+	         * @return {HzyElement}
+	         */
+	
+	    }, {
+	        key: 'addClass',
+	        value: function addClass(className) {
+	            _helper.addClass.apply(this.el, arguments);
+	            return this;
+	        }
+	
+	        /**
+	         * remove a class
+	         * @param className {string}
+	         * @return {HzyElement}
+	         */
+	
+	    }, {
+	        key: 'removeClass',
+	        value: function removeClass(className) {
+	            _helper.removeClass.apply(this.el, arguments);
+	            return this;
+	        }
+	
+	        /**
+	         * check has class
+	         * @param className {string}
+	         * @return {boolean}
+	         */
+	
+	    }, {
+	        key: 'hasClass',
+	        value: function hasClass(className) {
+	            return _helper.hasClass.apply(this.el, arguments);
+	        }
+	
+	        /**
+	         * get/set text
+	         * @param newText
+	         * @return {*}
+	         */
+	
+	    }, {
+	        key: 'text',
+	        value: function text(newText) {
+	            var result = _helper.text.apply(this.el, arguments);
+	            if (typeof result === 'undefined') {
+	                result = this;
+	            }
+	            return result;
+	        }
+	    }]);
+
+	    return HzyElement;
+	}();
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	/**
+	 * add events
+	 * @param EventName {string}
+	 * @param callback {function}
+	 * @param isCapture {boolean}
+	 * @return {object} the context of the function: this.
+	 */
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.on = on;
+	exports.addClass = addClass;
+	exports.removeClass = removeClass;
+	exports.hasClass = hasClass;
+	exports.text = text;
+	exports.addClassTemp = addClassTemp;
+	function on(EventName, callback, isCapture) {
+	    if (addEventListener) {
+	        this.addEventListener(EventName.toLowerCase(), callback, isCapture);
+	    } else {
+	        this['on' + EventName.toLowerCase()] = callback;
+	    }
+	    return this;
+	}
+	
+	/**
+	 * add a class nextBlankTargetIndex the DOM
+	 * @param className {string}
+	 * @return this
+	 */
+	function addClass(className) {
+	    if (this.classList) this.classList.add(className);else this.className += ' ' + className;
+	    return this;
+	}
+	
+	/**
+	 * remove a class
+	 * @param className {string}
+	 * @return this
+	 */
+	function removeClass(className) {
+	    if (this.classList) this.classList.remove(className);else this.className = this.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|Query)', 'gi'), ' ');
+	    return this;
+	}
+	
+	/**
+	 * check has class
+	 * @param className {string}
+	 * @return this
+	 */
+	function hasClass(className) {
+	    if (this.classList) return this.classList.contains(className);else return new RegExp('(^| )' + className + '( |$)', 'gi').test(this.className);
+	}
+	
+	/**
+	 * get/set text
+	 * @param newText
+	 * @return {*}
+	 */
+	function text(newText) {
+	    if (typeof newText === 'undefined') {
+	        return this.textContent;
+	    }
+	    this.textContent = newText;
+	    return undefined;
+	}
+	
+	/**
+	 * AddClass in a time
+	 * @param ele {HTMLElement}
+	 * @param className {string}
+	 * @param time {number} ms
+	 */
+	function addClassTemp(ele, className, time) {
+	    className = className instanceof Array ? className : [className];
+	    return new Promise(function (resolve, reject) {
+	        className.forEach(function (klass) {
+	            addClass.call(ele, klass);
+	        });
+	        setTimeout(function () {
+	            resolve(ele);
+	        }, time);
+	    }).then(function (ele) {
+	        className.forEach(function (klass) {
+	            removeClass.call(ele, klass);
+	        });
+	        return ele;
+	    });
+	}
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.move = move;
+	exports.search = search;
+	exports.randomlySelectAndMoveAsync = randomlySelectAndMoveAsync;
+	exports.update = update;
+	exports.getNeighbours = getNeighbours;
+	exports.getNeighboursIndex = getNeighboursIndex;
+	exports.getterFactory = getterFactory;
+	exports.getSample = getSample;
+	exports.showSolutionAsync = showSolutionAsync;
+	exports.drawCanvas = drawCanvas;
+	exports.mix = mix;
+	
+	var _util = __webpack_require__(10);
+	
+	var _dataStructure = __webpack_require__(11);
+	
+	/***********************************************************
+	 Public Helper Function
+	 ***********************************************************/
+	
+	/**
+	 *
+	 * @param targetIndex {number}
+	 * @param blankTargetIndex {number}
+	 * @param map {{element:Element,correctIndex:number}[] | number[]}
+	 * @return {Node}
+	 */
+	function move(targetIndex, blankTargetIndex, map) {
+	    if (getNeighboursIndex(targetIndex).some(function (neighboursIndex) {
+	        return neighboursIndex === blankTargetIndex;
+	    })) {
+	        var nextMap = map.slice();
+	        var _ref = [map[blankTargetIndex], map[targetIndex]];
+	        nextMap[targetIndex] = _ref[0];
+	        nextMap[blankTargetIndex] = _ref[1];
+	
+	        return {
+	            state: nextMap,
+	            blankTargetIndex: targetIndex,
+	            parentState: map
+	        };
+	    }
+	}
+	
+	function search(targetIndex, currentNode) {
+	    var subNode = move(targetIndex, currentNode.blankTargetIndex, currentNode.state);
+	    return new _dataStructure.Node(subNode.state, subNode.blankTargetIndex, currentNode);
+	}
+	
+	/**
+	 * baffle the blocks.
+	 * @param times {number} the times.
+	 * @param speed {number} the speed of the block when moving. (ms)
+	 * @param resolve {function} promise resolve
+	 * @return {function}
+	 */
+	function randomlySelectAndMoveAsync(times, speed, resolve) {
+	    times--;
+	    /**
+	     * randomly move the blank block
+	     * @param preTargetIndex {number} the index of element that will be ignore in the next randomly move.
+	     * @param blankTargetIndex {number} the blank object in the map.
+	     * @param map {Array} the state.
+	     * @param updater {function} update the view if called.
+	     */
+	    function randomlyMove(preTargetIndex, blankTargetIndex, map, updater) {
+	        var targetIndex = getSample(getNeighboursIndex(blankTargetIndex).filter(function (index) {
+	            return index !== preTargetIndex;
+	        }));
+	        var nextDescriptor = move(targetIndex, blankTargetIndex, map);
+	        updater(nextDescriptor.state);
+	
+	        if (times) {
+	            setTimeout(function () {
+	                times--;
+	                randomlyMove(blankTargetIndex, nextDescriptor.blankTargetIndex, nextDescriptor.state, updater);
+	            }, speed);
+	        } else {
+	            resolve(nextDescriptor);
+	        }
+	    }
+	
+	    return randomlyMove;
+	}
+	
+	/**
+	 * Update the view according nextBlankTargetIndex the descriptor.
+	 * @param nextState
+	 */
+	function update(nextState) {
+	    var patches = diff(nextState, this.blockMap);
+	    render(patches, nextState);
+	    this.blockMap = nextState;
+	}
+	
+	/**
+	 *
+	 * @param targetIndex {number}
+	 * @param map
+	 * @return {Array}
+	 */
+	function getNeighbours(targetIndex, map) {
+	    return [{ X: 0, Y: -1 }, // up
+	    { X: 1, Y: 0 }, // right
+	    { X: 0, Y: 1 }, // down
+	    { X: -1, Y: 0 } // left
+	    ].map(function (offset) {
+	        return {
+	            X: targetIndex % 4 + offset.X,
+	            Y: Math.floor(targetIndex / 4) + offset.Y
+	        };
+	    }).filter(function (position) {
+	        return position.X >= 0 && position.X < 4 && position.Y >= 0 && position.Y < 4;
+	    }).map(function (position) {
+	        return map[position.X + position.Y * 4];
+	    });
+	}
+	
+	function getNeighboursIndex(targetIndex) {
+	    return [{ X: 0, Y: -1 }, // up
+	    { X: 1, Y: 0 }, // right
+	    { X: 0, Y: 1 }, // down
+	    { X: -1, Y: 0 } // left
+	    ].map(function (offset) {
+	        return {
+	            X: targetIndex % 4 + offset.X,
+	            Y: Math.floor(targetIndex / 4) + offset.Y
+	        };
+	    }).filter(function (position) {
+	        return position.X >= 0 && position.X < 4 && position.Y >= 0 && position.Y < 4;
+	    }).map(function (position) {
+	        return position.Y * 4 + position.X;
+	    });
+	}
+	
+	function getterFactory(map, selector) {
+	    return function (target) {
+	        return map.map(selector).findIndex(function (object) {
+	            return object === target;
+	        });
+	    };
+	}
+	
+	function getSample(array) {
+	    return array[(0, _util.getRandomInt)(0, array.length - 1)];
+	}
+	
+	/***********************************************************
+	 Private Helper Function
+	 ***********************************************************/
+	
+	/**
+	 * Show the difference between the new map and the old map.
+	 * @param newMap {Array}
+	 * @param oldMap {Array}
+	 * @return {Array} tokens.
+	 */
+	function diff(newMap, oldMap) {
+	    var tokens = [];
+	    newMap.forEach(function (newObject, index) {
+	        var oldObject = oldMap[index];
+	        if (newObject.correctIndex !== oldObject.correctIndex) {
+	            tokens.push({
+	                before: oldObject.correctIndex,
+	                after: newObject.correctIndex,
+	                index: index
+	            });
+	        }
+	    });
+	    return tokens;
+	}
+	
+	function render(patches, map) {
+	    patches.forEach(function (patch) {
+	        var target = map[patch.index].element;
+	        target.className = target.className.replace(/order-\d*/, 'order-' + patch.index);
+	    });
+	}
+	
+	function showSolutionAsync(path, updater, resolve) {
+	    if (path.length) {
+	        updater(path.pop().state);
+	        setTimeout(function () {
+	            showSolutionAsync(path, updater, resolve);
+	        }, 120);
+	    } else {
+	        resolve(path);
+	    }
+	}
+	
+	function drawCanvas(canvasContextArray, image) {
+	    canvasContextArray.forEach(function (ctx, index) {
+	        ctx.drawImage(image, index % 4 * (image.width / 4), Math.floor(index / 4) * (image.height / 4), image.width / 4, image.height / 4, 0, 0, 100, 100);
+	    });
+	    var last = canvasContextArray[canvasContextArray.length - 1];
+	    last.fillStyle = 'rgba(120, 120, 120, 0.7)';
+	    last.fillRect(0, 0, 100, 100);
+	}
+	
+	function mix(model, blankElement, updater, selector) {
+	    var getElementIndex = getterFactory(model.blockMap, selector);
+	    var targetIndex = [blankElement, getElementIndex, getNeighboursIndex, getSample].reduce(function (value, wrapper) {
+	        return wrapper(value);
+	    });
+	    return new Promise(function (resolve, reject) {
+	        model.isRunning = true;
+	        randomlySelectAndMoveAsync(model.stepNumber, 120, resolve)(targetIndex, getElementIndex(blankElement), model.blockMap, updater);
+	    });
+	}
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.getRandomInt = getRandomInt;
+	function getRandomInt(min, max) {
+	    return Math.floor(Math.random() * (max - min + 1) + min);
+	}
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.PriorityQueue = exports.Node = undefined;
+	
+	var _selector = __webpack_require__(12);
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Node =
+	/**
+	 *
+	 * @param state {Array}
+	 * @param blankTargetIndex {Number}
+	 * @param parentNode {Node}
+	 */
+	exports.Node = function Node(state, blankTargetIndex, parentNode) {
+	    _classCallCheck(this, Node);
+	
+	    this.state = state;
+	    this.blankTargetIndex = blankTargetIndex;
+	    this.parentNode = parentNode;
+	    this.depth = parentNode !== null ? parentNode.depth + 1 : 0;
+	    this.h = this.state.map(_selector.selectNumber).map(function (number, index) {
+	        return Math.abs(number % 4 - index % 4) + Math.abs(number >> 2 - index >> 2);
+	    }).reduce(function (left, right) {
+	        return left + right;
+	    }, 0);
+	};
+	
+	var PriorityQueue = exports.PriorityQueue = function (_Array) {
+	    _inherits(PriorityQueue, _Array);
+	
+	    function PriorityQueue(compare) {
+	        _classCallCheck(this, PriorityQueue);
+	
+	        var _this = _possibleConstructorReturn(this, (PriorityQueue.__proto__ || Object.getPrototypeOf(PriorityQueue)).call(this));
+	
+	        _this.push(null);
+	        _this.compare = compare;
+	
+	        /**
+	         * push
+	         * @param item {*}
+	         */
+	        _this.enqueue = function (item) {
+	            this.push(item);
+	
+	            var currentIndex = this.length - 1;
+	            while (currentIndex > 1) {
+	                var parentIndex = currentIndex >> 1;
+	                if (this.compare(this[currentIndex], this[parentIndex]) < 0) {
+	                    swap(this, parentIndex, currentIndex);
+	                } else {
+	                    break;
+	                }
+	                currentIndex = parentIndex;
+	            }
+	        };
+	
+	        /**
+	         * Pop
+	         * @return {*}
+	         */
+	        _this.dequeue = function () {
+	            var _this2 = this;
+	
+	            var TopItem = this[1];
+	            this[1] = this.pop();
+	            if (this.length === 2) {
+	                this.pop();
+	            }
+	
+	            var Q = [1];
+	
+	            var _loop = function _loop() {
+	                var parentIndex = Q.shift();
+	                var minChildIndex = parentIndex;
+	
+	                var childIndexArray = [parentIndex << 1, parentIndex << 1 | 1];
+	                childIndexArray.filter(function (childIndex) {
+	                    return childIndex < _this2.length;
+	                }).forEach(function (childIndex) {
+	                    if (_this2.compare(_this2[childIndex], _this2[minChildIndex]) < 0) {
+	                        minChildIndex = childIndex;
+	                    }
+	                });
+	
+	                if (parentIndex !== minChildIndex) {
+	                    swap(_this2, parentIndex, minChildIndex);
+	                    Q.push(minChildIndex);
+	                }
+	            };
+	
+	            while (Q.length) {
+	                _loop();
+	            }
+	            return TopItem;
+	        };
+	
+	        /**
+	         * is empty?
+	         * @return {boolean}
+	         */
+	        _this.empty = function () {
+	            return this.length <= 1;
+	        };
+	        return _this;
+	    }
+	
+	    return PriorityQueue;
+	}(Array);
+	
+	function swap(array, leftIndex, rightIndex) {
+	    var temp = array[leftIndex];
+	    array[leftIndex] = array[rightIndex];
+	    array[rightIndex] = temp;
+	}
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var selectElement = exports.selectElement = function selectElement(o) {
+	  return o.element;
+	};
+	var selectNumber = exports.selectNumber = function selectNumber(o) {
+	  return o.correctIndex;
+	};
+	var selectOriginal = exports.selectOriginal = function selectOriginal(o) {
+	  return o;
+	};
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	/**
+	 * The State constant of the game.
+	 * @type {{Unstarted: string, Pending: string, Win: string, Lose: string, Over: string}}
+	 */
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var Type = exports.Type = {
+	    Unstarted: 'UNSTARTED',
+	    Pending: 'PENDING',
+	    Win: 'WIN',
+	    Lose: 'LOSE',
+	    Over: 'OVER'
+	};
+	
+	var Img = exports.Img = [{
+	    name: 'panda',
+	    url: {
+	        img: './img/panda.jpg',
+	        bg: './img/bg_gfpanda.jpg'
+	    }
+	}, {
+	    name: 'overwatch',
+	    url: {
+	        img: './img/img_overwatch.jpg',
+	        bg: './img/bg_overwatch.jpg'
+	    }
+	}, {
+	    name: 'zootopia',
+	    url: {
+	        img: './img/img_zootopia.jpeg',
+	        bg: './img/bg_zootopia.jpeg'
+	    }
+	}, {
+	    name: 'baymax',
+	    url: {
+	        img: './img/img_baymax.jpg',
+	        bg: './img/bg_baymax.jpg'
+	    }
+	}];
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
+	exports.AStar = AStar;
+	exports.IDAStar = IDAStar;
+	
+	var _dataStructure = __webpack_require__(11);
+	
+	var _selector = __webpack_require__(12);
+	
+	var _helper = __webpack_require__(9);
+	
+	/**
+	 * A* Algorithm
+	 * based on BFS with a function f to give an standard to choice
+	 * which node is the best when getting next state.
+	 * @param rootNode {Node} the root node. (Current State)
+	 * @return {undefined|Node} the last node
+	 */
+	function AStar(rootNode) {
+	    var PQ = new _dataStructure.PriorityQueue(function (left, right) {
+	        return 5 * (left.h - right.h) + left.depth - right.depth;
+	    });
+	    PQ.enqueue(rootNode);
+	    var S = new Set();
+	    console.time('AStar算法用时');
+	
+	    var _loop = function _loop() {
+	        var currentNode = PQ.dequeue();
+	        if (currentNode.state.map(_selector.selectNumber).every(function (object, index) {
+	            return object === index;
+	        })) {
+	            console.timeEnd('AStar算法用时');
+	            return {
+	                v: currentNode
+	            };
+	        }
+	
+	        var neighbours = (0, _helper.getNeighboursIndex)(currentNode.blankTargetIndex);
+	        neighbours.forEach(function (targetIndex) {
+	            var nextNode = (0, _helper.search)(targetIndex, currentNode);
+	            var signature = nextNode.state.map(_selector.selectNumber).toString();
+	            if (!S.has(signature)) {
+	                PQ.enqueue(nextNode);
+	                S.add(signature);
+	            }
+	        });
+	    };
+	
+	    while (!PQ.empty()) {
+	        var _ret = _loop();
+	
+	        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	    }
+	}
+	
+	/**
+	 * Iterative Deepening A*
+	 * @param rootNode {Node}
+	 * @return {*}
+	 * @constructor
+	 */
+	function IDAStar(rootNode) {
+	    var Stack = [rootNode];
+	    var bound = rootNode.h;
+	    console.time('IDAStar');
+	    while (bound) {
+	        var _loop2 = function _loop2() {
+	            var currentNode = Stack.pop();
+	            if (currentNode.state.map(_selector.selectNumber).every(function (object, index) {
+	                return object === index;
+	            })) {
+	                console.timeEnd('IDAStar');
+	                return {
+	                    v: currentNode
+	                };
+	            }
+	
+	            var neighbours = (0, _helper.getNeighboursIndex)(currentNode.blankTargetIndex);
+	            neighbours.forEach(function (targetIndex) {
+	                var nextNode = (0, _helper.search)(targetIndex, currentNode);
+	                var cost = nextNode.h + nextNode.depth;
+	                if (cost <= bound) {
+	                    Stack.push(nextNode);
+	                    console.log(Stack);
+	                }
+	            });
+	        };
+	
+	        while (Stack.length) {
+	            var _ret2 = _loop2();
+	
+	            if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
+	        }
+	        Stack.push(rootNode);
+	        bound++;
+	    }
+	}
+
+/***/ }
+/******/ ]);
 //# sourceMappingURL=bundle.js.map

@@ -13,7 +13,7 @@ import {search, getNeighboursIndex} from './helper.js';
  */
 export function AStar(rootNode) {
     const PQ = new PriorityQueue((left, right) => {
-        return (4 * left.h + left.depth) - (4 * right.h + right.depth);
+        return 5 * (left.h - right.h) + left.depth - right.depth;
     });
     PQ.enqueue(rootNode);
     const S = new Set();

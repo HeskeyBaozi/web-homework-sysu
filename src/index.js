@@ -34,7 +34,7 @@ const model = new Model({
         time: 0,
         count: 0,
         message: 'Welcome to play the Puzzle!!',
-        stepNumber: 20
+        stepNumber: 15
     }
 });
 
