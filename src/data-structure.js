@@ -27,7 +27,7 @@ export class Node {
  * @return {number}
  */
 function computeH(distanceObject) {
-    return (distanceObject.manhatten * 2 + distanceObject.geometric) * 2;
+    return (distanceObject.manhatten * 6 + distanceObject.geometric * 3);
 }
 
 /**

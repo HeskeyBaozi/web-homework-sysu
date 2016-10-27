@@ -12,21 +12,25 @@ import {search, getNeighboursIndex, isSolved} from './helper.js';
  * @return {Node|undefined} the last node
  */
 export function AStar(rootNode) {
-        const PQ = new PriorityQueue(compare);
-        const S = new Set();
-        PQ.enqueue(rootNode);
-        console.time('AStar算法用时');
+    const [PQ, S] = initializeAlgorithm(rootNode);
+    while (!PQ.empty()) {
+        const currentNode = PQ.dequeue();
+        if (isSolved(currentNode.state)) return currentNode;
+        getNeighboursIndex(currentNode.blankTargetIndex)
+            .forEach(targetIndex => tryInsertToSet(search(targetIndex, currentNode), S, PQ));
+    }
+}
 
-        while (!PQ.empty()) {
-            const currentNode = PQ.dequeue();
-            if (isSolved(currentNode.state)) {
-                console.timeEnd('AStar算法用时');
-                return currentNode;
-            }
-
-            getNeighboursIndex(currentNode.blankTargetIndex)
-                .forEach(targetIndex => tryInsertToSet(search(targetIndex, currentNode), S, PQ));
-        }
+/**
+ * initialize the algorithm.
+ * @param rootNode
+ * @return {*[]}
+ */
+function initializeAlgorithm(rootNode) {
+    const PQ = new PriorityQueue(compare);
+    const S = new Set();
+    PQ.enqueue(rootNode);
+    return [PQ, S];
 }
 
 /**

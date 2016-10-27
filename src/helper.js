@@ -1,6 +1,5 @@
 'use strict';
 
-import {getRandomInt} from './util.js';
 import {Node} from './data-structure.js';
 import _ from 'lodash';
 
@@ -18,20 +17,19 @@ import _ from 'lodash';
 export function move(targetIndex, blankTargetIndex, map) {
     if (getNeighboursIndex(targetIndex)
             .some(neighboursIndex => neighboursIndex === blankTargetIndex)) {
-        const nextMap = map.slice();
-        [
-            nextMap[targetIndex],
-            nextMap[blankTargetIndex]
-        ] = [
-            map[blankTargetIndex],
-            map[targetIndex]
-        ];
         return {
-            state: nextMap,
+            state: getNextMap(map, targetIndex, blankTargetIndex),
             blankTargetIndex: targetIndex,
             parentState: map
         }
     }
+}
+
+function getNextMap(map, targetIndex, blankTargetIndex) {
+    const nextMap = _.clone(map);
+    nextMap[targetIndex] = map[blankTargetIndex];
+    nextMap[blankTargetIndex] = map[targetIndex];
+    return nextMap;
 }
 
 export function search(targetIndex, currentNode) {
@@ -47,31 +45,17 @@ export function search(targetIndex, currentNode) {
  * @return {function}
  */
 export function randomlySelectAndMoveAsync(times, speed, resolve) {
-    times--;
-    /**
-     * randomly move the blank block
-     * @param preTargetIndex {number} the index of element that will be ignore in the next randomly move.
-     * @param blankTargetIndex {number} the blank object in the map.
-     * @param map {Array} the state.
-     * @param updater {function} update the view if called.
-     */
-    function randomlyMove(preTargetIndex, blankTargetIndex, map, updater) {
+    return function randomlyMove(preTargetIndex, blankTargetIndex, map, updater) {
         const targetIndex = _.sample(getNeighboursIndex(blankTargetIndex).filter(index => index !== preTargetIndex));
         const nextDescriptor = move(targetIndex, blankTargetIndex, map);
         updater(nextDescriptor.state);
-
-        if (times) {
-            setTimeout(() => {
-                times--;
-                randomlyMove(blankTargetIndex, nextDescriptor.blankTargetIndex, nextDescriptor.state, updater);
-            }, speed);
-        } else {
+        if (times--)
+            _.delay(() => randomlyMove(blankTargetIndex, nextDescriptor.blankTargetIndex, nextDescriptor.state, updater), speed);
+        else
             resolve(nextDescriptor);
-        }
-    }
-
-    return randomlyMove;
+    };
 }
+
 
 /**
  * Update the view according nextBlankTargetIndex the descriptor.
@@ -89,18 +73,10 @@ export function update(nextState) {
  * @return {Array}
  */
 export function getNeighboursIndex(targetIndex) {
-    return [
-        {X: 0, Y: -1}, // up
-        {X: 1, Y: 0}, // right
-        {X: 0, Y: 1}, // down
-        {X: -1, Y: 0} // left
-    ].map(offset => ({
-        X: targetIndex % 4 + offset.X,
-        Y: Math.floor(targetIndex / 4) + offset.Y
-    })).filter(position => (
-        position.X >= 0 && position.X < 4 &&
-        position.Y >= 0 && position.Y < 4
-    )).map(position => position.Y * 4 + position.X);
+    return [{X: 0, Y: -1}, {X: 1, Y: 0}, {X: 0, Y: 1}, {X: -1, Y: 0}]
+        .map(offset => ({X: targetIndex % 4 + offset.X, Y: Math.floor(targetIndex / 4) + offset.Y}))
+        .filter(position => (position.X >= 0 && position.X < 4 && position.Y >= 0 && position.Y < 4))
+        .map(position => position.Y * 4 + position.X);
 }
 
 /**
@@ -122,12 +98,10 @@ export function getterFactory(map, selector) {
 export function showSolutionAsync(path, updater, resolve) {
     if (path.length) {
         updater(path.pop().state);
-        setTimeout(() => {
+        _.delay(() => {
             showSolutionAsync(path, updater, resolve);
         }, 120);
-    } else {
-        resolve(path);
-    }
+    } else resolve(path);
 }
 
 /**
@@ -136,13 +110,9 @@ export function showSolutionAsync(path, updater, resolve) {
  * @param image {Image}
  */
 export function drawCanvas(canvasContextArray, image) {
-    canvasContextArray.forEach((ctx, index) => {
-        ctx.drawImage(image,
-            (index % 4) * (image.width / 4), Math.floor(index / 4) * (image.height / 4),
-            (image.width / 4), (image.height / 4),
-            0, 0, 100, 100
-        );
-    });
+    canvasContextArray.forEach((ctx, index) =>
+        ctx.drawImage(image, (index % 4) * (image.width / 4), Math.floor(index / 4) * (image.height / 4),
+            (image.width / 4), (image.height / 4), 0, 0, 100, 100));
     const last = canvasContextArray[canvasContextArray.length - 1];
     last.fillStyle = 'rgba(120, 120, 120, 0.7)';
     last.fillRect(0, 0, 100, 100);
@@ -182,13 +152,8 @@ function diff(newMap, oldMap) {
     const tokens = [];
     newMap.forEach((newObject, index) => {
         const oldObject = oldMap[index];
-        if (newObject.correctIndex !== oldObject.correctIndex) {
-            tokens.push({
-                before: oldObject.correctIndex,
-                after: newObject.correctIndex,
-                index
-            });
-        }
+        if (newObject.correctIndex !== oldObject.correctIndex)
+            tokens.push({before: oldObject.correctIndex, after: newObject.correctIndex, index});
     });
     return tokens;
 }

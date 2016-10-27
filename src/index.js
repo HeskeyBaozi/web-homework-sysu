@@ -2,6 +2,7 @@
 
 import Model from './myModel/index.js';
 import $ from 'jquery';
+import _ from 'lodash';
 import {
     move,
     getterFactory,
@@ -109,7 +110,7 @@ function handleBeginningGame(model) {
  * @param model
  */
 function normalizeInitialGameData(model) {
-    Object.assign(model, {
+    _.assign(model, {
         isRunning: false,
         startButton: 'Give Up : (',
         time: 0,
@@ -137,10 +138,9 @@ function beginCount(model) {
  * @param model
  */
 function handleEndingGame(model) {
-    if (model.isWinner) {
+    if (model.isWinner)
         cache.$selectors.removeClass('no-see');
-    }
-    Object.assign(model, {
+    _.assign(model, {
         message: `${model.isWinner ? 'Congratulations!' : 'Try your best.'} Time:${model.time}, Count:${model.count}`,
         startButton: model.isWinner ? 'Start!' : 'Getting Solution...',
         time: 0,
@@ -266,7 +266,7 @@ function handleStoppingGame(model) {
  */
 function asyncRunningAlgorithm(algorithm, args) {
     return new Promise((resolve, reject) => {
-        setTimeout(() => {
+        _.delay(() => {
             resolve(algorithm(args));
         }, 20);
     });
@@ -307,7 +307,7 @@ function collectSolutionPath(resultNode) {
  */
 function handleResolvingDisplaying(model) {
     cache.$loading.addClass('disable-see');
-    Object.assign(model, {
+    _.assign(model, {
         startButton: 'Recovering...',
         isRunning: true
     });
@@ -319,7 +319,7 @@ function handleResolvingDisplaying(model) {
  */
 function handleEndingDisplaying(model) {
     cache.$selectors.removeClass('no-see');
-    Object.assign(model, {
+    _.assign(model, {
         startButton: 'Try Again! : )',
         isRunning: false
     });
