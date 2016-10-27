@@ -1,6 +1,6 @@
 'use strict';
 
-import Hzy from './myQuery.js';
+import $ from 'jquery';
 
 /**
  * add a char to the calculator screen!
@@ -24,18 +24,13 @@ export function addChar(model, directive) {
  * @param valueGetter {function} return the value of the expression!
  */
 export function showResult(model, normalizedExpression, valueGetter) {
-    let result = null;
     try {
-        model.result = result = valueGetter();
-        if (typeof result === 'function') {
-            Hzy('#input-quick').text('Please enter number');
-        } else if (result) {
-            Hzy('#input-quick').text(`${normalizedExpression} = ${result}`);
-        } else {
-            Hzy('#input-quick').text('');
-        }
-    } catch (e) {
+        model.result = valueGetter();
+        $('#input-quick').text(typeof model.result === 'function'
+            ? 'Please enter number'
+            : (model.result ? `${normalizedExpression} = ${model.result}` : ''));
+    } catch (error) {
         model.result = 'Syntax Error :(';
-        Hzy('#input-quick').text(model.result);
+        $('#input-quick').text(model.result);
     }
 }

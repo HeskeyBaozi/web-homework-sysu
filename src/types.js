@@ -88,11 +88,13 @@ function onDelete() {
         this.input = '0';
         return;
     }
-    if (mathRegExp.trigonometricFunction.test(this.input)) {
-        this.input = this.input.slice(0, this.input.length - 4);
-    } else if (mathRegExp.logFunction.test(this.input)) {
-        this.input = this.input.slice(0, this.input.length - 3);
-    } else {
-        this.input = this.input.slice(0, this.input.length - 1);
-    }
+    deleteChar(this);
+}
+
+function deleteChar(model) {
+    model.input = mathRegExp.trigonometricFunction.test(model.input)
+        ? model.input.slice(0, model.input.length - 4)
+        : mathRegExp.logFunction.test(model.input)
+        ? model.input.slice(0, model.input.length - 3)
+        : model.input.slice(0, model.input.length - 1);
 }

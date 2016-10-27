@@ -1,15 +1,13 @@
 'use strict';
 
-import Hzy from '../myQuery.js';
+import $ from 'jquery';
+import _ from 'lodash';
 
-export default function normalizeStyle(model) {
-    return [model, normalizeInput, normalizeClass, normalizeOutput]
-        .reduce((model, wrapper) => wrapper(model));
-}
+export default  model => _.flow(normalizeInput, normalizeClass, normalizeOutput)(model);
 
 function normalizeClass(model) {
-    Hzy('#input-quick').removeClass('high-light');
-    Hzy('#input').removeClass('low-light');
+    $('#input-quick').removeClass('high-light');
+    $('#input').removeClass('low-light');
     return model;
 }
 

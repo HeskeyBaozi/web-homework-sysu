@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 const MyRegExp = {
     power: /(e|π|\d+\.?\d*|\(+[^\)]*\)+)\^(\d+\.?\d*|\(+[^\)]*\)+)/g,
     sqrt: /\√(e|π|\d+\.?\d*|\(+[^\)]*\)+)/g,
@@ -8,20 +10,23 @@ const MyRegExp = {
 };
 
 function normalizeBrace(expression) {
-    const leftNum = expression.match(/\(/g) && expression.match(/\(/g).length || 0;
-    const rightNum = expression.match(/\)/g) && expression.match(/\)/g).length || 0;
-    const differs = leftNum - rightNum;
-    if (differs < 0)
-        return undefined;
+    const differs = [
+        expression.match(/\(/g) && expression.match(/\(/g).length || 0,
+        expression.match(/\)/g) && expression.match(/\)/g).length || 0
+    ].reduce((left, right) => left - right);
+    return differs < 0 ? undefined : getRightBraceExpression(expression, differs);
+}
+
+function getRightBraceExpression(expression, differs) {
     let result = expression;
-    for (let i = 0; i < differs; i++) {
+    _.times(differs, () => {
         result += ')';
-    }
+    });
     return result;
 }
 
 function normalizeFactory(reg, placer) {
-    return function (expression) {
+    return expression => {
         let regArray = reg.exec(expression);
         while (regArray !== null) {
             expression = expression.replace(reg, placer(regArray));
@@ -31,26 +36,14 @@ function normalizeFactory(reg, placer) {
     }
 }
 
-const normalizePower = normalizeFactory(MyRegExp.power, regArray => {
-    return `pow(${regArray[0].split('^').join(',')})`;
-});
-
-const normalizeSqrt = normalizeFactory(MyRegExp.sqrt, regArray => {
-    return `sqrt(${regArray[0].split('√')[1]})`;
-});
-
-const normalizeFactorial = normalizeFactory(MyRegExp.factorial, regArray => {
-    return `factor(${regArray[0].split('!')[0]})`;
-});
-
-const normalizeNumberMultiply = normalizeFactory(MyRegExp.numberBeforeOperation, regArray => {
-    return regArray[0].replace(/\d+\.?\d*/g, match => match + '*');
-});
+const normalizePower = normalizeFactory(MyRegExp.power, regArray => `pow(${regArray[0].split('^').join(',')})`);
+const normalizeSqrt = normalizeFactory(MyRegExp.sqrt, regArray =>`sqrt(${regArray[0].split('√')[1]})`);
+const normalizeFactorial = normalizeFactory(MyRegExp.factorial, regArray => `factor(${regArray[0].split('!')[0]})`);
+const normalizeNumberMultiply = normalizeFactory(MyRegExp.numberBeforeOperation, regArray => regArray[0].replace(/\d+\.?\d*/g, match => match + '*'));
 
 
 export default function normalizeExpression(expression) {
-    return [expression, normalizeBrace, normalizePower,
-        normalizeSqrt, normalizeFactorial, normalizeNumberMultiply].reduce((expression, wrapper) => {
-        return wrapper(expression);
-    });
+    return _.flow(normalizeBrace, normalizePower, normalizeSqrt, normalizeFactorial, normalizeNumberMultiply)(
+        expression
+    );
 }

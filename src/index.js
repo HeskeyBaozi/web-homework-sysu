@@ -1,6 +1,6 @@
 'use strict';
 
-import Hzy from './myQuery.js';
+import $ from 'jquery';
 import Model from './myModel/index.js';
 import Type from './types.js';
 import parseExpression from './parser.js';
@@ -23,7 +23,7 @@ const model = new Model({
 /**
  * Add and Bind Events
  */
-Hzy('#panel').on('click', e => {
+$('#panel').on('click', e => {
     if (model.input === '0') model.input = ''; // normalize zero
     if (model.isEqualed) {
         normalizeStyle(model);
@@ -38,13 +38,13 @@ Hzy('#panel').on('click', e => {
  */
 model.$watch('output', (newValue, oldValue) => {
     if (newValue !== oldValue) {
-        Hzy('#output').text(newValue.trim());
+        $('#output').text(newValue.trim());
     }
 });
 
 model.$watch('input', function (newValue, oldValue) {
     if (newValue !== oldValue) {
-        Hzy('#input').text(newValue);
+        $('#input').text(newValue);
         const normalizedExpression = normalizeExpression(newValue);
         const getter = parseExpression(normalizedExpression);
         showResult(this, normalizedExpression, getter);
@@ -52,10 +52,8 @@ model.$watch('input', function (newValue, oldValue) {
 });
 
 model.$watch('isEqualed', function (newValue, oldValue) {
-    if (newValue !== oldValue) {
-        if (newValue === true) {
-            Hzy('#input').addClass('low-light');
-            Hzy('#input-quick').text(this.input ? `=${this.result}` : `0`).addClass('high-light');
-        }
+    if (newValue !== oldValue && newValue) {
+        $('#input').addClass('low-light');
+        $('#input-quick').text(this.input ? `=${this.result}` : `0`).addClass('high-light');
     }
 });

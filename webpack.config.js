@@ -29,5 +29,9 @@ module.exports = {
     plugins: [
         new webpack.BannerPlugin(banner)
     ],
+    externals: {
+        jquery: 'jQuery',
+        lodash: '_'
+    },
     devtool: '#source-map'
 };
