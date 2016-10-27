@@ -10,15 +10,69 @@ export class Node {
      * @param parentNode {Node}
      */
     constructor(state, blankTargetIndex, parentNode) {
-        this.state = state;
-        this.blankTargetIndex = blankTargetIndex;
-        this.parentNode = parentNode;
-        this.depth = parentNode !== null ? parentNode.depth + 1 : 0;
-        this.h = this.state
-            .map(selectNumber)
-            .map((number, index) => Math.abs(number % 4 - index % 4) + Math.abs(number >> 2 - index >> 2))
-            .reduce((left, right) => left + right, 0);
+        Object.assign(this, {
+            state,
+            blankTargetIndex,
+            parentNode,
+            depth: parentNode !== null ? parentNode.depth + 1 : 0,
+        });
+
+        this.h = computeH(this.state.map(selectNumber).map(mapIndexToDistanceObject).reduce(objectReducer));
     }
+}
+
+/**
+ * compute the h value of the current state.
+ * @param distanceObject
+ * @return {number}
+ */
+function computeH(distanceObject) {
+    return (distanceObject.manhatten * 2 + distanceObject.geometric) * 2;
+}
+
+/**
+ * map the number & index to the distance object.
+ * @param number
+ * @param index
+ * @return {{manhatten: number, geometric: number}}
+ */
+function mapIndexToDistanceObject(number, index) {
+    return {
+        manhatten: getManhattenDistance(number, index),
+        geometric: getGeometricDistance(number, index)
+    };
+}
+
+/**
+ * get manhatten distance
+ * @param from
+ * @param to
+ * @return {number}
+ */
+function getManhattenDistance(from, to) {
+    return Math.abs(from % 4 - to % 4) + Math.abs(from >> 2 - to >> 2);
+}
+
+/**
+ * get geometric distance
+ * @param from
+ * @param to
+ * @return {number}
+ */
+function getGeometricDistance(from, to) {
+    return Math.sqrt(Math.pow((from % 4 - to % 4), 2) + Math.pow(from >> 2 - to >> 2, 2));
+}
+
+/**
+ * reduce the object
+ * @param leftObject
+ * @param rightObject
+ * @return {Object}
+ */
+function objectReducer(leftObject, rightObject) {
+    leftObject.manhatten += rightObject.manhatten;
+    leftObject.geometric += rightObject.geometric;
+    return leftObject;
 }
 
 export class PriorityQueue extends Array {

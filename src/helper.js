@@ -2,6 +2,7 @@
 
 import {getRandomInt} from './util.js';
 import {Node} from './data-structure.js';
+import _ from 'lodash';
 
 /***********************************************************
  Public Helper Function
@@ -55,7 +56,7 @@ export function randomlySelectAndMoveAsync(times, speed, resolve) {
      * @param updater {function} update the view if called.
      */
     function randomlyMove(preTargetIndex, blankTargetIndex, map, updater) {
-        const targetIndex = getSample(getNeighboursIndex(blankTargetIndex).filter(index => index !== preTargetIndex));
+        const targetIndex = _.sample(getNeighboursIndex(blankTargetIndex).filter(index => index !== preTargetIndex));
         const nextDescriptor = move(targetIndex, blankTargetIndex, map);
         updater(nextDescriptor.state);
 
@@ -83,26 +84,10 @@ export function update(nextState) {
 }
 
 /**
- *
- * @param targetIndex {number}
- * @param map
+ * get the neighbours index.
+ * @param targetIndex
  * @return {Array}
  */
-export function getNeighbours(targetIndex, map) {
-    return [
-        {X: 0, Y: -1}, // up
-        {X: 1, Y: 0}, // right
-        {X: 0, Y: 1}, // down
-        {X: -1, Y: 0} // left
-    ].map(offset => ({
-        X: targetIndex % 4 + offset.X,
-        Y: Math.floor(targetIndex / 4) + offset.Y
-    })).filter(position => (
-        position.X >= 0 && position.X < 4 &&
-        position.Y >= 0 && position.Y < 4
-    )).map(position => map[position.X + position.Y * 4]);
-}
-
 export function getNeighboursIndex(targetIndex) {
     return [
         {X: 0, Y: -1}, // up
@@ -118,12 +103,69 @@ export function getNeighboursIndex(targetIndex) {
     )).map(position => position.Y * 4 + position.X);
 }
 
+/**
+ * make a index getter
+ * @param map
+ * @param selector
+ * @return {function(*): number}
+ */
 export function getterFactory(map, selector) {
     return target => map.map(selector).findIndex(object => object === target);
 }
 
-export function getSample(array) {
-    return array[getRandomInt(0, array.length - 1)];
+/**
+ * showing the solution for the solution path.
+ * @param path {Array}
+ * @param updater {Function}
+ * @param resolve
+ */
+export function showSolutionAsync(path, updater, resolve) {
+    if (path.length) {
+        updater(path.pop().state);
+        setTimeout(() => {
+            showSolutionAsync(path, updater, resolve);
+        }, 120);
+    } else {
+        resolve(path);
+    }
+}
+
+/**
+ * draw the picture
+ * @param canvasContextArray {Array}
+ * @param image {Image}
+ */
+export function drawCanvas(canvasContextArray, image) {
+    canvasContextArray.forEach((ctx, index) => {
+        ctx.drawImage(image,
+            (index % 4) * (image.width / 4), Math.floor(index / 4) * (image.height / 4),
+            (image.width / 4), (image.height / 4),
+            0, 0, 100, 100
+        );
+    });
+    const last = canvasContextArray[canvasContextArray.length - 1];
+    last.fillStyle = 'rgba(120, 120, 120, 0.7)';
+    last.fillRect(0, 0, 100, 100);
+}
+
+export function mix(model, blankElement, updater, selector) {
+    const getElementIndex = getterFactory(model.blockMap, selector);
+    const targetIndex = _.flow(getElementIndex, getNeighboursIndex, _.sample)(blankElement);
+    return new Promise((resolve, reject) => {
+        model.isRunning = true;
+        randomlySelectAndMoveAsync(model.stepNumber, 120, resolve)(
+            targetIndex, getElementIndex(blankElement), model.blockMap, updater
+        );
+    });
+}
+
+/**
+ * judge if it is Solved.
+ * @param blockMap
+ * @return {boolean|*}
+ */
+export function isSolved(blockMap) {
+    return blockMap.every((object, index) => object.correctIndex === index);
 }
 
 /***********************************************************
@@ -151,6 +193,11 @@ function diff(newMap, oldMap) {
     return tokens;
 }
 
+/**
+ * render the data to the view
+ * @param patches {Array}
+ * @param map
+ */
 function render(patches, map) {
     patches.forEach(patch => {
         const target = map[patch.index].element;
@@ -158,42 +205,3 @@ function render(patches, map) {
     });
 }
 
-export function showSolutionAsync(path, updater, resolve) {
-    if (path.length) {
-        updater(path.pop().state);
-        setTimeout(() => {
-            showSolutionAsync(path, updater, resolve);
-        }, 120);
-    } else {
-        resolve(path);
-    }
-}
-
-export function drawCanvas(canvasContextArray, image) {
-    canvasContextArray.forEach((ctx, index) => {
-        ctx.drawImage(image,
-            (index % 4) * (image.width / 4), Math.floor(index / 4) * (image.height / 4),
-            (image.width / 4), (image.height / 4),
-            0, 0, 100, 100
-        );
-    });
-    const last = canvasContextArray[canvasContextArray.length - 1];
-    last.fillStyle = 'rgba(120, 120, 120, 0.7)';
-    last.fillRect(0, 0, 100, 100);
-}
-
-export function mix(model, blankElement, updater, selector) {
-    const getElementIndex = getterFactory(model.blockMap, selector);
-    const targetIndex = [
-        blankElement,
-        getElementIndex,
-        getNeighboursIndex,
-        getSample
-    ].reduce((value, wrapper) => wrapper(value));
-    return new Promise((resolve, reject) => {
-        model.isRunning = true;
-        randomlySelectAndMoveAsync(model.stepNumber, 120, resolve)(
-            targetIndex, getElementIndex(blankElement), model.blockMap, updater
-        );
-    });
-}

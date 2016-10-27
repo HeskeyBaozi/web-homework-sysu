@@ -1,14 +1,15 @@
 'use strict';
 
 import Model from './myModel/index.js';
-import Query from './myQuery/index.js';
+import $ from 'jquery';
 import {
     move,
     getterFactory,
     update,
     showSolutionAsync,
     drawCanvas,
-    mix
+    mix,
+    isSolved
 } from  './helper.js'
 import {Node} from './data-structure.js';
 import {Type, Img} from './type.js';
@@ -38,12 +39,15 @@ const model = new Model({
     }
 });
 
-
+/**
+ * the jquery object cache.
+ * @type {{$blank: (any), $loading: (any), $startBtn: (any), $selectors: (any), updater: (())}}
+ */
 const cache = {
-    blankElement: document.querySelector('#blk-15'),
-    loadingElement: document.querySelector('#loading'),
-    btnElement: document.querySelector('#start'),
-    selectorsElement: document.querySelector('.img-groups'),
+    $blank: $('#blk-15'),
+    $loading: $('#loading'),
+    $startBtn: $('#start'),
+    $selectors: $('.img-groups'),
     updater: update.bind(model)
 };
 
@@ -76,51 +80,83 @@ model.imgUrl = './img/panda.jpg';
  * be reactive to the state of the game.
  */
 model.$watch('gameState', function (newValue, oldValue) {
-    switch (newValue) {
-        /**
-         * When the game starts...
-         */
-        case Type.Pending:
-            this.time = 0;
-            this.count = 0;
-            this.isWinner = false;
-            this.message = 'Game Starting...';
-            cache.selectorsElement.classList.add('no-see');
-            const timeUid = setInterval(() => {
-                if (this.gameState === Type.Pending) {
-                    this.time++;
-                } else
-                    clearInterval(timeUid);
-
-            }, 1000);
-            break;
+    /**
+     * When the game starts...
+     */
+    if (Type.Pending === newValue) {
+        handleBeginningGame(this);
     }
-
-    switch (oldValue) {
-        /**
-         * When the game over or give up.
-         */
-        case Type.Pending:
-            this.message = `${this.isWinner ? 'Congratulations!' : 'Try your best.'} Time:${this.time}, Count:${this.count}`;
-            if (this.isWinner) {
-                this.startButton = 'Start!';
-                cache.selectorsElement.classList.remove('no-see');
-            }
-            this.time = 0;
-            this.count = 0;
-            break;
+    /**
+     * When the game over or give up.
+     */
+    if (Type.Pending === oldValue) {
+        handleEndingGame(this);
     }
 });
+
+/**
+ * normalize data & style.
+ * @param model
+ */
+function handleBeginningGame(model) {
+    normalizeInitialGameData(model);
+    cache.$selectors.addClass('no-see');
+    beginCount(model);
+}
+
+/**
+ * set initial data of the game.
+ * @param model
+ */
+function normalizeInitialGameData(model) {
+    Object.assign(model, {
+        isRunning: false,
+        startButton: 'Give Up : (',
+        time: 0,
+        count: 0,
+        isWinner: false,
+        message: 'Game Starting...'
+    });
+}
+
+/**
+ * counting the time every 1s.
+ * @param model
+ */
+function beginCount(model) {
+    const timeUid = setInterval(() => {
+        if (model.gameState === Type.Pending) {
+            model.time++;
+        } else
+            clearInterval(timeUid);
+    }, 1000);
+}
+
+/**
+ * set data & style when game ending.
+ * @param model
+ */
+function handleEndingGame(model) {
+    if (model.isWinner) {
+        cache.$selectors.removeClass('no-see');
+    }
+    Object.assign(model, {
+        message: `${model.isWinner ? 'Congratulations!' : 'Try your best.'} Time:${model.time}, Count:${model.count}`,
+        startButton: model.isWinner ? 'Start!' : 'Getting Solution...',
+        time: 0,
+        count: 0
+    });
+}
 
 /**
  * watch the block moving. update the style.
  */
 model.$watch('isRunning', function (isRunning) {
     if (isRunning) {
-        cache.btnElement.classList.add('disable-click');
-        cache.selectorsElement.classList.add('no-see');
+        cache.$startBtn.addClass('disable-click');
+        cache.$selectors.addClass('no-see');
     } else {
-        cache.btnElement.classList.remove('disable-click');
+        cache.$startBtn.removeClass('disable-click');
     }
 });
 
@@ -132,90 +168,168 @@ model.$watch('isRunning', function (isRunning) {
  * Move the block when it was clicked
  * if it is near the blank Block.
  */
-Query('.playground')
-    .on('click', e => {
-        e.preventDefault();
-        const getIndex = getterFactory(model.blockMap, selectElement);
-        const nextDescriptor = move(getIndex(e.target), getIndex(cache.blankElement), model.blockMap);
-        if (!nextDescriptor) return;
-        update.call(model, nextDescriptor.state);
-        if (model.blockMap.every((object, index) => object.correctIndex === index)) {
-            model.isWinner = true;
-            model.gameState = Type.Unstarted;
-        }
-        if (model.gameState === Type.Pending) {
-            model.count++;
-        }
+$('.playground').click(e => {
+    e.preventDefault();
+    const getIndex = getterFactory(model.blockMap, selectElement);
+    const nextDescriptor = move(getIndex(e.target), getIndex(cache.$blank[0]), model.blockMap);
+    if (!nextDescriptor) return;
+    update.call(model, nextDescriptor.state);
+    handleMovedMap(model);
+});
+
+/**
+ * set data & style after moving a block.
+ * @param model
+ */
+function handleMovedMap(model) {
+    if (isSolved(model.blockMap)) {
+        model.isWinner = true;
+        model.gameState = Type.Unstarted;
+    }
+    if (model.gameState === Type.Pending) {
+        model.count++;
+    }
+}
+
+
+cache.$startBtn.click(e => {
+    e.preventDefault();
+    /**
+     * refuse when the animate running.
+     */
+    if (model.isRunning) return;
+    if (model.gameState === Type.Unstarted) {
+        startGame(model);
+    } else if (model.gameState === Type.Pending) {
+        stopGame(model);
+    }
+
+});
+
+/**
+ * turn to starting.
+ * @param model {model}
+ */
+function startGame(model) {
+    /**
+     * Mix the puzzle.
+     * @type {string}
+     */
+    model.startButton = 'Mixing...';
+    mix(model, cache.$blank[0], cache.updater, selectElement)
+        .then(() => {
+            model.gameState = Type.Pending;
+        });
+}
+
+/**
+ * turn to stopping game.
+ * @param model {model}
+ */
+function stopGame(model) {
+    model.gameState = Type.Unstarted;
+    handleStoppingGame(model);
+    /**
+     * Use Algorithm to solve the problem.
+     */
+    asyncRunningAlgorithm(AStar, generateInitialNode(model, selectElement))
+        .then(resultNode => displaySolution(model, resultNode))
+        .then(() => {
+            handleEndingDisplaying(model);
+        });
+}
+
+/**
+ * generate a initial parent Node for the algorithm.
+ * @param model
+ * @param selector
+ * @return {Node}
+ */
+function generateInitialNode(model, selector) {
+    const getIndex = getterFactory(model.blockMap, selector);
+    return new Node(model.blockMap, getIndex(cache.$blank[0]), null);
+}
+
+/**
+ * set data & style when stopping the game.
+ * @param model
+ */
+function handleStoppingGame(model) {
+    cache.$loading.removeClass('disable-see');
+}
+
+/**
+ * running the algorithm after the UI handler.
+ * @param algorithm
+ * @param args
+ * @return {Promise}
+ */
+function asyncRunningAlgorithm(algorithm, args) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(algorithm(args));
+        }, 20);
     });
+}
 
-
-Query('#start')
-    .on('click', e => {
-        e.preventDefault();
-        /**
-         * refuse when the animate running.
-         */
-        if (model.isRunning) {
-            return;
-        }
-        switch (model.gameState) {
-            case Type.Unstarted:
-                /**
-                 * Mix the puzzle.
-                 * @type {string}
-                 */
-                model.startButton = 'Mixing...';
-                mix(model, cache.blankElement, cache.updater, selectElement)
-                    .then(() => {
-                        model.isRunning = false;
-                        model.startButton = 'Give Up : (';
-                        model.gameState = Type.Pending;
-                    });
-                break;
-
-            case Type.Pending:
-                new Promise((resolve, reject) => {
-                    model.gameState = Type.Unstarted;
-                    model.startButton = 'Getting Solution...';
-                    cache.loadingElement.classList.remove('disable-see');
-                    const getIndex = getterFactory(model.blockMap, selectElement);
-                    setTimeout(() => {
-                        /**
-                         * Use Algorithm to solve the problem.
-                         */
-                        resolve(AStar(new Node(model.blockMap, getIndex(cache.blankElement), null)));
-                    }, 20);
-                }).then(result => {
-                    /**
-                     * Display the Solution.
-                     */
-                    const path = [];
-                    let target = result;
-                    while (target.parentNode) {
-                        path.push(target);
-                        target = target.parentNode;
-                    }
-
-                    return new Promise((resolve, reject) => {
-                        model.isRunning = true;
-                        cache.loadingElement.classList.add('disable-see');
-                        model.startButton = 'Recovering...';
-                        showSolutionAsync(path, cache.updater, resolve);
-                    });
-                }).then(() => {
-                    cache.selectorsElement.classList.remove('no-see');
-                    model.startButton = 'Try Again! : )';
-                    model.isRunning = false;
-                });
-                break;
-        }
+/**
+ * collect the solution path and display it.
+ * @param model
+ * @param resultNode
+ * @return {Promise}
+ */
+function displaySolution(model, resultNode) {
+    const path = collectSolutionPath(resultNode);
+    handleResolvingDisplaying(model);
+    return new Promise((resolve, reject) => {
+        showSolutionAsync(path, cache.updater, resolve);
     });
+}
+
+/**
+ * convert the result node into a solution path.
+ * @param resultNode {Node}
+ * @return {Array<Node>}
+ */
+function collectSolutionPath(resultNode) {
+    const path = [];
+    let target = resultNode;
+    while (target.parentNode) {
+        path.push(target);
+        target = target.parentNode;
+    }
+    return path;
+}
+
+/**
+ * set Data & style while displaying the solution.
+ * @param model
+ */
+function handleResolvingDisplaying(model) {
+    cache.$loading.addClass('disable-see');
+    Object.assign(model, {
+        startButton: 'Recovering...',
+        isRunning: true
+    });
+}
+
+/**
+ * set Data & style after displaying the solution.
+ * @param model
+ */
+function handleEndingDisplaying(model) {
+    cache.$selectors.removeClass('no-see');
+    Object.assign(model, {
+        startButton: 'Try Again! : )',
+        isRunning: false
+    });
+}
 
 /**
  * the image switcher.
  */
-Query('.img-groups')
-    .on('click', e => {
+cache.$selectors
+    .click(e => {
         e.preventDefault();
         if (model.gameState === Type.Unstarted) {
             const currentImg = Img.find(imageInfo => imageInfo.name === e.target.id);
