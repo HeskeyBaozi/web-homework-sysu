@@ -1,9 +1,8 @@
 'use strict';
 
 import Model from './myModel/index.js';
-import Query from './myQuery/index.js';
-import {hasClass, addClass, removeClass, addClassTemp} from  './myQuery/helper.js';
-import {rnd} from './util.js';
+import $ from 'jquery';
+import _ from 'lodash';
 import Type from './types.js';
 
 /**
@@ -30,40 +29,45 @@ const model = new Model({
 /**
  * When you click on the start button, start the game.
  */
-Query('#mole-start').on('click', e => {
+$('#mole-start').click(e => {
     e.preventDefault();
-    if (model.gameState !== Type.Pending) {
-        model.gameState = Type.Pending;
-    } else {
-        model.gameState = Type.Over;
-    }
+    model.gameState = model.gameState !== Type.Pending ? Type.Pending : Type.Over;
 });
 
 /**
  * While playing the game, if you click on the highlight box,
  * you hit it. and then you will get score.
  */
-Query('#mole-playground').on('click', e => {
+$('#mole-playground').click(e => {
     e.preventDefault();
-    if (model.gameState === Type.Pending) {
-        if (hasClass.call(e.target, 'highlight')) {
-            model.hasHit = true; // trigger the callback of the Watcher of the 'hasHit'
-            model.score += 1 + Math.round(model.combo / 2);
-            model.combo += 1;
-            removeClass.call(e.target, 'highlight');
-            selectHole(model);
-
-            /**
-             * the style of the box will change if you hit it.
-             */
-            addClassTemp(e.target, ['hit-on'], 500);
-        } else {
-            model.score -= 1;
-            model.combo = 0;
-            model.hasHit = false;
-        }
-    }
+    if (model.gameState !== Type.Pending) return;
+    handleHittingHole(model, $(e.target));
 });
+
+function handleHittingHole(model, $hole) {
+    if ($hole.hasClass('highlight')) {
+        handleHitBlock(model, $hole);
+        selectHole(model);
+    } else handleUnhitBlock(model);
+}
+
+function handleHitBlock(model, $target) {
+    _.assign(model, {
+        hasHit: true, // trigger the callback of the Watcher of the 'hasHit'
+        score: model.score + 1 + _.floor(model.combo / 2),
+        combo: model.combo + 1
+    });
+    $target.removeClass('highlight').addClass('hit-on');
+    _.delay(() => $target.removeClass('hit-on'), 500);
+}
+
+function handleUnhitBlock(model) {
+    _.assign(model, {
+        score: model.score - 1,
+        combo: 0,
+        hasHit: false
+    });
+}
 
 /**
  * Watch the state of the game
@@ -71,66 +75,90 @@ Query('#mole-playground').on('click', e => {
 model.$watch('gameState', function (newValue, oldValue) {
     switch (newValue) {
         case Type.Pending:
-            /**
-             * normalize the game data.
-             */
-            this.time = 30;
-            this.score = 0;
-            this.combo = 0;
-            this.button = 'Stop!';
-            this.message = 'Hit the Mouse with RedPick Color!';
-            new Promise((resolve, reject) => {
-
-                /**
-                 * Time decreasing
-                 * @type {number}
-                 */
-                const timeUID = setInterval(() => {
-                    this.time--;
-                    if (this.time <= 0 || this.gameState === Type.Unstarted) {
-                        resolve(timeUID);
-                    }
-                }, 1000);
-
-                selectHole(this);
-
-            }).then((timeUID) => {
-                /**
-                 * clear all the timer, the game is over
-                 */
-                clearInterval(timeUID);
-                this.time = 0;
-                if (this.gameState === Type.Pending)
-                    this.gameState = Type.Over;
-                if (this.currentHole) {
-                    removeClass.call(this.currentHole, 'highlight');
-                }
-            });
+            startGame(this);
             break;
-
         case Type.Over:
-            /**
-             * normalize the game data.
-             */
-            this.time = 0;
-            this.button = 'Start!!';
-            this.message = `Nice! ${this.score} points!!`;
+            handleGameOver(this);
             break;
-
         case Type.Unstarted:
-            this.time = 30;
-            this.button = 'Start!!';
-            this.score = this.combo = 0;
-            this.message = 'Welcome to play Mole!!';
+            handleUnstartedGame(this);
     }
 });
+
+function startGame(model) {
+    /**
+     * normalize the game data.
+     */
+    handleBeginningGame(model);
+    new Promise((resolve, reject) => {
+        setContinuingTimeAsync(model, resolve);
+        selectHole(model);
+    }).then((timeUID) => timeOut(timeUID, model));
+}
+
+function handleBeginningGame(model) {
+    _.assign(model, {
+        time: 30,
+        score: 0,
+        combo: 0,
+        button: 'Stop!',
+        message: 'Hit the Mouse with RedPick Color!'
+    });
+}
+
+function setContinuingTimeAsync(model, callback) {
+    /**
+     * Time decreasing
+     * @type {number}
+     */
+    const timeUID = setInterval(() => {
+        model.time--;
+        if (model.time <= 0 || model.gameState === Type.Unstarted) {
+            callback(timeUID);
+        }
+    }, 1000);
+}
+
+function timeOut(timeUID, model) {
+    /**
+     * clear all the timer, the game is over
+     */
+    clearInterval(timeUID);
+    _.assign(model, {
+        time: 0,
+        gameState: model.gameState === Type.Pending ? Type.Over : model.gameState
+    });
+    if (model.currentHole)
+        model.currentHole.removeClass('highlight');
+}
+
+function handleGameOver(model) {
+    /**
+     * normalize the game data.
+     */
+    _.assign(model, {
+        time: 0,
+        button: 'Start!!',
+        message: `Nice! ${model.score} points!!`
+    });
+}
+
+function handleUnstartedGame(model) {
+    _.assign(model, {
+        time: 30,
+        button: 'Start!!',
+        message: 'Welcome to play Mole!!',
+        score: 0,
+        combo: 0
+    });
+}
 
 /**
  * Watch the combo.
  * p.s If you get more than combo, the font will turn into red and get bonus points.
  */
 model.$watch('combo', function (newValue, oldValue) {
-    const ComboEle = Query('#combo');
+    const ComboEle = $('#combo');
     if (newValue >= 10) {
         ComboEle.addClass('great');
     } else {
@@ -145,7 +173,7 @@ model.$watch('combo', function (newValue, oldValue) {
 model.$watch('hasHit', function (newValue, oldValue) {
     if (newValue) {
         selectHole(this);
-        removeClass.call(this.currentHole, 'highlight');
+        this.currentHole.removeClass('highlight');
         this.currentHole = null;
         this.hasHit = false;
     }
@@ -156,11 +184,7 @@ model.$watch('hasHit', function (newValue, oldValue) {
  * @param model {model}
  */
 function selectHole(model) {
-    model.currentHole = model.maps[rnd(0, model.maps.length - 1)];
-    /**
-     * highlight the box, and then check whether you've hit it.
-     */
-    addClass.call(model.currentHole, 'highlight');
+    model.currentHole = $(_.sample(model.maps)).addClass('highlight');
 }
 
 export default model;

@@ -1,9 +1,9 @@
 'use strict';
 
-import Query from  './myQuery/index.js';
-import {hasClass, addClassTemp} from './myQuery/helper.js';
+import $ from  'jquery';
 import Model from './myModel/index.js';
 import Type from './types.js';
+import _ from 'lodash';
 
 /**
  * The model of the game: Maze
@@ -22,43 +22,53 @@ export const model = new Model({
  * When your mouse get into the start box,
  * the game starts.
  */
-Query('.start')
-    .on('mouseover', e => {
+$('.start')
+    .on('mouseover', _.throttle(() => {
         model.gameState = Type.Pending;
-    });
+    }, 50));
+
 
 /**
  * Check if you are cheating.
  */
-Query('.end')
-    .on('mouseenter', e => {
-        if (hasClass.call(e.relatedTarget, 'container')) {
+$('.end')
+    .on('mouseenter', _.throttle(e => {
+        if ($(e.relatedTarget).hasClass('container'))
             model.isCheating = true;
-        }
+        if (model.gameState !== Type.Pending)
+            handleCheatingWhenGetEnter(model);
+    }, 50));
 
-        if (model.gameState !== Type.Pending) {
-            model.isCheating = true;
-            model.gameState = Type.Win;
-        }
+
+function handleCheatingWhenGetEnter(model) {
+    _.assign(model, {
+        isCheating: true,
+        gameState: Type.Win
     });
+}
 
 /**
  * When you're playing the game,
  * if you hit the wall careless, you'll lose.
  * And then the wall you hit will be clear to recognize.
  */
-Query('.playground')
-    .on('mousemove', e => {
-        if (model.gameState === Type.Pending) {
-            if (hasClass.call(e.target, 'wall')) {
-                model.gameState = Type.Lose;
-                addClassTemp(e.target, 'highlight', 2000);
-            }
-            if (hasClass.call(e.target, 'end')) {
-                model.gameState = Type.Win;
-            }
-        }
-    });
+$('.playground')
+    .on('mousemove', _.throttle(e => {
+        if (model.gameState !== Type.Pending) return;
+        loopChecking(model, $(e.target));
+    }, 50));
+
+function loopChecking(model, $target) {
+    if ($target.hasClass('wall')) {
+        handleWall(model, $target);
+    } else if ($target.hasClass('end')) model.gameState = Type.Win;
+}
+
+function handleWall(model, $target) {
+    model.gameState = Type.Lose;
+    $target.addClass('highlight');
+    _.delay(() => $target.removeClass('highlight'), 2000);
+}
 
 
 /**
@@ -66,30 +76,25 @@ Query('.playground')
  * display different message when there're different game's state.
  */
 model.$watch('gameState', function (newValue, oldValue) {
-    const content = Query('.playground').removeClass('maze-pending');
-    switch (newValue) {
-        case Type.Pending:
-            this.message = 'The Game have been started!';
-            this.isCheating = false;
-            content.addClass('maze-pending');
-            break;
-
-        case Type.Win:
-            if (this.isCheating) {
-                this.message = `Don't cheat, you should start form the 'S' and move to the 'E' inside the maze!`;
-                break;
-            }
-            this.message = 'You Win!';
-            break;
-
-        case Type.Lose:
-            this.message = 'You Lose!';
-            break;
-
-        case Type.Unstarted:
-            this.message = 'Welcome to Play the Maze!!!';
-            break;
-    }
+    switcher(this, newValue, $('.playground').removeClass('maze-pending'));
 });
 
+function switcher(model, value, $content) {
+    switch (value) {
+        case Type.Pending:
+            handleBeginningGame(model, $content);
+            break;
+        case Type.Win:
+            model.message = model.isCheating ? `Don't cheat, you should start form the 'S' and move to the 'E' inside the maze!` : 'You Win!';
+            break;
+        default:
+            model.message = value === Type.Lose ? 'You Lose!' : 'Welcome to Play the Maze!!!';
+    }
+}
+
+function handleBeginningGame(model, $content) {
+    model.message = 'The Game have been started!';
+    model.isCheating = false;
+    $content.addClass('maze-pending');
+}
 export default model;

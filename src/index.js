@@ -1,11 +1,9 @@
 'use strict';
-
-
 import modelMole from './mole.js';
 import modelMaze from './maze.js';
 import Type from './types.js';
 import Model from './myModel/index.js';
-import Query from './myQuery/index.js';
+import $ from 'jquery';
 
 /**
  * the state of the whole page.
@@ -27,13 +25,13 @@ const router = new Model({
 router.$watch('isMaze', function (newValue, oldValue) {
     if (newValue) {
         // mole ==> maze
-        Query('#maze').removeClass('hidden');
-        Query('#mole').addClass('hidden');
+        $('#maze').show();
+        $('#mole').hide();
         modelMaze.gameState = Type.Unstarted;
     } else {
         // maze ==> mole
-        Query('#mole').removeClass('hidden');
-        Query('#maze').addClass('hidden');
+        $('#mole').show();
+        $('#maze').hide();
         modelMole.gameState = Type.Unstarted;
     }
 });
@@ -41,18 +39,18 @@ router.$watch('isMaze', function (newValue, oldValue) {
 /**
  * The navigation event of the single page.
  */
-Query('#maze')
-    .removeClass('hidden')
-    .on('click', e => {
+$('#maze')
+    .show()
+    .click(e => {
         if (e.target.id === 'next') {
             router.isMaze = false;
         }
     });
 
 
-Query('#mole')
-    .addClass('hidden')
-    .on('click', e => {
+$('#mole')
+    .hide()
+    .click(e => {
         if (e.target.id === 'pre') {
             router.isMaze = true;
         }
