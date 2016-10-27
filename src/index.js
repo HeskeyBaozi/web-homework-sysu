@@ -160,9 +160,6 @@ model.$watch('isRunning', function (isRunning) {
     }
 });
 
-/****************************************************************
- Event Handler
- ****************************************************************/
 
 /**
  * Move the block when it was clicked
