@@ -1,0 +1,16 @@
+{
+  "name": "hw-sign-up",
+  "version": "1.0.0",
+  "description": "homework",
+  "main": "index.js",
+  "scripts": {
+    "start": "cross-env DEBUG=app:* nodemon ./bin/www.js "
+  },
+  "author": "Heskey He",
+  "license": "MIT",
+  "devDependencies": {
+    "cross-env": "^3.1.3",
+    "debug": "^2.2.0",
+    "nodemon": "^1.11.0"
+  }
+}
