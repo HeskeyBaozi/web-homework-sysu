@@ -1,0 +1,16 @@
+{
+  "userList": [
+    {
+      "username": "Zhiyu He",
+      "studentnumber": "15331097",
+      "email": "hezhiyu233@foxmail.com",
+      "phone": "18123915385"
+    },
+    {
+      "username": "Sakura",
+      "studentnumber": "15338888",
+      "email": "sakura@foxmail.com",
+      "phone": "18912345678"
+    }
+  ]
+}

@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const debug = require('debug')('app:staticServer');
+const ErrorCode = require('./error_code.js');
 
 function readFile(path) {
     return new Promise((resolve, reject) => {
@@ -31,18 +32,19 @@ function sendFile(ctx, path) {
         });
 }
 
-function sendNotFound(ctx) {
-    debug(`Send 404 for ${ctx.state.$url.pathname}`);
-    ctx.response.writeHead(404);
-    ctx.response.end();
-}
-
 module.exports.staticServe = publicDir => (ctx, next) => {
     if (ctx.state.$mimeType) {
         const requestFilePath = path.join(publicDir, ctx.state.$url.pathname);
-        fs.existsSync(requestFilePath) ? sendFile(ctx, requestFilePath) : sendNotFound(ctx);
-    } else if (ctx.state.$url.pathname === '/') {
+        if (fs.existsSync(requestFilePath)) {
+            sendFile(ctx, requestFilePath);
+        } else {
+            throw new ErrorCode(ErrorCode.FAILURE, `Send 404 for ${ctx.state.$url.pathname}`);
+        }
+    } else {
+        debug(`redirect ${ctx.state.$url.pathname} to /index.html`);
         sendFile(ctx, path.join(publicDir, './index.html'));
-    } else
-        next();
+        return next();
+    }
 };
+
+module.exports.readFile = readFile;

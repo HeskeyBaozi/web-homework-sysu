@@ -5,9 +5,68 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/framework.css">
+    <title>My achievements</title>
 </head>
 <body>
-<h1>Fuck you</h1>
+<header class="flex-container">
+    <div class="content">
+        <h1>Hello, Welcome to Sign Up!</h1>
+    </div>
+
+</header>
+<main>
+    <div class="big-banner flex-container">
+        <div class="content flex-container">
+            <div class="homepage-intro">
+                <h1>这个世界需要更多的英雄!</h1>
+                <p>Millions of developers use GitHub to build personal projects, support their businesses, and work
+                    together on open source technologies.</p>
+            </div>
+            <div class="homepage-sign-up">
+                <form action="#" method="post" class="login-flex flex-container">
+                    <div class="form-group">
+                        <label for="login-username"></label>
+                        <input id="login-username" name="username" type="text"
+                               class="need-test form-control form-control-lg" placeholder="Pick a username"/>
+                        <div class="message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-studentnumber"></label>
+                        <input id="login-studentnumber" name="studentnumber" type="text"
+                               class="need-test form-control form-control-lg" placeholder="Student number"/>
+                        <div class="message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-email"></label>
+                        <input id="login-email" name="email" type="text"
+                               class="need-test form-control form-control-lg" placeholder="Email address"/>
+                        <div class="message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-phone"></label>
+                        <input id="login-phone" name="phone" type="text"
+                               class="need-test form-control form-control-lg" placeholder="Phone number"/>
+                        <div class="message"></div>
+                    </div>
+                    <div class="form-group">
+                        <input id="submit" class="btn btn-primary btn-large btn-block submit" type="submit"
+                               value="Sign Up!"/>
+                    </div>
+
+                    <div class="form-group">
+                        <input id="reset" class="btn btn-large btn-block submit" type="reset" value="Reset"/>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+<script src="/lib/lodash.js"></script>
+<script src="/js/myFetch.js"></script>
+<script src="/js/main.js"></script>
 </body>
 </html>

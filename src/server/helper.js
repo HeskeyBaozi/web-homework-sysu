@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * compose multiple middlerwares into one function.
+ * compose multiple middleWares into one function.
  * just like _.flow
  *
  * @param middleWares {Array<function>}
@@ -59,7 +59,7 @@ function flow(middleWares) {
                  */
                 return Promise.resolve(fn(ctx, () => dispatch(i + 1)));
             } catch (error) {
-                return Promise.reject();
+                return Promise.reject(error);
             }
         }
 
