@@ -10,8 +10,8 @@ class ErrorCode {
     }
 }
 
-ErrorCode.SUCCESS = 'SUCCESS';
-ErrorCode.FAILURE = 'FAILURE';
+ErrorCode.SUCCESS = ErrorCode.prototype.SUCCESS = 'SUCCESS';
+ErrorCode.FAILURE = ErrorCode.prototype.FAILURE = 'FAILURE';
 
 
 module.exports = ErrorCode;

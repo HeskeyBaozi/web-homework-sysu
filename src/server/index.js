@@ -2,14 +2,35 @@
 
 const url = require('url');
 const path = require('path');
-const debug = require('debug')('app:server');
-const ServerApp = require('./ServerApp.class.js');
-const server = require('./staticServe').staticServe;
-const logger = require('./logger.js');
-const util = require('util');
+const debug = require('debug')('app:serve');
+const http = require('http');
 const multiparty = require('multiparty');
+const serve = require('./staticServe').staticServe;
+const logger = require('./logger.js');
 const Service = require('./service.js');
 const ErrorCode = require('./error_code.js');
+
+class ServerApp {
+    constructor() {
+        this.middleware = [];
+    }
+
+    use(fn) {
+        this.middleware.push(fn);
+    }
+
+    createServer() {
+        const middleware = this.middleware;
+        return http.createServer(function (request, response) {
+            const context = Object.create(this);
+            Object.assign(context, {
+                request, response, state: {}
+            });
+            flow(middleware)(context);
+        });
+    }
+}
+
 
 const app = new ServerApp();
 
@@ -32,7 +53,7 @@ app.use(logger);
 app.use((ctx, next) => {
     return next().catch(errorCode => {
         ctx.response.writeHead(400, {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json;charset=utf-8'
         });
         ctx.response.end(JSON.stringify(errorCode));
     });
@@ -100,15 +121,32 @@ app.use((() => {
     return (ctx, next) => {
         if (ctx.state.$url.pathname === '/registry' && ctx.request.method === 'POST') {
             sendRest(ctx, service.registry(ctx.state.$body));
-        } else if (ctx.state.$url.pathname === '/' && ctx.request.method === 'GET' && ctx.state.$url.query['username']) {
-            sendRest(ctx, service.query(ctx.state.$url.query['username']));
+        } else if (ctx.request.method === 'GET' && ctx.state.$url.query['check']) {
+            const text = ctx.state.$url.query['text'];
+            switch (ctx.state.$url.query['check']) {
+                case 'username':
+                    sendRest(ctx, service.checkUsername(text));
+                    break;
+                case 'studentnumber':
+                    sendRest(ctx, service.checkStudentNumber(text));
+                    break;
+                case 'email':
+                    sendRest(ctx, service.checkEmail(text));
+                    break;
+                case 'phone':
+                    sendRest(ctx, service.checkPhone(text));
+                    break;
+            }
         } else {
             return next();
         }
     };
 })());
 
-app.use(server(path.join(__dirname, '../client/')));
+/**
+ * static Files
+ */
+app.use(serve(path.join(__dirname, '../client/')));
 
 
 function sendRest(ctx, errorCode) {
@@ -122,5 +160,75 @@ function sendRest(ctx, errorCode) {
     }
 }
 
+
+/**
+ * compose multiple middleWares into one function.
+ * just like _.flow
+ *
+ * @param middleWares {Array<function>}
+ * @return {function({Object}, {Function})}
+ *
+ * @example
+ * const middleware = [fn1, fn2];
+ *
+ * function fn1(ctx, next) {
+ *    console.log('Coming from fn1');
+ *    ctx.testProperty = 'test';
+ *    next().then(() => {
+ *        console.log('Coming from fn1 end');
+ *    });
+ * }
+ *
+ * function fn2(ctx, next) {
+ *    console.log('Coming from fn2');
+ *    console.log('the test Property is ', ctx.testProperty);
+ *    next().then(() => {
+ *        console.log('Coming from fn2 end');
+ *    });
+ * }
+ *
+ * // ↓↓ call the flow
+ * flow(middleware)({});
+ *
+ * [Output]:
+ * Coming from fn1
+ * Coming from fn2
+ * the test Property is  test
+ * Coming from fn2 end
+ * Coming from fn1 end
+ */
+function flow(middleWares) {
+    return (ctx, next) => {
+        let index = -1;
+
+        function dispatch(i) {
+            if (i <= index)
+                return Promise.reject(new Error('next() called multiple times...'));
+
+            index = i;
+            const fn = middleWares[i] || next;
+
+            /**
+             * if reach the length of the middleware array.
+             */
+            if (!fn) {
+                return Promise.resolve();
+            }
+            try {
+                /**
+                 * the param next is the next middleware function. ↓↓
+                 */
+                return Promise.resolve(fn(ctx, () => dispatch(i + 1)));
+            } catch (error) {
+                return Promise.reject(error);
+            }
+        }
+
+        /**
+         * return a promise instance.
+         */
+        return dispatch(0);
+    };
+}
 
 module.exports = app.createServer();

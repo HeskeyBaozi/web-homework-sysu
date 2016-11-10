@@ -24,10 +24,6 @@ input {
     margin: 0 auto;
 }
 
-
-
-
-
 .homepage-intro {
     padding: 0 20px;
 }
@@ -41,15 +37,12 @@ input {
     align-items: center;
 }
 
-.form-group {
-    width: 100%;
-}
+
 
 .homepage-sign-up {
-    width: 500px;
     padding: 0 20px;
 
-    flex-basis: 350px;
+    flex-basis: 450px;
     flex-shrink: 0;
 }
 

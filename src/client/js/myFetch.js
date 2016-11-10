@@ -1,6 +1,9 @@
 'use strict';
 
 function myFetch(url, options) {
+    if (!options) {
+        options = {};
+    }
     return new Promise((resolve, reject) => {
         const XHR = new XMLHttpRequest();
         XHR.open(options.method || 'GET', url);

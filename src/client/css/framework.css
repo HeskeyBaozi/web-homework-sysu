@@ -67,6 +67,19 @@
     background-clip: padding-box;
 }
 
+.form-group {
+    width: 100%;
+    position: relative;
+}
+
+.form-group .message {
+    height: 20px;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 .form-control {
     font-size: 14px;
     line-height: 20px;
@@ -97,4 +110,21 @@
     border-color: rgba(0, 0, 0, .25);
     border-radius: 5px;
     background-clip: padding-box;
+}
+
+.form-correct .form-control {
+    box-shadow: inset 0 0 15px 2px lightgreen;
+}
+
+.form-correct .message {
+    color: lightgreen;
+}
+
+.form-danger .form-control {
+    box-shadow: inset 0 0 15px 3px lightcoral;
+}
+
+.form-danger .message {
+    color: lightcoral;
+    font-weight: bold;
 }

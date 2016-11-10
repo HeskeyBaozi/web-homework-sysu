@@ -6,8 +6,20 @@ class Storage {
         this.isDirty = false;
     }
 
-    exists(name) {
-        return this.data.userList.filter(User => User.username === name);
+    findUserName(username) {
+        return this.data.userList.find(User => User.username === username);
+    }
+
+    findEmail(email) {
+        return this.data.userList.find(User => User.email === email);
+    }
+
+    findPhone(phone) {
+        return this.data.userList.find(User => User.phone === phone);
+    }
+
+    findStudentNumber(studentnumber) {
+        return this.data.userList.find(User => User.studentnumber === studentnumber);
     }
 
     add(User) {
