@@ -1,5 +1,7 @@
 'use strict';
 
+const fs = require('fs');
+
 class Storage {
     constructor(data) {
         this.data = data;

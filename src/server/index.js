@@ -35,7 +35,7 @@ class ServerApp {
 const app = new ServerApp();
 
 /**
- * parse the url
+ * 解析URL
  */
 app.use((ctx, next) => {
     ctx.state.$url = url.parse(ctx.request.url, true);
@@ -43,12 +43,12 @@ app.use((ctx, next) => {
 });
 
 /**
- * app logger, dependent on $url.
+ * 打印日志，依赖解析URL生成的$url
  */
 app.use(logger);
 
 /**
- * handle Error
+ * RESTful 异常处理
  */
 app.use((ctx, next) => {
     return next().catch(errorCode => {
@@ -61,7 +61,7 @@ app.use((ctx, next) => {
 
 
 /**
- * parse the mimeType & filePath
+ * 解析mimeType
  */
 app.use((() => {
     /**
@@ -86,7 +86,7 @@ app.use((() => {
 
 
 /**
- * parse body
+ * 解析 POST 中的请求体Body
  */
 app.use((ctx, next) => {
     if (ctx.request.method === 'POST') {
@@ -137,6 +137,8 @@ app.use((() => {
                     sendRest(ctx, service.checkPhone(text));
                     break;
             }
+        } else if (ctx.request.method === 'GET' && ctx.state.$url.query['queryDetail']) {
+            sendRest(ctx, service.getUserDetail(ctx.state.$url.query['queryDetail']));
         } else {
             return next();
         }
@@ -144,7 +146,7 @@ app.use((() => {
 })());
 
 /**
- * static Files
+ * 静态服务
  */
 app.use(serve(path.join(__dirname, '../client/')));
 
@@ -162,8 +164,8 @@ function sendRest(ctx, errorCode) {
 
 
 /**
- * compose multiple middleWares into one function.
- * just like _.flow
+ * 将多个中间件函数整合到一个
+ * 像lodash中的_.flow一样，但是有promise的回调
  *
  * @param middleWares {Array<function>}
  * @return {function({Object}, {Function})}
@@ -209,14 +211,14 @@ function flow(middleWares) {
             const fn = middleWares[i] || next;
 
             /**
-             * if reach the length of the middleware array.
+             * 当到中间件数组尾的时候..
              */
             if (!fn) {
                 return Promise.resolve();
             }
             try {
                 /**
-                 * the param next is the next middleware function. ↓↓
+                 * 参数next就是这里的下一个中间件函数 ↓↓
                  */
                 return Promise.resolve(fn(ctx, () => dispatch(i + 1)));
             } catch (error) {
@@ -225,7 +227,7 @@ function flow(middleWares) {
         }
 
         /**
-         * return a promise instance.
+         * 返回的是一个Promise实例
          */
         return dispatch(0);
     };

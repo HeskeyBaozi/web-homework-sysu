@@ -37,6 +37,8 @@ module.exports.staticServe = publicDir => (ctx, next) => {
         const requestFilePath = path.join(publicDir, ctx.state.$url.pathname);
         if (fs.existsSync(requestFilePath)) {
             sendFile(ctx, requestFilePath);
+        } else if (ctx.state.$mimeType === 'text/html') {
+            sendFile(ctx, path.join(publicDir, './index.html'));
         } else {
             throw new ErrorCode(ErrorCode.FAILURE, `Send 404 for ${ctx.state.$url.pathname}`);
         }

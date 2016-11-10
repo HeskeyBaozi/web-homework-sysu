@@ -1,32 +1,30 @@
 'use strict';
 (() => {
-
-
     /**
-     * 表单提交
+     * 缓存
      */
-    document.getElementById('submit').addEventListener('click', e => {
-        e.preventDefault();
-        const form = new FormData(document.querySelector('.login-flex'));
-        myFetch('/registry', {
-            method: 'POST',
-            body: form
-        }).then(responseText => {
-            console.log(responseText);
-        }).catch(text => {
-            console.log(text);
-        });
-    });
+    const cache = {
+        allFormGroupArray: Array.from(document.querySelectorAll('.form-group')),
+        loginForm: document.querySelector('.login-flex'),
+        submitButton: document.getElementById('submit'),
+        resetButton: document.getElementById('reset'),
+        allInputArray: Array.from(document.querySelectorAll('.needTest')),
+        detailElement: document.querySelector('.detail')
+    };
 
     /**
      * 表单复位
      */
-    document.getElementById('reset').addEventListener('click', e => {
-        Array.from(document.querySelectorAll('.form-group')).forEach(ele => {
+    function reset() {
+        cache.allFormGroupArray.forEach(ele => {
             ele.classList.remove('form-danger');
             ele.classList.remove('form-correct');
             ele.lastElementChild.textContent = '';
         });
+    }
+
+    cache.resetButton.addEventListener('click', e => {
+        reset();
     });
 
 
@@ -76,6 +74,23 @@
                     test: /.+/,
                     message: '不能为空'
                 },
+                {
+                    test: /^[a-zA-Z0-9]/,
+                    message: '必须字母数字开头'
+                },
+                {
+                    test: /^(\w|\.|-)*@(\w|\.|-)*$/i,
+                    message: '@没有或过多'
+                },
+                {
+                    test: /\.[a-zA-Z]{2,4}$/,
+                    message: '后缀不合理'
+                },
+
+                {
+                    test: /^[\w\-]+@(([\w\-])+\.)+[a-zA-Z]{2,4}$/,
+                    message: '不符合正常邮箱格式'
+                }
             ],
             'phone': [
                 {
@@ -110,8 +125,7 @@
         return function (element) {
             const validateResult = validateOne(element.name, element.value);
             if (validateResult.success) {
-                myFetch(`/?check=${element.name}&text=${element.value}`)
-                    .then(text => JSON.parse(text))
+                checkExists(element.name, element.value)
                     .then(errorCode => {
                         if (errorCode.code === 'SUCCESS') {
                             showWrong(element, errorCode.message);
@@ -125,10 +139,15 @@
         }
     })();
 
+    function checkExists(type, value) {
+        return myFetch(`/?check=${type}&text=${value}`)
+            .then(text => JSON.parse(text));
+    }
+
     /**
      * 输入时验证，500毫秒防止抖动
      */
-    document.querySelector('.login-flex').addEventListener('input', _.debounce(e => {
+    cache.loginForm.addEventListener('input', _.debounce(e => {
         validate(e.target);
     }, 500));
 
@@ -143,4 +162,80 @@
         element.parentNode.classList.add('form-danger');
         element.parentNode.lastElementChild.textContent = `${message} ×`;
     }
+
+
+    /**
+     * 表单提交
+     */
+    cache.submitButton.addEventListener('click', e => {
+        e.preventDefault();
+        cache.allInputArray.forEach(ele => {
+            validate(ele);
+        });
+        const check = cache.allInputArray.every(ele => {
+            return ele.value && ele.parentNode.classList.contains('form-correct');
+        });
+        if (check) {
+            const form = new FormData(cache.loginForm);
+            myFetch('/registry', {
+                method: 'POST',
+                body: form
+            }).then(responseText => {
+                console.log(JSON.parse(responseText));
+                location.assign(`/?username=${form.get('username')}`);
+            }).catch(text => {
+                console.log(text);
+            });
+            reset();
+        }
+    });
+
+    function checkCurrentPage() {
+        if (location.search && /^\?username=\w+$/.test(location.search)) {
+            const userName = location.search.match(/^\?username=\w+$/)[0].split(/\?username=/)[1];
+            myFetch(`/?queryDetail=${userName}`)
+                .then(errorCode => JSON.parse(errorCode))
+                .then(errorCode => {
+                    if (errorCode.code === 'SUCCESS') {
+                        cache.loginForm.classList.toggle('hidden');
+                        cache.detailElement.classList.toggle('hidden');
+                        cache.detailElement.innerHTML = parseText(cache.detailElement.innerHTML, errorCode.message).join('');
+                    }
+                })
+        }
+    }
+
+    const tagRE = /\{\{((?:.|\n)+?)\}\}/g;
+
+    /**
+     * 解析{{}}并用object替换模版数据
+     * @param text
+     * @param object
+     * @return {Array}
+     */
+    function parseText(text, object) {
+        if (!tagRE.test(text))
+            return;
+
+        const tokens = [];
+        let lastIndex = tagRE.lastIndex = 0;
+        let match, index;
+        while ((match = tagRE.exec(text))) {
+            index = match.index;
+            // push text token
+            if (index > lastIndex) {
+                tokens.push(text.slice(lastIndex, index));
+            }
+            // tag token
+            const exp = match[1];
+            tokens.push(object[exp]);
+            lastIndex = index + match[0].length;
+        }
+        if (lastIndex < text.length) {
+            tokens.push(text.slice(lastIndex));
+        }
+        return tokens;
+    }
+
+    checkCurrentPage();
 })();

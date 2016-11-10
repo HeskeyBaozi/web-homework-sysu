@@ -21,34 +21,34 @@
     <div class="big-banner flex-container">
         <div class="content flex-container">
             <div class="homepage-intro">
-                <h1>这个世界需要更多的英雄!</h1>
-                <p>Millions of developers use GitHub to build personal projects, support their businesses, and work
-                    together on open source technologies.</p>
+                <h1>这个世界需要更多英雄!</h1>
+                <p>我看到你了！午时已到！天降正义！死吧，死吧！龍神の剣を喰らえ！没人可以躲过我的眼睛！
+                    龍か我が敵を喰ろう！冻住！不许走！哦！在这停顿！英雄不朽！感受宁静！遁入智瞳！吃我一锤！随意开火！From Zhiyu He, 15331097.</p>
             </div>
-            <div class="homepage-sign-up">
+            <div class="homepage-sign-up homepage-detail">
                 <form action="#" method="post" class="login-flex flex-container">
                     <div class="form-group">
                         <label for="login-username"></label>
                         <input id="login-username" name="username" type="text"
-                               class="need-test form-control form-control-lg" placeholder="Pick a username"/>
+                               class="needTest form-control form-control-lg" placeholder="Pick a username"/>
                         <div class="message"></div>
                     </div>
                     <div class="form-group">
                         <label for="login-studentnumber"></label>
                         <input id="login-studentnumber" name="studentnumber" type="text"
-                               class="need-test form-control form-control-lg" placeholder="Student number"/>
+                               class="needTest form-control form-control-lg" placeholder="Student number"/>
                         <div class="message"></div>
                     </div>
                     <div class="form-group">
                         <label for="login-email"></label>
                         <input id="login-email" name="email" type="text"
-                               class="need-test form-control form-control-lg" placeholder="Email address"/>
+                               class="needTest form-control form-control-lg" placeholder="Email address"/>
                         <div class="message"></div>
                     </div>
                     <div class="form-group">
                         <label for="login-phone"></label>
                         <input id="login-phone" name="phone" type="text"
-                               class="need-test form-control form-control-lg" placeholder="Phone number"/>
+                               class="needTest form-control form-control-lg" placeholder="Phone number"/>
                         <div class="message"></div>
                     </div>
                     <div class="form-group">
@@ -59,8 +59,15 @@
                     <div class="form-group">
                         <input id="reset" class="btn btn-large btn-block submit" type="reset" value="Reset"/>
                     </div>
-
                 </form>
+                <div class="detail hidden">
+                    <ul>
+                        <li><span class="detail-title">用户名：</span><span class="detail-content">{{username}}</span></li>
+                        <li><span class="detail-title">学号：</span><span class="detail-content">{{studentnumber}}</span></li>
+                        <li><span class="detail-title">邮箱：</span><span class="detail-content">{{email}}</span></li>
+                        <li><span class="detail-title">电话：</span><span class="detail-content">{{phone}}</span></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
