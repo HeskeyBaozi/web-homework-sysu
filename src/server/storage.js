@@ -2,6 +2,9 @@
 
 const fs = require('fs');
 
+/**
+ * 读写层
+ */
 class Storage {
     constructor(data) {
         this.data = data;
@@ -34,7 +37,6 @@ class Storage {
             fs.writeFileSync(path, JSON.stringify(this.data), 'utf8');
             this.isDirty = false;
         }
-
     }
 }
 

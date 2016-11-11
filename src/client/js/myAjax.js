@@ -1,6 +1,12 @@
 'use strict';
 
-function myFetch(url, options) {
+/**
+ * 实现类似fetch API的接口
+ * @param url
+ * @param options
+ * @return {Promise}
+ */
+function myAjax(url, options) {
     if (!options) {
         options = {};
     }

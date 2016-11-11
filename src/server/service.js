@@ -6,6 +6,9 @@ const path = require('path');
 const pathName = path.join(__dirname, './data.json');
 const ErrorCode = require('./error_code.js');
 
+/**
+ * 业务逻辑层
+ */
 class Service {
     constructor() {
         this.storage = new Storage(JSON.parse(fs.readFileSync(pathName, 'utf8')));

@@ -140,7 +140,7 @@
     })();
 
     function checkExists(type, value) {
-        return myFetch(`/?check=${type}&text=${value}`)
+        return myAjax(`/?check=${type}&text=${value}`)
             .then(text => JSON.parse(text));
     }
 
@@ -177,7 +177,7 @@
         });
         if (check) {
             const form = new FormData(cache.loginForm);
-            myFetch('/registry', {
+            myAjax('/registry', {
                 method: 'POST',
                 body: form
             }).then(responseText => {
@@ -193,7 +193,7 @@
     function checkCurrentPage() {
         if (location.search && /^\?username=\w+$/.test(location.search)) {
             const userName = location.search.match(/^\?username=\w+$/)[0].split(/\?username=/)[1];
-            myFetch(`/?queryDetail=${userName}`)
+            myAjax(`/?queryDetail=${userName}`)
                 .then(errorCode => JSON.parse(errorCode))
                 .then(errorCode => {
                     if (errorCode.code === 'SUCCESS') {
