@@ -31,7 +31,7 @@
     /**
      * 验证函数，闭包包裹相关helper
      */
-    const validate = (() => {
+    var validate = (() => {
         const validator = {
             'username': [
                 {
@@ -122,6 +122,23 @@
             };
         }
 
+        function showOK(element, message) {
+            element.parentNode.classList.remove('form-danger');
+            element.parentNode.classList.add('form-correct');
+            element.parentNode.lastElementChild.textContent = ' √';
+        }
+
+        function showWrong(element, message) {
+            element.parentNode.classList.remove('form-correct');
+            element.parentNode.classList.add('form-danger');
+            element.parentNode.lastElementChild.textContent = `${message} ×`;
+        }
+
+        function checkExists(type, value) {
+            return myAjax(`/?check=${type}&text=${value}`)
+                .then(text => JSON.parse(text));
+        }
+
         return function (element) {
             const validateResult = validateOne(element.name, element.value);
             if (validateResult.success) {
@@ -139,10 +156,7 @@
         }
     })();
 
-    function checkExists(type, value) {
-        return myAjax(`/?check=${type}&text=${value}`)
-            .then(text => JSON.parse(text));
-    }
+
 
     /**
      * 输入时验证，500毫秒防止抖动
@@ -150,18 +164,6 @@
     cache.loginForm.addEventListener('input', _.debounce(e => {
         validate(e.target);
     }, 500));
-
-    function showOK(element, message) {
-        element.parentNode.classList.remove('form-danger');
-        element.parentNode.classList.add('form-correct');
-        element.parentNode.lastElementChild.textContent = ' √';
-    }
-
-    function showWrong(element, message) {
-        element.parentNode.classList.remove('form-correct');
-        element.parentNode.classList.add('form-danger');
-        element.parentNode.lastElementChild.textContent = `${message} ×`;
-    }
 
 
     /**
@@ -172,10 +174,10 @@
         cache.allInputArray.forEach(ele => {
             validate(ele);
         });
-        const check = cache.allInputArray.every(ele => {
+        const ableToSubmitForm = cache.allInputArray.every(ele => {
             return ele.value && ele.parentNode.classList.contains('form-correct');
         });
-        if (check) {
+        if (ableToSubmitForm) {
             const form = new FormData(cache.loginForm);
             myAjax('/registry', {
                 method: 'POST',
@@ -190,22 +192,30 @@
         }
     });
 
-    function checkCurrentPage() {
-        if (location.search && /^\?username=\w+$/.test(location.search)) {
+    function checkCurrentPageAndRenderDetail() {
+        if (checkPage(window.location)) {
             const userName = location.search.match(/^\?username=\w+$/)[0].split(/\?username=/)[1];
             myAjax(`/?queryDetail=${userName}`)
                 .then(errorCode => JSON.parse(errorCode))
                 .then(errorCode => {
                     if (errorCode.code === 'SUCCESS') {
-                        cache.loginForm.classList.toggle('hidden');
-                        cache.detailElement.classList.toggle('hidden');
-                        cache.detailElement.innerHTML = parseText(cache.detailElement.innerHTML, errorCode.message).join('');
+                        renderDetail(errorCode.message);
                     }
-                })
+                });
         }
     }
 
-    const tagRE = /\{\{((?:.|\n)+?)\}\}/g;
+    checkCurrentPageAndRenderDetail();
+
+    function checkPage(location) {
+        return location.search && /^\?username=\w+$/.test(location.search);
+    }
+
+    function renderDetail(data) {
+        cache.loginForm.classList.toggle('hidden');
+        cache.detailElement.classList.toggle('hidden');
+        cache.detailElement.innerHTML = parseTextContent(cache.detailElement.innerHTML, data).join('');
+    }
 
     /**
      * 解析{{}}并用object替换模版数据
@@ -213,29 +223,30 @@
      * @param object
      * @return {Array}
      */
-    function parseText(text, object) {
-        if (!tagRE.test(text))
-            return;
+    var parseTextContent = (() => {
+        const tagRE = /\{\{((?:.|\n)+?)\}\}/g;
+        return function (text, object) {
+            if (!tagRE.test(text))
+                return;
 
-        const tokens = [];
-        let lastIndex = tagRE.lastIndex = 0;
-        let match, index;
-        while ((match = tagRE.exec(text))) {
-            index = match.index;
-            // push text token
-            if (index > lastIndex) {
-                tokens.push(text.slice(lastIndex, index));
+            const tokens = [];
+            let lastIndex = tagRE.lastIndex = 0;
+            let match, index;
+            while ((match = tagRE.exec(text))) {
+                index = match.index;
+                // push text token
+                if (index > lastIndex) {
+                    tokens.push(text.slice(lastIndex, index));
+                }
+                // tag token
+                const exp = match[1];
+                tokens.push(object[exp]);
+                lastIndex = index + match[0].length;
             }
-            // tag token
-            const exp = match[1];
-            tokens.push(object[exp]);
-            lastIndex = index + match[0].length;
+            if (lastIndex < text.length) {
+                tokens.push(text.slice(lastIndex));
+            }
+            return tokens;
         }
-        if (lastIndex < text.length) {
-            tokens.push(text.slice(lastIndex));
-        }
-        return tokens;
-    }
-
-    checkCurrentPage();
+    })();
 })();

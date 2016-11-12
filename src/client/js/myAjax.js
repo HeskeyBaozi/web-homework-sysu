@@ -7,12 +7,14 @@
  * @return {Promise}
  */
 function myAjax(url, options) {
-    if (!options) {
-        options = {};
-    }
+    options = options || {
+            method: 'GET',
+            body: null,
+            handleHeader: null
+        };
     return new Promise((resolve, reject) => {
         const XHR = new XMLHttpRequest();
-        XHR.open(options.method || 'GET', url);
+        XHR.open(options.method, url);
         if (options.handleHeader) {
             options.handleHeader(XHR.setRequestHeader.bind(XHR));
         }
@@ -28,6 +30,6 @@ function myAjax(url, options) {
             console.log('XHR error: ', e);
         };
 
-        XHR.send(options.body || null);
+        XHR.send(options.body);
     });
 }
