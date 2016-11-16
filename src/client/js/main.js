@@ -177,6 +177,7 @@
         const ableToSubmitForm = cache.allInputArray.every(ele => {
             return ele.value && ele.parentNode.classList.contains('form-correct');
         });
+        // 若表单信息合法
         if (ableToSubmitForm) {
             const form = new FormData(cache.loginForm);
             myAjax('/registry', {

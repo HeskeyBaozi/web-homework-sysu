@@ -15,23 +15,39 @@ class ServerApp {
         this.middleware = [];
     }
 
+    /**
+     * @param fn 中间件函数, 接受上下文对象, next表示下一个中间件
+     * 一定要return next(); 返回一个Promise
+     * middleware(ctx: Object, next: Function() => Promise) => Promise
+     */
     use(fn) {
         this.middleware.push(fn);
     }
 
     createServer() {
-        const middleware = this.middleware;
+        const that = this;
         return http.createServer(function (request, response) {
+            /**
+             * 将request和response 封装到上下文对象当中
+             * @type {Object}
+             */
             const context = Object.create(this);
             Object.assign(context, {
                 request, response, state: {}
             });
-            flow(middleware)(context);
+
+            /**
+             * 封装所有中间件，并处理上下文
+             */
+            flow(that.middleware)(context);
         });
     }
 }
 
-
+/**
+ * 服务器实例
+ * @type {ServerApp}
+ */
 const app = new ServerApp();
 
 /**
@@ -119,8 +135,15 @@ app.use((ctx, next) => {
 app.use((() => {
     const service = new Service();
     return (ctx, next) => {
+        /**
+         * handle POST /registry
+         */
         if (ctx.state.$url.pathname === '/registry' && ctx.request.method === 'POST') {
             sendRest(ctx, service.registry(ctx.state.$body));
+
+            /**
+             * handle GET /?check={{something}}&text={{something}}
+             */
         } else if (ctx.request.method === 'GET' && ctx.state.$url.query['check']) {
             const text = ctx.state.$url.query['text'];
             switch (ctx.state.$url.query['check']) {
@@ -137,6 +160,9 @@ app.use((() => {
                     sendRest(ctx, service.checkPhone(text));
                     break;
             }
+            /**
+             * handle GET /?queryDetail={{username}}
+             */
         } else if (ctx.request.method === 'GET' && ctx.state.$url.query['queryDetail']) {
             sendRest(ctx, service.getUserDetail(ctx.state.$url.query['queryDetail']));
         } else {
