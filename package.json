@@ -1,0 +1,11 @@
+{
+  "name": "hw10-async",
+  "version": "1.0.0",
+  "description": "sysu web homework",
+  "main": "server.js",
+  "scripts": {
+    "start": "node ./server.js"
+  },
+  "author": "Zhiyu He",
+  "license": "MIT"
+}
