@@ -30,33 +30,38 @@ function createButtonHandler(option) {
     };
 }
 
-$('.icon').click(() => {
+$('.icon').click(e => {
+    const $ctx = $(e.currentTarget);
+    if ($ctx.hasClass('running')) // avoid called frequently...
+        return;
+    $ctx.addClass('running');
+
     reset();
     const infoArray = [
         {
             id: 'A',
             successMessage: 'A:这是一个天大的秘密',
-            failMessage: 'A:这不会是一个个天大的秘密'
+            failMessage: 'A:这不会是一个个天大的秘密(失败)'
         },
         {
             id: 'B',
             successMessage: 'B:我不知道',
-            failMessage: 'B:我好像知道诶'
+            failMessage: 'B:我好像知道诶(失败)'
         },
         {
             id: 'C',
             successMessage: 'C:你不知道',
-            failMessage: 'C:你好像知道诶'
+            failMessage: 'C:你好像知道诶(失败)'
         },
         {
             id: 'D',
             successMessage: 'D:他不知道',
-            failMessage: 'D:他好像知道诶'
+            failMessage: 'D:他好像知道诶(失败)'
         },
         {
             id: 'E',
             successMessage: 'E:才怪',
-            failMessage: 'E:是真的'
+            failMessage: 'E:是真的(失败)'
         }
     ];
     const shuffledArray = shuffle(infoArray);
@@ -82,15 +87,19 @@ $('.icon').click(() => {
                     display(failState.message);
                     return failState;
                 })
-                .then(nextState => rightPromiseMaker(nextState))
-                .catch(nextState => rightPromiseMaker(nextState));
+                .then(nextState => rightPromiseMaker(nextState));
         }, Promise.resolve(new State(true, null, 0)) // initial value
     );
 
-    flow.then(finalState => {
-        display('大气泡：楼主异步调用战斗力感人，目测不超过');
-        $('#info-bar').addClass('disable').children('.info-result').text(finalState.currentSum);
-    });
+    /**
+     * final state
+     */
+    flow.catch(finalState => finalState)
+        .then(finalState => {
+            display('大气泡：楼主异步调用战斗力感人，目测不超过');
+            $('#info-bar').addClass('disable').children('.info-result').text(finalState.currentSum);
+            $ctx.removeClass('running');
+        });
 });
 
 function shuffle(array) {
