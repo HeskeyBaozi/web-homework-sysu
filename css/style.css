@@ -8,7 +8,7 @@
 
 html,
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Microsoft YaHei UI", Arial, sans-serif;
     line-height: 1.15;
 }
 
@@ -192,56 +192,6 @@ li {
 }
 
 /*******************************
-       information content
- *******************************/
-.alpha .info {
-    position: static;
-
-    width: 100%;
-    margin-top: 12px;
-}
-
-.info li {
-    font-size: 1rem;
-    line-height: 1.5;
-
-    box-sizing: border-box;
-    width: 100%;
-
-    text-align: center;
-    vertical-align: top;
-
-    color: white;
-}
-
-.info span {
-    margin-left: 5px;
-
-    vertical-align: top;
-}
-
-.info .mine {
-    width: 50%;
-}
-
-.info .posted {
-    padding-right: 5px;
-
-    text-align: right;
-}
-
-.info .like {
-    padding-left: 5px;
-
-    text-align: left;
-}
-
-.info .comment {
-    font-size: 30px;
-    font-weight: bold;
-}
-
-/*******************************
              util
  *******************************/
 .center-content {
@@ -255,6 +205,11 @@ li {
     font-weight: bold;
 }
 
-.hidden {
-    display: none;
+#info-bar .top-message {
+    width: 300px;
+    position: absolute;
+    top: -30%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: black;
 }
