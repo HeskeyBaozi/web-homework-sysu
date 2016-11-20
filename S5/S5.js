@@ -1,5 +1,35 @@
 'use strict';
 
+class State {
+    constructor(isSuccess, message, currentSum) {
+        this.isSuccess = isSuccess;
+        this.message = message;
+        this.currentSum = typeof currentSum === 'number' ? currentSum : Number.parseInt(currentSum);
+    }
+}
+
+/**
+ * create a handler.
+ * @param option
+ * @return {Function}
+ */
+function createButtonHandler(option) {
+    /**
+     * @param currentState {State}
+     */
+    return function (currentState) {
+        return clickButton($(`#${option.id}`))
+            .then(number => {
+                if (isFailedRandomly()) { // randomly failed
+                    throw new State(false, option.failMessage, currentState.currentSum);
+                } else {
+                    enableBubble();
+                    return new State(true, option.successMessage, currentState.currentSum + Number.parseInt(number));
+                }
+            })
+    };
+}
+
 $('.icon').click(() => {
     reset();
     const infoArray = [
@@ -30,36 +60,36 @@ $('.icon').click(() => {
         }
     ];
     const shuffledArray = shuffle(infoArray);
+
+    /**
+     * display the order
+     */
     display(shuffledArray.map(option => option.id).reduce((left, right) => left + right));
+
+    /**
+     * handlers is an array of function that return a promise.
+     * @type {Array<Function>}
+     */
     const handlers = shuffledArray.map(option => createButtonHandler(option));
+    const flow = handlers.reduce(
+        (leftPromise, rightPromiseMaker) => {
+            return leftPromise
+                .then(successState => {
+                    display(successState.message);
+                    return successState;
+                })
+                .catch(failState => {
+                    display(failState.message);
+                    return failState;
+                })
+                .then(nextState => rightPromiseMaker(nextState))
+                .catch(nextState => rightPromiseMaker(nextState));
+        }, Promise.resolve(new State(true, null, 0)) // initial value
+    );
 
-    const flow = handlers.reduce((leftPromise, rightPromiseMaker) => {
-        return leftPromise
-            .then(successObject => {
-                console.log(successObject);
-                display(successObject.message);
-                return successObject;
-            })
-            .catch(failObject => {
-                console.log(failObject);
-                display(failObject.message);
-                return failObject;
-            })
-            .then(nextState => {
-                return rightPromiseMaker(nextState);
-            })
-            .catch(nextState => {
-                return rightPromiseMaker(nextState);
-            });
-    }, Promise.resolve({
-        currentSum: 0
-    }));
-
-
-    flow.then(finalObject => {
-        console.log(finalObject);
+    flow.then(finalState => {
         display('大气泡：楼主异步调用战斗力感人，目测不超过');
-        $('.info-result').text(finalObject.currentSum);
+        $('#info-bar').addClass('disable').children('.info-result').text(finalState.currentSum);
     });
 });
 
@@ -79,30 +109,11 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function createButtonHandler(option) {
-    return function (currentState) {
-        return clickButton($(`#${option.id}`))
-            .then(number => {
-                if (isFailedRandomly()) {
-                    throw {
-                        message: option.failMessage + ',失败',
-                        currentSum: Number.parseInt(currentState.currentSum)
-                    };
-                } else {
-                    enableBubble();
-                    return {
-                        message: option.successMessage + ',成功',
-                        currentSum: Number.parseInt(currentState.currentSum) + Number.parseInt(number)
-                    };
-                }
-            })
-    };
-}
-
 function isFailedRandomly() {
     return Math.random() < 0.5;
 }
 
 function display(message) {
-    $('.top-message').text(message);
+    if (message)
+        $('.top-message').text(message);
 }

@@ -2,9 +2,16 @@
 
 $('.icon').click(() => {
     reset();
-    const asyncFlow = Array.from($('.button'));
-    const flow = asyncFlow.reduce((myPromise, button) => {
-        return myPromise.then(() => clickButtonAndEnableBubble($(button)));
-    }, Promise.resolve());
+
+    const flow = Array.from($('.button')) // convert into real array.
+        .reduce(
+            (myPromise, button) => {
+
+                // add callback
+                return myPromise.then(() => clickButtonAndEnableBubble($(button)));
+            },
+            Promise.resolve() // initial value
+        );
+
     flow.then(() => clickBubble($('#info-bar')));
 });
