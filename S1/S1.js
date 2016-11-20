@@ -11,6 +11,9 @@ const cache = {
     $bigBubble: $('#info-bar')
 };
 
+/**
+ * If your mouse enter the @+ logo, the menu will expand.
+ */
 cache.$alphaLogo.mouseenter((() => {
     return e => {
         cache.$wholeApp.toggleClass('on-hover');
@@ -26,45 +29,61 @@ cache.$alphaLogo.mouseenter((() => {
 })());
 
 
+/**
+ * If you click the button A~E, it will fetch the random number from the server.
+ */
 $('#control-ring').click((() => {
-    /**
-     * button handler.
-     * @param $ctx {object} the jquery object of the button.
-     */
-    const buttonHandler = (() => {
-        let uid = 0;
-        return $ctx => {
-            if ($ctx.hasClass('disable'))
-                return;
-            $ctx.siblings().addClass('disable');
-            $ctx.children('.center-content').removeClass('hidden').text('...');
-            return fetchNumber().then(number => {
-                $ctx.addClass('disable disable-fix').children('.center-content').text(number);
-                $ctx.siblings(':not(.disable-fix)').removeClass('disable');
-                return number;
-            });
-        };
-
-        function fetchNumber() {
-            return new Promise((resolve, reject) => {
-                $.get('/', {
-                    _uid: uid++
-                }, responseNumber => {
-                    resolve(responseNumber);
-                });
-            });
-        }
-    })();
-
+    const handler = clickButtonAndNotify(cache.$bigBubble);
     return e => {
-        buttonHandler($(e.target))
-            .then(number => {
-                cache.$bigBubble.trigger('notify', {
-                    [e.target.id]: number
-                });
-            });
+        handler($(e.target));
     };
 })());
+
+function clickButtonAndNotify($notifyTarget) {
+    return $element => {
+        if ($element.hasClass('disable')) {
+            return;
+        }
+        return clickButton($element).then(number => {
+            /**
+             * Attention!!
+             * Once the A~E button get the random number,
+             * it will trigger the event 'notify' for the big bubble.
+             * And then, convert the information:
+             *
+             * @example
+             * { A: 3 }, { B: 4 }, { C: 5 }...
+             */
+            $notifyTarget.trigger('notify', {
+                [$element[0].id]: number
+            });
+        });
+    };
+}
+
+/**
+ * button handler.
+ * @param $ctx {object} the jquery object of the button.
+ */
+function clickButton($ctx) {
+    $ctx.siblings().addClass('disable');
+    $ctx.children('.center-content').removeClass('hidden').text('...');
+    return fetchNumber().then(number => {
+        $ctx.addClass('disable disable-fix').children('.center-content').text(number);
+        $ctx.siblings(':not(.disable-fix)').removeClass('disable');
+        return number;
+    });
+}
+
+function fetchNumber() {
+    return new Promise((resolve, reject) => {
+        $.get('/', {
+            _: new Date().getTime()
+        }, responseNumber => {
+            resolve(responseNumber);
+        });
+    });
+}
 
 
 (function ($bigBubble) {
@@ -72,6 +91,13 @@ $('#control-ring').click((() => {
     let collection = {};
 
     $bigBubble
+    /**
+     * @event 'notify'
+     * it will receive the message object,
+     * and then merge with the collection object.
+     * Once the collection has keys 'A', 'B', 'C', 'D', 'E',
+     * the big bubble becomes enable to click.
+     */
         .on('notify', (e, message) => {
             Object.assign(collection, message);
             if (Object.keys(collection).length === 5) {
