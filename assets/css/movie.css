@@ -1,0 +1,180 @@
+/* global config */
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-family: Verdana, Tahoma, sans-serif;
+    font-size: 1.5em;
+
+    text-align: left;
+
+    background: url('../images/background.png') repeat;
+}
+
+div {
+    box-sizing: border-box;
+}
+
+/* typical style */
+.text-center {
+    text-align: center;
+}
+
+.highlight-background {
+    background-color: #a2b964;
+}
+
+.top-banner {
+    background: url('../images/bannerbackground.png') repeat-x;
+}
+
+.top-banner > img {
+    display: block;
+
+    margin: 0 auto;
+}
+
+/* main body */
+.wrapper {
+    padding: 0 calc(50% - 400px);
+}
+
+.container {
+    border: .4em solid gray;
+    min-width: min-content;
+}
+
+.flex-container {
+    display: flex;
+}
+
+.flex-container > #main-content {
+    flex-basis: 550px;
+    flex-grow: 2;
+}
+
+.flex-container > #slide-bar {
+    min-width: min-content;
+
+    flex-basis: 250px;
+    flex-grow: 1;
+}
+
+.container > footer {
+    font-size: 80%;
+
+    padding: 5px;
+}
+
+/* main-content */
+#top-rotten {
+    display: flex;
+
+    height: 83px;
+
+    background: url('../images/rottenbackground.png') repeat-x;
+
+    align-items: flex-end;
+}
+
+#top-rotten em {
+    font-size: 48pt;
+    font-weight: bold;
+    font-style: normal;
+
+    padding: 0 0 1px 5px;
+
+    color: red;
+}
+
+#top-rotten small {
+    font-size: 8pt;
+    font-weight: lighter;
+
+    padding: 0 0 10px 5px;
+
+    color: white;
+}
+
+#main-content > #section {
+    font-size: 8pt;
+
+    display: flex;
+
+    justify-content: space-between;
+}
+
+/* column */
+.col-md-6 {
+    width: 47%;
+
+    flex-grow: 0;
+}
+
+.left {
+    margin-left: 2%;
+}
+
+.right {
+    margin-right: 2%;
+}
+
+/* comment */
+.comment {
+    margin-top: 1em;
+    margin-bottom: 3em;
+}
+
+.comment p {
+    line-height: 13px;
+}
+
+.comment img {
+    float: left;
+
+    margin-right: 5px;
+}
+
+.comment-body {
+    font-weight: bold;
+
+    overflow: hidden;
+
+    width: 100%;
+    padding: 8px;
+
+    border: .2em solid gray;
+    background-color: #e1d697;
+}
+
+.comment-body p {
+    margin: 0;
+}
+
+.from .additional {
+    font-style: italic;
+}
+
+/* side-bar */
+#detail {
+    font-family: Arial, sans-serif;
+    font-size: 8pt;
+
+    margin: 0 1em;
+}
+
+#detail dt {
+    font-weight: bold;
+
+    margin-top: 1em;
+}
+
+/* validator */
+#validator {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+}
+
+
