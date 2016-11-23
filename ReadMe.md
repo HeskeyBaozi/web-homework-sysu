@@ -4,7 +4,6 @@
 
 
 ## Current Project
-[Games](https://github.com/HeskeyBaozi/web-homework-sysu/tree/6-Games)
 
 ## License
 [MIT](/LICENSE)
