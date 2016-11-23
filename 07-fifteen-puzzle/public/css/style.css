@@ -1,0 +1,230 @@
+.center-content {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    position: relative;
+
+    display: flex;
+
+    width: 400px;
+    height: 680px;
+
+    padding: 10px 0;
+
+    text-align: center;
+
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0 0 50px #5c5c5c;
+
+    flex-flow: column nowrap;
+    align-items: center;
+}
+
+.playground {
+    position: relative;
+    z-index: 2;
+
+    overflow: hidden;
+
+    box-sizing: content-box;
+    width: 400px;
+    height: 400px;
+
+    background: url('../img/jy.jpg') 0 / cover fixed;
+}
+
+.no-see {
+
+}
+
+.no-see:before {
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    display: block;
+
+    content: '';
+
+    background-color: rgba(255, 255, 255, .52);
+}
+
+.btn-group {
+    display: flex;
+
+    margin: 10px 0;
+
+    justify-content: center;
+}
+
+.btn {
+    margin: 0 5px;
+    padding: 5px 30px;
+
+    transition: all 200ms;
+
+    color: #5c5c5c;
+    border: 1px solid #5c5c5c;
+    border-radius: 5px;
+    background-color: white;
+}
+
+.btn:hover {
+    color: white;
+    background-color: #5c5c5c;
+}
+
+.disable-click {
+    cursor: wait;
+
+    color: white;
+    background-color: rgba(92, 92, 92, .5);
+}
+
+.disable-click:hover {
+    background-color: rgba(92, 92, 92, .5);
+}
+
+h1 {
+    font-family: 'MFMiaoMiao_Noncommercial-Regular', Consolas, sans-serif;
+    font-size: 30px;
+
+    margin: 10px 0;
+}
+
+.message {
+    font-size: 20px;
+    font-weight: bold;
+
+    margin: 0;
+
+    color: #5c5c5c;
+}
+
+.game-data {
+    margin: 10px 0;
+}
+
+.img-groups {
+    display: flex;
+    position: relative;
+
+    width: 380px;
+    margin: 10px 0;
+
+    justify-content: space-around;
+}
+
+.select-block {
+    transition: all 500ms;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    box-shadow: 0 0 4px gray;
+    cursor: pointer;
+}
+
+.select-block:hover {
+    transform: rotate(1turn);
+
+    box-shadow: 0 0 20px gray;
+}
+
+.block {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+
+    transition: all 300ms;
+}
+
+.block:hover {
+    z-index: 2;
+
+    transform: scale(1.1);
+
+    border: 1px solid white;
+    box-shadow: 0 0 5px gray;
+}
+
+.no-hover {
+    z-index: 0;
+}
+
+.no-hover:hover {
+    transform: none;
+
+    border: none;
+    box-shadow: none;
+}
+
+#loading {
+    font-size: 30px;
+
+    position: absolute;
+    z-index: 4;
+    top: 0;
+    left: 0;
+
+    width: 400px;
+    height: 400px;
+
+    color: #575757;
+    background-color: rgba(255, 255, 255, .68);
+
+    flex-flow: column nowrap;
+}
+
+#loading-icon {
+    width: 50px;
+    height: 50px;
+
+    animation: square-spin 2s 0s cubic-bezier(.09, .57, .49, .9) infinite;
+
+    background: #575757;
+
+    animation-fill-mode: both;
+}
+
+@keyframes square-spin {
+    25% {
+        transform: perspective(100px) rotateX(180deg) rotateY(0deg);
+    }
+    50% {
+        transform: perspective(100px) rotateX(180deg) rotateY(180deg);
+    }
+    75% {
+        transform: perspective(100px) rotateX(0deg) rotateY(180deg);
+    }
+    100% {
+        transform: perspective(100px) rotateX(0deg) rotateY(0deg);
+    }
+}
+
+.disable-see {
+    display: none;
+}
+
+.select-block:nth-child(1) {
+    background: url("../img/icon_gfpanda.png") 0/cover;
+}
+
+.select-block:nth-child(2) {
+    background: url("../img/icon_overwatch.jpg") 0/cover;
+}
+
+.select-block:nth-child(3) {
+    background: url("../img/icon_zoo.png") 0/cover;
+}
+
+.select-block:nth-child(4) {
+    background: url("../img/icon_baymax.png") 0/cover;
+}
