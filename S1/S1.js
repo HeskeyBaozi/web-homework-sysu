@@ -4,13 +4,11 @@
  * when the mouse enter the logo. reset the state and begin calculating.
  */
 
-function defineAction(eventName) {
-    $('.icon')
-        .on(eventName, () => {
-            reset();
-            $('#button').toggleClass('on-hover');
-        });
-}
+$('.icon')
+    .mouseenter(() => {
+        reset();
+        $('#button').toggleClass('on-hover');
+    });
 
 
 $('.button').click(e => {

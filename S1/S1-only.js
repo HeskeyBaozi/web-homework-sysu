@@ -1,1 +1,0 @@
-defineAction('mouseenter');

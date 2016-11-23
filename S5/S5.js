@@ -4,8 +4,6 @@
 
 'use strict';
 
-defineAction('mouseenter mouseleave');
-
 class State {
     /**
      * State Object
@@ -27,10 +25,9 @@ class State {
  */
 $('.icon').click(e => {
     const $ctx = $(e.currentTarget);
-    if ($ctx.hasClass('running')) // avoid called frequently...
+    if ($ctx.hasClass('running') || !$('#button').hasClass('on-hover')) // avoid called frequently...
         return;
     $ctx.addClass('running');
-
     reset();
 
     /**
