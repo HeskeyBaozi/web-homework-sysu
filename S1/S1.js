@@ -3,11 +3,15 @@
 /**
  * when the mouse enter the logo. reset the state and begin calculating.
  */
-$('.icon')
-    .mouseenter(() => {
-        reset();
-        $('#button').toggleClass('on-hover');
-    });
+
+function defineAction(eventName) {
+    $('.icon')
+        .on(eventName, () => {
+            reset();
+            $('#button').toggleClass('on-hover');
+        });
+}
+
 
 $('.button').click(e => {
     const $ctx = $(e.currentTarget);

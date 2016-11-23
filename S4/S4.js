@@ -1,6 +1,12 @@
 'use strict';
 
-$('.icon').click(() => {
+defineAction('mouseenter mouseleave');
+
+$('.icon').click(e => {
+    const $ctx = $(e.currentTarget);
+    if ($ctx.hasClass('running')) // avoid called frequently...
+        return;
+    $ctx.addClass('running');
     reset();
     const asyncFlow = shuffle(Array.from($('.button')));
 
@@ -17,7 +23,10 @@ $('.icon').click(() => {
             return myPromise.then(() => clickButtonAndEnableBubble($(button)));
         }, Promise.resolve() // initial value.
     );
-    flow.then(() => clickBubble($('#info-bar')));
+    flow.then(() => {
+        clickBubble($('#info-bar'));
+        $ctx.removeClass('running');
+    });
 });
 
 /**

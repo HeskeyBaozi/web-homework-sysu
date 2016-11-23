@@ -1,6 +1,12 @@
 'use strict';
 
-$('.icon').click(() => {
+defineAction('mouseenter mouseleave');
+
+$('.icon').click(e => {
+    const $ctx = $(e.currentTarget);
+    if ($ctx.hasClass('running')) // avoid called frequently...
+        return;
+    $ctx.addClass('running');
     reset();
 
     const flow = Array.from($('.button')) // convert into real array.
@@ -13,5 +19,8 @@ $('.icon').click(() => {
             Promise.resolve() // initial value
         );
 
-    flow.then(() => clickBubble($('#info-bar')));
+    flow.then(() => {
+        clickBubble($('#info-bar'));
+        $ctx.removeClass('running');
+    });
 });

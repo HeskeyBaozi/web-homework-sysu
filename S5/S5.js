@@ -4,6 +4,8 @@
 
 'use strict';
 
+defineAction('mouseenter mouseleave');
+
 class State {
     /**
      * State Object
