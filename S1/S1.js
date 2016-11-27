@@ -15,15 +15,11 @@ $('.button').click(e => {
     const $ctx = $(e.currentTarget);
     if ($ctx.hasClass('disable'))
         return;
-    clickButton($ctx)
-        .then(() => enableBubble());
+    clickButtonAndEnableBubbleCallback($ctx, (error, result) => null);
 });
 
 $('#info-bar').click(e => {
-    const $ctx = $(e.currentTarget);
-    if ($ctx.hasClass('disable'))
-        return;
-    clickBubble($ctx);
+    showSum();
 });
 
 /**
@@ -36,67 +32,79 @@ function reset() {
 }
 
 /**
+ * Async
  * use ajax to get the number from the server.
- * @return {Promise}
  */
-function fetchNumber() {
-    return new Promise((resolve, reject) => {
-        $.get('/', {
-            _time: new Date().getTime() // avoid waiting.
-        }, data => {
-            resolve(data);
-        });
+function fetchNumberCallback(callback) {
+    $.get('/', {
+        _time: new Date().getTime() // avoid waiting.
+    }, data => {
+        callback(null, data);
     });
 }
 
 /**
+ * Async
  * click the button handler.
  * @param $ctx {Object} jQuery Object
- * @return {Promise}
+ * @param callback {Function}
  */
-function clickButton($ctx) {
+function clickButtonCallback($ctx, callback) {
     $ctx.addClass('disable disable-fix').children('span').text('...').show();
     $ctx.siblings().addClass('disable');
-    return fetchNumber().then(number => {
-        $ctx.addClass('fulfilled').children('span').text(number);
-        $ctx.siblings(':not(.disable-fix)').removeClass('disable');
-        return number;
+    fetchNumberCallback((error, number) => {
+        if (error) {
+            callback(error);
+        } else {
+            $ctx.addClass('fulfilled').children('span').text(number);
+            $ctx.siblings(':not(.disable-fix)').removeClass('disable');
+            callback(null, number);
+        }
     });
 }
 
 /**
  * try to enable the bubble, return true if succeed.
- * @return {boolean}
+ * callback {boolean}
  */
-function enableBubble() {
+function enableBubbleCallback(callback) {
     if ($('.fulfilled').length === 5) {
         $('#info-bar').removeClass('disable');
-        return true;
+        callback(null, true);
+    } else {
+        callback(null, false);
     }
-    return false;
 }
 
 /**
  * click the button and then try to enable the bubble.
  * @param $ctx {Object} jQuery Object
- * @return {Promise.<boolean>}
+ * @param callback {Function}
  */
-function clickButtonAndEnableBubble($ctx) {
-    return clickButton($ctx)
-        .then(() => enableBubble());
+function clickButtonAndEnableBubbleCallback($ctx, callback) {
+    clickButtonCallback($ctx, (error, number) => {
+        if (error) {
+            callback(error);
+        } else {
+            enableBubbleCallback((error, result) => {
+                if (error) {
+                    callback(error);
+                } else {
+                    callback(null, result);
+                }
+            });
+        }
+    });
 }
 
 /**
- * click the bubble handler.
- * @param $ctx {Object} jQuery Object
- * @return {Promise}
+ * display the sum
  */
-function clickBubble($ctx) {
-    return new Promise((resolve, reject) => {
-        const sum = computeSum();
-        $ctx.addClass('disable').children('.info-result').text(sum);
-        resolve(sum);
-    });
+function showSum() {
+    const $ctx = $('#info-bar');
+    if ($ctx.hasClass('disable'))
+        return;
+    $ctx.addClass('disable').children('.info-result').text(computeSum());
 }
 
 /**

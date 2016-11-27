@@ -13,17 +13,25 @@ $('.icon').click(e => {
      */
     display(asyncFlow.map(button => button.id).reduce((left, right) => left + right));
 
+    const callbackArray = asyncFlow.map(button => {
+        return callback => {
+            clickButtonAndEnableBubbleCallback($(button), (error, result) => {
+                if (error) {
+                    callback(error);
+                } else {
+                    callback(null, result);
+                }
+            });
+        };
+    });
 
-    const flow = asyncFlow.reduce(
-        (myPromise, button) => {
-
-            // add callback
-            return myPromise.then(() => clickButtonAndEnableBubble($(button)));
-        }, Promise.resolve() // initial value.
-    );
-    flow.then(() => {
-        clickBubble($('#info-bar'));
-        $ctx.removeClass('running');
+    waterfall(callbackArray, (error, result) => {
+        if (error) {
+            throw error;
+        } else {
+            showSum();
+            $ctx.removeClass('running');
+        }
     });
 });
 
@@ -51,4 +59,31 @@ function getRandomInt(min, max) {
 function display(message) {
     if (message)
         $('.top-message').text(message);
+}
+
+/**
+ * async waterfall
+ * @param flowArray {Array<Function>}
+ * @param finalCallback {Function}
+ */
+function waterfall(flowArray, finalCallback) {
+    const fn = flowArray[0];
+    let index = 1;
+
+    function callback(error, result) {
+        const next = flowArray[index++];
+        if (next) {
+            next(callback);
+        } else {
+            finalCallback(error, result);
+        }
+    }
+
+    fn((error, result) => {
+        if (error) {
+            callback(error);
+        } else {
+            callback(null, result);
+        }
+    });
 }

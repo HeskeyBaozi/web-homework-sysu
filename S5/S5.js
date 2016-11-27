@@ -10,13 +10,11 @@ class State {
      * @param isSuccess {boolean}
      * @param message {string}
      * @param currentSum {number}
-     * @param retryCallback {function}
      */
-    constructor(isSuccess, message, currentSum, retryCallback) {
+    constructor(isSuccess, message, currentSum) {
         this.isSuccess = isSuccess;
         this.message = message;
         this.currentSum = typeof currentSum === 'number' ? currentSum : Number.parseInt(currentSum);
-        this.retryCallback = retryCallback;
     }
 }
 
@@ -81,19 +79,31 @@ $('.icon').click(e => {
      */
     const handlers = shuffledArray.map(option => createButtonHandler(option));
 
-    /**
-     * connect each handler by registering a callback.
-     */
-    const flow = handlers.reduce(
-        (initialPromise, handler) => {
-            return initialPromise.then(nextState => handleErrorAndShowMessage(handler(nextState)));
-        }, Promise.resolve(new State(true, null, 0)) // initial value
-    );
+    function waterfall(handlers, finalCallback) {
+        const fn = handlers[0];
+        let index = 0;
 
-    /**
-     * final state
-     */
-    flow.then(finalState => {
+        fn(new State(true, null, 0), callback);
+
+        function callback(error, successState) {
+            const current = handlers[index];
+            const next = handlers[index + 1];
+            if (error) {
+                display(error.message);
+                current(error, callback);
+            } else {
+                display(successState.message);
+                if (next) {
+                    index++;
+                    next(successState, callback);
+                } else {
+                    finalCallback(error, successState);
+                }
+            }
+        }
+    }
+
+    waterfall(handlers, (error, finalState) => {
         display('大气泡：楼主异步调用战斗力感人，目测不超过');
         $('#info-bar').addClass('disable').children('.info-result').text(finalState.currentSum);
         $ctx.removeClass('running');
@@ -110,47 +120,32 @@ function createButtonHandler(option) {
 
     /**
      * @param currentState {State}
+     * @param callback {Function}
      */
-    function handler(currentState) {
-        return clickButton($(`#${option.id}`))
-            .then(number => {
+    function handler(currentState, callback) {
+        clickButtonCallback($(`#${option.id}`), (error, number) => {
+            if (error) {
+                callback(error);
+            } else {
                 if (isFailedRandomly()) { // randomly failed
                     /**
                      * Attention!!
                      * Here we throw an Object because it failed.
                      * and pass in the callback..
                      */
-                    throw new State(false, option.failMessage, currentState.currentSum, handler);
+                    callback(new State(false, option.failMessage, currentState.currentSum));
                 } else {
-                    enableBubble();
-                    return new State(true, option.successMessage, currentState.currentSum + Number.parseInt(number));
+                    enableBubbleCallback((error, result) => {
+                        if (error) {
+                            callback(error);
+                        } else {
+                            callback(null, new State(true, option.successMessage, currentState.currentSum + Number.parseInt(number)));
+                        }
+                    });
                 }
-            })
-    }
-}
-
-/**
- * show the failure/success message, handle the error and retry to call it again..
- * @param promise {Promise}
- * @return {Promise.<State>}
- */
-function handleErrorAndShowMessage(promise) {
-    return promise
-        .catch(failState => {
-            display(failState.message);
-            /**
-             * if catch the error. retry to call it again.
-             */
-            if (failState.retryCallback) {
-                return handleErrorAndShowMessage(failState.retryCallback(failState));
-            } else {
-                throw new Error("You can't reach this error, because it will retry to get the number until it succeed.")
             }
-        })
-        .then(successState => {
-            display(successState.message);
-            return successState;
         });
+    }
 }
 
 /**
